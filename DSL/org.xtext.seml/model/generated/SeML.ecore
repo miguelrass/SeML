@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="seML" nsURI="http://www.xtext.org/seml/SeML" nsPrefix="seML">
+  <eClassifiers xsi:type="ecore:EClass" name="Model"/>
+  <eClassifiers xsi:type="ecore:EClass" name="MainModel" eSuperTypes="#//Model">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="imports" upperBound="-1"
+        eType="#//Import" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="sentences" upperBound="-1"
+        eType="#//Sentence" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ImportModel" eSuperTypes="#//Model">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="components" upperBound="-1"
+        eType="#//Component" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="characteristics" upperBound="-1"
+        eType="#//Characteristic" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="objectProperties" upperBound="-1"
+        eType="#//ObjectProperty" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="metaIndividuals" upperBound="-1"
+        eType="#//MetaIndividual" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Import">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Sentence"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Individual" eSuperTypes="#//Sentence #//AnyIndividual">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="cls" unique="false" upperBound="-1"
+        eType="#//Component"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="UseCharacteristic" eSuperTypes="#//Sentence">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="name" eType="#//Characteristic"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Relation" eSuperTypes="#//Sentence">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="instance1" eType="#//AnyIndividual"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="obj" eType="#//ObjectProperty"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="instance2" eType="#//AnyIndividual"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Component">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="iri" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AnyIndividual">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Component_Process" eSuperTypes="#//Component"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Component_Event" eSuperTypes="#//Component"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Component_Property" eSuperTypes="#//Component"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Component_Entity" eSuperTypes="#//Component"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ObjectProperty">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="iri" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Characteristic">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="iri" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="MetaIndividual" eSuperTypes="#//AnyIndividual">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="cls" unique="false" upperBound="-1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="iri" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+</ecore:EPackage>

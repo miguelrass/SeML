@@ -1,0 +1,68 @@
+
+CENAS A FAZER:
+
+	fazer uma copia da calculadora e ver se ha problema na mesma com o facto de ja ter essa ontologia (conflito pcausa da upper)  DOES WORK!! No problemo
+	simplificar nomes simplifcaveis
+	
+	tentar fazer auto complete de parentesis como acontece aqui no eclipse, pode ser util
+
+
+
+
+
+
+
+
+
+
+	    //================================================================================================================
+		//================================================================================================================
+		//================================================================================================================
+		
+	    //Get axiom info for ontology
+	    Set<OWLAxiom> axiomSet = masterOntology.getAxioms();
+        HashMap<String,Integer> axiomsMap = new HashMap<String, Integer>();
+        if(axiomSet!=null && axiomSet.size()>0)
+        {
+            Iterator<OWLAxiom> setIter = axiomSet.iterator();
+            OWLAxiom axiom = null;
+            while(setIter.hasNext()){
+                axiom = setIter.next();
+                if(axiomsMap.containsKey(axiom.getAxiomType().getName())){
+                    axiomsMap.put(axiom.getAxiomType().getName(),axiomsMap.get(axiom.getAxiomType().getName())+1);
+                }
+                else{
+                	axiomsMap.put(axiom.getAxiomType().getName(),1);
+                }
+                if(axiom.getAxiomType() == AxiomType.SUBCLASS_OF){ System.out.println(axiom);}
+            }
+            System.out.println("-------------- Axiom Info for Ontology =["+masterOntology+"]");
+            System.out.println("No.of Axiom Types =["+axiomsMap.size()+"]");
+            Iterator<String> mapIter = axiomsMap.keySet().iterator();
+            String axiomType = null;
+       
+            while(mapIter.hasNext()){
+                axiomType = mapIter.next();
+                System.out.println("Axiom Type =["+axiomType+"] No.of Axioms =["+axiomsMap.get(axiomType)+"]");
+            }
+ 			System.out.println("-------------- ------------------------------------------");
+        }
+
+        
+        OUTPUT:
+        -------------- Axiom Info for Ontology =[Ontology(OntologyID(OntologyIRI(<http://www.esrg.com/Master.owl>) VersionIRI(<null>))) [Axioms: 150 Logical Axioms: 89] First 20 axioms: {InverseObjectProperties(<http://www.esrg.com/ontologies/upper.owl#characterizes> <http://www.esrg.com/ontologies/upper.owl#isCharacterizedBy>) SubObjectPropertyOf(<http://www.esrg.com/ontologies/upper.owl#hasInput> <http://www.esrg.com/ontologies/upper.owl#hasIO>) SubObjectPropertyOf(<http://www.esrg.com/ontologies/upper.owl#writesTo> <http://www.esrg.com/ontologies/upper.owl#accesses>) SubObjectPropertyOf(<http://www.esrg.com/ontologies/upper.owl#hasOutput> <http://www.esrg.com/ontologies/upper.owl#hasIO>) SubObjectPropertyOf(<http://www.esrg.com/ontologies/upper.owl#precedes> <http://www.esrg.com/ontologies/upper.owl#flowsTo>) SubObjectPropertyOf(<http://www.esrg.com/ontologies/upper.owl#uses> <http://www.esrg.com/ontologies/upper.owl#flowsTo>) SubObjectPropertyOf(<http://www.esrg.com/ontologies/upper.owl#readsFrom> <http://www.esrg.com/ontologies/upper.owl#accesses>) ClassAssertion(<http://calculator#DisplayController> <http://www.esrg.com/Master.owl#DispCtrl>) ClassAssertion(<http://calculator#Contrast> <http://www.esrg.com/Master.owl#Contr>) AnnotationAssertion(<http://www.esrg.com/ontologies/upper.owl#NonInstantiable> <http://www.esrg.com/ontologies/upper.owl#Component> ""^^xsd:string) AnnotationAssertion(<http://www.esrg.com/ontologies/upper.owl#NonInstantiable> <http://www.esrg.com/ontologies/upper.owl#Report> ""^^xsd:string) AnnotationAssertion(<http://www.esrg.com/ontologies/upper.owl#NonInstantiable> <http://www.w3.org/2002/07/owl#Thing> ""^^xsd:string) AnnotationAssertion(<http://www.esrg.com/ontologies/upper.owl#NonInstantiable> <http://www.esrg.com/ontologies/upper.owl#Characteristic> ""^^xsd:string) AnnotationAssertion(<http://www.esrg.com/ontologies/upper.owl#NonInstantiable> <http://www.esrg.com/ontologies/upper.owl#Variability> ""^^xsd:string) SubClassOf(<http://calculator#Calculator> ObjectExactCardinality(1 <http://www.esrg.com/ontologies/upper.owl#isComposedOf> <http://calculator#MainBoard>)) SubClassOf(<http://calculator#ButtonsController> <http://www.esrg.com/ontologies/upper.owl#Entity>) SubClassOf(<http://calculator#MainBoard> <http://www.esrg.com/ontologies/upper.owl#Entity>) SubClassOf(<http://www.esrg.com/ontologies/upper.owl#Variability> <http://www.esrg.com/ontologies/upper.owl#Component>) SubClassOf(<http://calculator#TouchEvent> ObjectExactCardinality(1 <http://www.esrg.com/ontologies/upper.owl#precedes> <http://calculator#DecodeTouch>)) SubClassOf(<http://calculator#MainBoard> ObjectExactCardinality(1 <http://www.esrg.com/ontologies/upper.owl#uses> <http://calculator#DisplayController>)) }]
+		No.of Axiom Types =[10]
+		Axiom Type =[AnnotationAssertion] No.of Axioms =[5]
+		Axiom Type =[SubObjectPropertyOf] No.of Axioms =[6]
+		Axiom Type =[ObjectPropertyDomain] No.of Axioms =[12]
+		Axiom Type =[DisjointClasses] No.of Axioms =[5]
+		Axiom Type =[Declaration] No.of Axioms =[56]
+		Axiom Type =[InverseObjectProperties] No.of Axioms =[1]
+		Axiom Type =[ClassAssertion] No.of Axioms =[2]
+		Axiom Type =[SubClassOf] No.of Axioms =[48]
+		Axiom Type =[ObjectPropertyRange] No.of Axioms =[12]
+		Axiom Type =[AsymmetricObjectProperty] No.of Axioms =[3]
+		
+		//================================================================================================================
+		//================================================================================================================
+		//================================================================================================================

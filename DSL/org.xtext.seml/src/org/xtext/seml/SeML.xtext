@@ -1,0 +1,96 @@
+//grammar org.xtext.seml.SeML with org.eclipse.xtext.common.Terminals
+grammar org.xtext.seml.SeML hidden(WS, ML_COMMENT, SL_COMMENT)
+
+generate seML "http://www.xtext.org/seml/SeML"
+
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
+Model:
+	MainModel | ImportModel
+;
+
+MainModel:
+	imports+=Import+ 
+	sentences+=Sentence*
+;
+
+ImportModel:
+	components+=Component+
+	characteristics+=Characteristic*
+	objectProperties+=ObjectProperty*
+	metaIndividuals+=MetaIndividual*
+;
+
+Import:
+	'import' name=STRING
+;
+	
+Sentence:
+	Individual | Relation | UseCharacteristic
+;
+
+Individual:
+	'new' cls+=[Component|IRI]+ name=IRI '\n' //However, an individual cannot have #
+;
+
+UseCharacteristic:
+	'use' name=[Characteristic|IRI] '\n'
+;
+
+Relation:
+	instance1=[AnyIndividual|IRI] obj=[ObjectProperty|IRI] instance2=[AnyIndividual|IRI] '\n'
+;
+
+Component:
+	Component_Process | Component_Event | Component_Property | Component_Entity
+;
+
+AnyIndividual:
+	Individual | MetaIndividual
+;
+
+Component_Process:  'CompProcess' name=IRI iri=STRING;
+Component_Event:    'CompEvent' name=IRI iri=STRING;
+Component_Property: 'CompProperty' name=IRI iri=STRING;
+Component_Entity:	'CompEntity' name=IRI iri=STRING;
+ObjectProperty:    'ObjectProperty' name=IRI iri=STRING;
+Characteristic:		'Characteristic' name=IRI iri=STRING;
+MetaIndividual:    'MetaIndividual' cls+=STRING+ name=IRI iri=STRING;
+
+
+
+/*
+ * Terminal rules
+ */
+	
+terminal FLOAT returns ecore::EFloat:
+/* 	('-'|'+')?*/ (INT '.' INT) (('e' | 'E') INT)?;
+
+terminal BOOL returns ecore::EBoolean:
+	'true' | 'false';
+
+//terminal ID:
+//	'^'? ('a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
+
+terminal INT returns ecore::EInt:
+	/*('-' | '+')?*/ ('0'..'9')+;
+
+terminal STRING:
+	'"' ('\\' . /* 'b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\' */ | !('\\' | '"'))* '"' | "'" ('\\' .
+	/* 'b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\' */ | !('\\' | "'"))* "'";
+
+terminal ML_COMMENT:
+	'/*'->'*/';
+
+terminal SL_COMMENT:
+	'//' !('\n' | '\r')* ('\r'? '\n')?;
+	
+terminal IRI:
+	('#' | '&'..';' | '?'..'Z' | 'a'..'z' | '_')+;
+	//#  &'()*+,-./0-9:; ?@A-Z  a-z  _
+
+terminal WS:
+	(' ' | '\t' | '\r' | '\n')+;
+
+terminal ANY_OTHER:
+	.;
