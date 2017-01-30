@@ -13,13 +13,16 @@
     <Prefix name="xsd" IRI="http://www.w3.org/2001/XMLSchema#"/>
     <Prefix name="rdfs" IRI="http://www.w3.org/2000/01/rdf-schema#"/>
     <Declaration>
-        <Class IRI="#Goal"/>
+        <DataProperty IRI="#hasLiteral"/>
     </Declaration>
     <Declaration>
         <Class IRI="#Optional"/>
     </Declaration>
     <Declaration>
         <AnnotationProperty IRI="#NonInstantiable"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Goal"/>
     </Declaration>
     <Declaration>
         <Class IRI="#Property"/>
@@ -43,13 +46,16 @@
         <ObjectProperty IRI="#readsFrom"/>
     </Declaration>
     <Declaration>
-        <Class IRI="#Warning"/>
-    </Declaration>
-    <Declaration>
         <ObjectProperty IRI="#precedes"/>
     </Declaration>
     <Declaration>
         <ObjectProperty IRI="#isComposedOf"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Warning"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasValue"/>
     </Declaration>
     <Declaration>
         <Class IRI="#XOR"/>
@@ -61,25 +67,22 @@
         <Class IRI="#Characteristic"/>
     </Declaration>
     <Declaration>
-        <ObjectProperty IRI="#triggers"/>
-    </Declaration>
-    <Declaration>
         <Class IRI="#Value"/>
     </Declaration>
     <Declaration>
-        <ObjectProperty IRI="#dependsOn"/>
+        <ObjectProperty IRI="#triggers"/>
     </Declaration>
     <Declaration>
         <ObjectProperty IRI="#accesses"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#RejectedComponent"/>
     </Declaration>
     <Declaration>
         <Class IRI="#Report"/>
     </Declaration>
     <Declaration>
         <ObjectProperty IRI="#hasIO"/>
-    </Declaration>
-    <Declaration>
-        <ObjectProperty IRI="#rejects"/>
     </Declaration>
     <Declaration>
         <Class IRI="#Problem"/>
@@ -173,6 +176,10 @@
         <Class IRI="#Component"/>
     </SubClassOf>
     <SubClassOf>
+        <Class IRI="#RejectedComponent"/>
+        <Class IRI="#Error"/>
+    </SubClassOf>
+    <SubClassOf>
         <Class IRI="#Set"/>
         <Class IRI="#Component"/>
     </SubClassOf>
@@ -207,10 +214,6 @@
         <Class IRI="#Error"/>
         <Class IRI="#Information"/>
         <Class IRI="#Warning"/>
-    </DisjointClasses>
-    <DisjointClasses>
-        <Class IRI="#Feature"/>
-        <Class IRI="#Goal"/>
     </DisjointClasses>
     <DisjointClasses>
         <Class IRI="#OR"/>
@@ -274,10 +277,6 @@
         <Class IRI="#Characteristic"/>
     </ObjectPropertyDomain>
     <ObjectPropertyDomain>
-        <ObjectProperty IRI="#dependsOn"/>
-        <Class IRI="#Characteristic"/>
-    </ObjectPropertyDomain>
-    <ObjectPropertyDomain>
         <ObjectProperty IRI="#flowsTo"/>
         <ObjectUnionOf>
             <Class IRI="#Entity"/>
@@ -290,6 +289,10 @@
         <Class IRI="#Process"/>
     </ObjectPropertyDomain>
     <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasValue"/>
+        <Class IRI="#Characteristic"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
         <ObjectProperty IRI="#isCharacterizedBy"/>
         <Class IRI="#Component"/>
     </ObjectPropertyDomain>
@@ -299,10 +302,6 @@
     </ObjectPropertyDomain>
     <ObjectPropertyDomain>
         <ObjectProperty IRI="#opposedTo"/>
-        <Class IRI="#Characteristic"/>
-    </ObjectPropertyDomain>
-    <ObjectPropertyDomain>
-        <ObjectProperty IRI="#rejects"/>
         <Class IRI="#Characteristic"/>
     </ObjectPropertyDomain>
     <ObjectPropertyDomain>
@@ -330,14 +329,7 @@
     </ObjectPropertyRange>
     <ObjectPropertyRange>
         <ObjectProperty IRI="#demands"/>
-        <ObjectUnionOf>
-            <Class IRI="#Component"/>
-            <Class IRI="#Value"/>
-        </ObjectUnionOf>
-    </ObjectPropertyRange>
-    <ObjectPropertyRange>
-        <ObjectProperty IRI="#dependsOn"/>
-        <Class IRI="#Characteristic"/>
+        <Class IRI="#Component"/>
     </ObjectPropertyRange>
     <ObjectPropertyRange>
         <ObjectProperty IRI="#flowsTo"/>
@@ -352,6 +344,10 @@
         <Class IRI="#Property"/>
     </ObjectPropertyRange>
     <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasValue"/>
+        <Class IRI="#Value"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
         <ObjectProperty IRI="#isCharacterizedBy"/>
         <Class IRI="#Characteristic"/>
     </ObjectPropertyRange>
@@ -362,10 +358,6 @@
     <ObjectPropertyRange>
         <ObjectProperty IRI="#opposedTo"/>
         <Class IRI="#Problem"/>
-    </ObjectPropertyRange>
-    <ObjectPropertyRange>
-        <ObjectProperty IRI="#rejects"/>
-        <Class IRI="#Component"/>
     </ObjectPropertyRange>
     <ObjectPropertyRange>
         <ObjectProperty IRI="#solves"/>
