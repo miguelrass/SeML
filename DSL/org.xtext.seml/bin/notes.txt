@@ -11,7 +11,7 @@ CENAS A FAZER:
 
 	(eventualmente verificar se as regras swrl nao sao abatidas no processo de importacao e se faria sentido transforma-las em axiomas)
 	
-	auto vangloriaçao
+	auto vangloriaçao 
 
 
 
