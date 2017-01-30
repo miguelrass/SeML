@@ -22,7 +22,7 @@ import java.util.ArrayList;
 @SuppressWarnings("all")
 public class InternalSeMLParser extends AbstractInternalContentAssistParser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_STRING", "RULE_IRI", "RULE_INT", "RULE_FLOAT", "RULE_BOOL", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'import'", "'new'", "'\\n'", "'use'", "'CompProcess'", "'CompEvent'", "'CompProperty'", "'CompEntity'", "'ObjectProperty'", "'Characteristic'", "'MetaIndividual'"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_STRING", "RULE_IRI", "RULE_INT", "RULE_FLOAT", "RULE_BOOL", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'import'", "'new'", "','", "'use'", "'CompProcess'", "'CompEvent'", "'CompProperty'", "'CompEntity'", "'ObjectProperty'", "'Characteristic'", "'MetaIndividual'"
     };
     public static final int RULE_IRI=5;
     public static final int RULE_STRING=4;
@@ -2528,7 +2528,7 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
             // InternalSeML.g:794:1: ( rule__Individual__Group__1__Impl rule__Individual__Group__2 )
             // InternalSeML.g:795:2: rule__Individual__Group__1__Impl rule__Individual__Group__2
             {
-            pushFollow(FOLLOW_12);
+            pushFollow(FOLLOW_13);
             rule__Individual__Group__1__Impl();
 
             state._fsp--;
@@ -2557,26 +2557,23 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Individual__Group__1__Impl"
-    // InternalSeML.g:802:1: rule__Individual__Group__1__Impl : ( ( ( rule__Individual__ClsAssignment_1 ) ) ( ( rule__Individual__ClsAssignment_1 )* ) ) ;
+    // InternalSeML.g:802:1: rule__Individual__Group__1__Impl : ( ( rule__Individual__ClsAssignment_1 ) ) ;
     public final void rule__Individual__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:806:1: ( ( ( ( rule__Individual__ClsAssignment_1 ) ) ( ( rule__Individual__ClsAssignment_1 )* ) ) )
-            // InternalSeML.g:807:1: ( ( ( rule__Individual__ClsAssignment_1 ) ) ( ( rule__Individual__ClsAssignment_1 )* ) )
+            // InternalSeML.g:806:1: ( ( ( rule__Individual__ClsAssignment_1 ) ) )
+            // InternalSeML.g:807:1: ( ( rule__Individual__ClsAssignment_1 ) )
             {
-            // InternalSeML.g:807:1: ( ( ( rule__Individual__ClsAssignment_1 ) ) ( ( rule__Individual__ClsAssignment_1 )* ) )
-            // InternalSeML.g:808:2: ( ( rule__Individual__ClsAssignment_1 ) ) ( ( rule__Individual__ClsAssignment_1 )* )
-            {
-            // InternalSeML.g:808:2: ( ( rule__Individual__ClsAssignment_1 ) )
-            // InternalSeML.g:809:3: ( rule__Individual__ClsAssignment_1 )
+            // InternalSeML.g:807:1: ( ( rule__Individual__ClsAssignment_1 ) )
+            // InternalSeML.g:808:2: ( rule__Individual__ClsAssignment_1 )
             {
              before(grammarAccess.getIndividualAccess().getClsAssignment_1()); 
-            // InternalSeML.g:810:3: ( rule__Individual__ClsAssignment_1 )
-            // InternalSeML.g:810:4: rule__Individual__ClsAssignment_1
+            // InternalSeML.g:809:2: ( rule__Individual__ClsAssignment_1 )
+            // InternalSeML.g:809:3: rule__Individual__ClsAssignment_1
             {
-            pushFollow(FOLLOW_13);
+            pushFollow(FOLLOW_2);
             rule__Individual__ClsAssignment_1();
 
             state._fsp--;
@@ -2585,52 +2582,6 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
             }
 
              after(grammarAccess.getIndividualAccess().getClsAssignment_1()); 
-
-            }
-
-            // InternalSeML.g:813:2: ( ( rule__Individual__ClsAssignment_1 )* )
-            // InternalSeML.g:814:3: ( rule__Individual__ClsAssignment_1 )*
-            {
-             before(grammarAccess.getIndividualAccess().getClsAssignment_1()); 
-            // InternalSeML.g:815:3: ( rule__Individual__ClsAssignment_1 )*
-            loop10:
-            do {
-                int alt10=2;
-                int LA10_0 = input.LA(1);
-
-                if ( (LA10_0==RULE_IRI) ) {
-                    int LA10_1 = input.LA(2);
-
-                    if ( (LA10_1==RULE_IRI) ) {
-                        alt10=1;
-                    }
-
-
-                }
-
-
-                switch (alt10) {
-            	case 1 :
-            	    // InternalSeML.g:815:4: rule__Individual__ClsAssignment_1
-            	    {
-            	    pushFollow(FOLLOW_13);
-            	    rule__Individual__ClsAssignment_1();
-
-            	    state._fsp--;
-
-
-            	    }
-            	    break;
-
-            	default :
-            	    break loop10;
-                }
-            } while (true);
-
-             after(grammarAccess.getIndividualAccess().getClsAssignment_1()); 
-
-            }
-
 
             }
 
@@ -2653,16 +2604,16 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Individual__Group__2"
-    // InternalSeML.g:824:1: rule__Individual__Group__2 : rule__Individual__Group__2__Impl rule__Individual__Group__3 ;
+    // InternalSeML.g:817:1: rule__Individual__Group__2 : rule__Individual__Group__2__Impl rule__Individual__Group__3 ;
     public final void rule__Individual__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:828:1: ( rule__Individual__Group__2__Impl rule__Individual__Group__3 )
-            // InternalSeML.g:829:2: rule__Individual__Group__2__Impl rule__Individual__Group__3
+            // InternalSeML.g:821:1: ( rule__Individual__Group__2__Impl rule__Individual__Group__3 )
+            // InternalSeML.g:822:2: rule__Individual__Group__2__Impl rule__Individual__Group__3
             {
-            pushFollow(FOLLOW_14);
+            pushFollow(FOLLOW_13);
             rule__Individual__Group__2__Impl();
 
             state._fsp--;
@@ -2691,31 +2642,49 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Individual__Group__2__Impl"
-    // InternalSeML.g:836:1: rule__Individual__Group__2__Impl : ( ( rule__Individual__NameAssignment_2 ) ) ;
+    // InternalSeML.g:829:1: rule__Individual__Group__2__Impl : ( ( rule__Individual__Group_2__0 )* ) ;
     public final void rule__Individual__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:840:1: ( ( ( rule__Individual__NameAssignment_2 ) ) )
-            // InternalSeML.g:841:1: ( ( rule__Individual__NameAssignment_2 ) )
+            // InternalSeML.g:833:1: ( ( ( rule__Individual__Group_2__0 )* ) )
+            // InternalSeML.g:834:1: ( ( rule__Individual__Group_2__0 )* )
             {
-            // InternalSeML.g:841:1: ( ( rule__Individual__NameAssignment_2 ) )
-            // InternalSeML.g:842:2: ( rule__Individual__NameAssignment_2 )
+            // InternalSeML.g:834:1: ( ( rule__Individual__Group_2__0 )* )
+            // InternalSeML.g:835:2: ( rule__Individual__Group_2__0 )*
             {
-             before(grammarAccess.getIndividualAccess().getNameAssignment_2()); 
-            // InternalSeML.g:843:2: ( rule__Individual__NameAssignment_2 )
-            // InternalSeML.g:843:3: rule__Individual__NameAssignment_2
-            {
-            pushFollow(FOLLOW_2);
-            rule__Individual__NameAssignment_2();
+             before(grammarAccess.getIndividualAccess().getGroup_2()); 
+            // InternalSeML.g:836:2: ( rule__Individual__Group_2__0 )*
+            loop10:
+            do {
+                int alt10=2;
+                int LA10_0 = input.LA(1);
 
-            state._fsp--;
+                if ( (LA10_0==15) ) {
+                    alt10=1;
+                }
 
 
-            }
+                switch (alt10) {
+            	case 1 :
+            	    // InternalSeML.g:836:3: rule__Individual__Group_2__0
+            	    {
+            	    pushFollow(FOLLOW_14);
+            	    rule__Individual__Group_2__0();
 
-             after(grammarAccess.getIndividualAccess().getNameAssignment_2()); 
+            	    state._fsp--;
+
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop10;
+                }
+            } while (true);
+
+             after(grammarAccess.getIndividualAccess().getGroup_2()); 
 
             }
 
@@ -2738,14 +2707,14 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Individual__Group__3"
-    // InternalSeML.g:851:1: rule__Individual__Group__3 : rule__Individual__Group__3__Impl ;
+    // InternalSeML.g:844:1: rule__Individual__Group__3 : rule__Individual__Group__3__Impl ;
     public final void rule__Individual__Group__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:855:1: ( rule__Individual__Group__3__Impl )
-            // InternalSeML.g:856:2: rule__Individual__Group__3__Impl
+            // InternalSeML.g:848:1: ( rule__Individual__Group__3__Impl )
+            // InternalSeML.g:849:2: rule__Individual__Group__3__Impl
             {
             pushFollow(FOLLOW_2);
             rule__Individual__Group__3__Impl();
@@ -2771,21 +2740,31 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Individual__Group__3__Impl"
-    // InternalSeML.g:862:1: rule__Individual__Group__3__Impl : ( '\\n' ) ;
+    // InternalSeML.g:855:1: rule__Individual__Group__3__Impl : ( ( rule__Individual__NameAssignment_3 ) ) ;
     public final void rule__Individual__Group__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:866:1: ( ( '\\n' ) )
-            // InternalSeML.g:867:1: ( '\\n' )
+            // InternalSeML.g:859:1: ( ( ( rule__Individual__NameAssignment_3 ) ) )
+            // InternalSeML.g:860:1: ( ( rule__Individual__NameAssignment_3 ) )
             {
-            // InternalSeML.g:867:1: ( '\\n' )
-            // InternalSeML.g:868:2: '\\n'
+            // InternalSeML.g:860:1: ( ( rule__Individual__NameAssignment_3 ) )
+            // InternalSeML.g:861:2: ( rule__Individual__NameAssignment_3 )
             {
-             before(grammarAccess.getIndividualAccess().getControl000aKeyword_3()); 
-            match(input,15,FOLLOW_2); 
-             after(grammarAccess.getIndividualAccess().getControl000aKeyword_3()); 
+             before(grammarAccess.getIndividualAccess().getNameAssignment_3()); 
+            // InternalSeML.g:862:2: ( rule__Individual__NameAssignment_3 )
+            // InternalSeML.g:862:3: rule__Individual__NameAssignment_3
+            {
+            pushFollow(FOLLOW_2);
+            rule__Individual__NameAssignment_3();
+
+            state._fsp--;
+
+
+            }
+
+             after(grammarAccess.getIndividualAccess().getNameAssignment_3()); 
 
             }
 
@@ -2807,15 +2786,170 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
     // $ANTLR end "rule__Individual__Group__3__Impl"
 
 
+    // $ANTLR start "rule__Individual__Group_2__0"
+    // InternalSeML.g:871:1: rule__Individual__Group_2__0 : rule__Individual__Group_2__0__Impl rule__Individual__Group_2__1 ;
+    public final void rule__Individual__Group_2__0() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalSeML.g:875:1: ( rule__Individual__Group_2__0__Impl rule__Individual__Group_2__1 )
+            // InternalSeML.g:876:2: rule__Individual__Group_2__0__Impl rule__Individual__Group_2__1
+            {
+            pushFollow(FOLLOW_12);
+            rule__Individual__Group_2__0__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_2);
+            rule__Individual__Group_2__1();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__Individual__Group_2__0"
+
+
+    // $ANTLR start "rule__Individual__Group_2__0__Impl"
+    // InternalSeML.g:883:1: rule__Individual__Group_2__0__Impl : ( ',' ) ;
+    public final void rule__Individual__Group_2__0__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalSeML.g:887:1: ( ( ',' ) )
+            // InternalSeML.g:888:1: ( ',' )
+            {
+            // InternalSeML.g:888:1: ( ',' )
+            // InternalSeML.g:889:2: ','
+            {
+             before(grammarAccess.getIndividualAccess().getCommaKeyword_2_0()); 
+            match(input,15,FOLLOW_2); 
+             after(grammarAccess.getIndividualAccess().getCommaKeyword_2_0()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__Individual__Group_2__0__Impl"
+
+
+    // $ANTLR start "rule__Individual__Group_2__1"
+    // InternalSeML.g:898:1: rule__Individual__Group_2__1 : rule__Individual__Group_2__1__Impl ;
+    public final void rule__Individual__Group_2__1() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalSeML.g:902:1: ( rule__Individual__Group_2__1__Impl )
+            // InternalSeML.g:903:2: rule__Individual__Group_2__1__Impl
+            {
+            pushFollow(FOLLOW_2);
+            rule__Individual__Group_2__1__Impl();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__Individual__Group_2__1"
+
+
+    // $ANTLR start "rule__Individual__Group_2__1__Impl"
+    // InternalSeML.g:909:1: rule__Individual__Group_2__1__Impl : ( ( rule__Individual__ClsAssignment_2_1 ) ) ;
+    public final void rule__Individual__Group_2__1__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalSeML.g:913:1: ( ( ( rule__Individual__ClsAssignment_2_1 ) ) )
+            // InternalSeML.g:914:1: ( ( rule__Individual__ClsAssignment_2_1 ) )
+            {
+            // InternalSeML.g:914:1: ( ( rule__Individual__ClsAssignment_2_1 ) )
+            // InternalSeML.g:915:2: ( rule__Individual__ClsAssignment_2_1 )
+            {
+             before(grammarAccess.getIndividualAccess().getClsAssignment_2_1()); 
+            // InternalSeML.g:916:2: ( rule__Individual__ClsAssignment_2_1 )
+            // InternalSeML.g:916:3: rule__Individual__ClsAssignment_2_1
+            {
+            pushFollow(FOLLOW_2);
+            rule__Individual__ClsAssignment_2_1();
+
+            state._fsp--;
+
+
+            }
+
+             after(grammarAccess.getIndividualAccess().getClsAssignment_2_1()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__Individual__Group_2__1__Impl"
+
+
     // $ANTLR start "rule__UseCharacteristic__Group__0"
-    // InternalSeML.g:878:1: rule__UseCharacteristic__Group__0 : rule__UseCharacteristic__Group__0__Impl rule__UseCharacteristic__Group__1 ;
+    // InternalSeML.g:925:1: rule__UseCharacteristic__Group__0 : rule__UseCharacteristic__Group__0__Impl rule__UseCharacteristic__Group__1 ;
     public final void rule__UseCharacteristic__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:882:1: ( rule__UseCharacteristic__Group__0__Impl rule__UseCharacteristic__Group__1 )
-            // InternalSeML.g:883:2: rule__UseCharacteristic__Group__0__Impl rule__UseCharacteristic__Group__1
+            // InternalSeML.g:929:1: ( rule__UseCharacteristic__Group__0__Impl rule__UseCharacteristic__Group__1 )
+            // InternalSeML.g:930:2: rule__UseCharacteristic__Group__0__Impl rule__UseCharacteristic__Group__1
             {
             pushFollow(FOLLOW_12);
             rule__UseCharacteristic__Group__0__Impl();
@@ -2846,17 +2980,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__UseCharacteristic__Group__0__Impl"
-    // InternalSeML.g:890:1: rule__UseCharacteristic__Group__0__Impl : ( 'use' ) ;
+    // InternalSeML.g:937:1: rule__UseCharacteristic__Group__0__Impl : ( 'use' ) ;
     public final void rule__UseCharacteristic__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:894:1: ( ( 'use' ) )
-            // InternalSeML.g:895:1: ( 'use' )
+            // InternalSeML.g:941:1: ( ( 'use' ) )
+            // InternalSeML.g:942:1: ( 'use' )
             {
-            // InternalSeML.g:895:1: ( 'use' )
-            // InternalSeML.g:896:2: 'use'
+            // InternalSeML.g:942:1: ( 'use' )
+            // InternalSeML.g:943:2: 'use'
             {
              before(grammarAccess.getUseCharacteristicAccess().getUseKeyword_0()); 
             match(input,16,FOLLOW_2); 
@@ -2883,22 +3017,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__UseCharacteristic__Group__1"
-    // InternalSeML.g:905:1: rule__UseCharacteristic__Group__1 : rule__UseCharacteristic__Group__1__Impl rule__UseCharacteristic__Group__2 ;
+    // InternalSeML.g:952:1: rule__UseCharacteristic__Group__1 : rule__UseCharacteristic__Group__1__Impl ;
     public final void rule__UseCharacteristic__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:909:1: ( rule__UseCharacteristic__Group__1__Impl rule__UseCharacteristic__Group__2 )
-            // InternalSeML.g:910:2: rule__UseCharacteristic__Group__1__Impl rule__UseCharacteristic__Group__2
+            // InternalSeML.g:956:1: ( rule__UseCharacteristic__Group__1__Impl )
+            // InternalSeML.g:957:2: rule__UseCharacteristic__Group__1__Impl
             {
-            pushFollow(FOLLOW_14);
-            rule__UseCharacteristic__Group__1__Impl();
-
-            state._fsp--;
-
             pushFollow(FOLLOW_2);
-            rule__UseCharacteristic__Group__2();
+            rule__UseCharacteristic__Group__1__Impl();
 
             state._fsp--;
 
@@ -2921,21 +3050,21 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__UseCharacteristic__Group__1__Impl"
-    // InternalSeML.g:917:1: rule__UseCharacteristic__Group__1__Impl : ( ( rule__UseCharacteristic__NameAssignment_1 ) ) ;
+    // InternalSeML.g:963:1: rule__UseCharacteristic__Group__1__Impl : ( ( rule__UseCharacteristic__NameAssignment_1 ) ) ;
     public final void rule__UseCharacteristic__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:921:1: ( ( ( rule__UseCharacteristic__NameAssignment_1 ) ) )
-            // InternalSeML.g:922:1: ( ( rule__UseCharacteristic__NameAssignment_1 ) )
+            // InternalSeML.g:967:1: ( ( ( rule__UseCharacteristic__NameAssignment_1 ) ) )
+            // InternalSeML.g:968:1: ( ( rule__UseCharacteristic__NameAssignment_1 ) )
             {
-            // InternalSeML.g:922:1: ( ( rule__UseCharacteristic__NameAssignment_1 ) )
-            // InternalSeML.g:923:2: ( rule__UseCharacteristic__NameAssignment_1 )
+            // InternalSeML.g:968:1: ( ( rule__UseCharacteristic__NameAssignment_1 ) )
+            // InternalSeML.g:969:2: ( rule__UseCharacteristic__NameAssignment_1 )
             {
              before(grammarAccess.getUseCharacteristicAccess().getNameAssignment_1()); 
-            // InternalSeML.g:924:2: ( rule__UseCharacteristic__NameAssignment_1 )
-            // InternalSeML.g:924:3: rule__UseCharacteristic__NameAssignment_1
+            // InternalSeML.g:970:2: ( rule__UseCharacteristic__NameAssignment_1 )
+            // InternalSeML.g:970:3: rule__UseCharacteristic__NameAssignment_1
             {
             pushFollow(FOLLOW_2);
             rule__UseCharacteristic__NameAssignment_1();
@@ -2967,85 +3096,15 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
     // $ANTLR end "rule__UseCharacteristic__Group__1__Impl"
 
 
-    // $ANTLR start "rule__UseCharacteristic__Group__2"
-    // InternalSeML.g:932:1: rule__UseCharacteristic__Group__2 : rule__UseCharacteristic__Group__2__Impl ;
-    public final void rule__UseCharacteristic__Group__2() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalSeML.g:936:1: ( rule__UseCharacteristic__Group__2__Impl )
-            // InternalSeML.g:937:2: rule__UseCharacteristic__Group__2__Impl
-            {
-            pushFollow(FOLLOW_2);
-            rule__UseCharacteristic__Group__2__Impl();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__UseCharacteristic__Group__2"
-
-
-    // $ANTLR start "rule__UseCharacteristic__Group__2__Impl"
-    // InternalSeML.g:943:1: rule__UseCharacteristic__Group__2__Impl : ( '\\n' ) ;
-    public final void rule__UseCharacteristic__Group__2__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalSeML.g:947:1: ( ( '\\n' ) )
-            // InternalSeML.g:948:1: ( '\\n' )
-            {
-            // InternalSeML.g:948:1: ( '\\n' )
-            // InternalSeML.g:949:2: '\\n'
-            {
-             before(grammarAccess.getUseCharacteristicAccess().getControl000aKeyword_2()); 
-            match(input,15,FOLLOW_2); 
-             after(grammarAccess.getUseCharacteristicAccess().getControl000aKeyword_2()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__UseCharacteristic__Group__2__Impl"
-
-
     // $ANTLR start "rule__Relation__Group__0"
-    // InternalSeML.g:959:1: rule__Relation__Group__0 : rule__Relation__Group__0__Impl rule__Relation__Group__1 ;
+    // InternalSeML.g:979:1: rule__Relation__Group__0 : rule__Relation__Group__0__Impl rule__Relation__Group__1 ;
     public final void rule__Relation__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:963:1: ( rule__Relation__Group__0__Impl rule__Relation__Group__1 )
-            // InternalSeML.g:964:2: rule__Relation__Group__0__Impl rule__Relation__Group__1
+            // InternalSeML.g:983:1: ( rule__Relation__Group__0__Impl rule__Relation__Group__1 )
+            // InternalSeML.g:984:2: rule__Relation__Group__0__Impl rule__Relation__Group__1
             {
             pushFollow(FOLLOW_12);
             rule__Relation__Group__0__Impl();
@@ -3076,21 +3135,21 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Relation__Group__0__Impl"
-    // InternalSeML.g:971:1: rule__Relation__Group__0__Impl : ( ( rule__Relation__Instance1Assignment_0 ) ) ;
+    // InternalSeML.g:991:1: rule__Relation__Group__0__Impl : ( ( rule__Relation__Instance1Assignment_0 ) ) ;
     public final void rule__Relation__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:975:1: ( ( ( rule__Relation__Instance1Assignment_0 ) ) )
-            // InternalSeML.g:976:1: ( ( rule__Relation__Instance1Assignment_0 ) )
+            // InternalSeML.g:995:1: ( ( ( rule__Relation__Instance1Assignment_0 ) ) )
+            // InternalSeML.g:996:1: ( ( rule__Relation__Instance1Assignment_0 ) )
             {
-            // InternalSeML.g:976:1: ( ( rule__Relation__Instance1Assignment_0 ) )
-            // InternalSeML.g:977:2: ( rule__Relation__Instance1Assignment_0 )
+            // InternalSeML.g:996:1: ( ( rule__Relation__Instance1Assignment_0 ) )
+            // InternalSeML.g:997:2: ( rule__Relation__Instance1Assignment_0 )
             {
              before(grammarAccess.getRelationAccess().getInstance1Assignment_0()); 
-            // InternalSeML.g:978:2: ( rule__Relation__Instance1Assignment_0 )
-            // InternalSeML.g:978:3: rule__Relation__Instance1Assignment_0
+            // InternalSeML.g:998:2: ( rule__Relation__Instance1Assignment_0 )
+            // InternalSeML.g:998:3: rule__Relation__Instance1Assignment_0
             {
             pushFollow(FOLLOW_2);
             rule__Relation__Instance1Assignment_0();
@@ -3123,14 +3182,14 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Relation__Group__1"
-    // InternalSeML.g:986:1: rule__Relation__Group__1 : rule__Relation__Group__1__Impl rule__Relation__Group__2 ;
+    // InternalSeML.g:1006:1: rule__Relation__Group__1 : rule__Relation__Group__1__Impl rule__Relation__Group__2 ;
     public final void rule__Relation__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:990:1: ( rule__Relation__Group__1__Impl rule__Relation__Group__2 )
-            // InternalSeML.g:991:2: rule__Relation__Group__1__Impl rule__Relation__Group__2
+            // InternalSeML.g:1010:1: ( rule__Relation__Group__1__Impl rule__Relation__Group__2 )
+            // InternalSeML.g:1011:2: rule__Relation__Group__1__Impl rule__Relation__Group__2
             {
             pushFollow(FOLLOW_12);
             rule__Relation__Group__1__Impl();
@@ -3161,21 +3220,21 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Relation__Group__1__Impl"
-    // InternalSeML.g:998:1: rule__Relation__Group__1__Impl : ( ( rule__Relation__ObjAssignment_1 ) ) ;
+    // InternalSeML.g:1018:1: rule__Relation__Group__1__Impl : ( ( rule__Relation__ObjAssignment_1 ) ) ;
     public final void rule__Relation__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1002:1: ( ( ( rule__Relation__ObjAssignment_1 ) ) )
-            // InternalSeML.g:1003:1: ( ( rule__Relation__ObjAssignment_1 ) )
+            // InternalSeML.g:1022:1: ( ( ( rule__Relation__ObjAssignment_1 ) ) )
+            // InternalSeML.g:1023:1: ( ( rule__Relation__ObjAssignment_1 ) )
             {
-            // InternalSeML.g:1003:1: ( ( rule__Relation__ObjAssignment_1 ) )
-            // InternalSeML.g:1004:2: ( rule__Relation__ObjAssignment_1 )
+            // InternalSeML.g:1023:1: ( ( rule__Relation__ObjAssignment_1 ) )
+            // InternalSeML.g:1024:2: ( rule__Relation__ObjAssignment_1 )
             {
              before(grammarAccess.getRelationAccess().getObjAssignment_1()); 
-            // InternalSeML.g:1005:2: ( rule__Relation__ObjAssignment_1 )
-            // InternalSeML.g:1005:3: rule__Relation__ObjAssignment_1
+            // InternalSeML.g:1025:2: ( rule__Relation__ObjAssignment_1 )
+            // InternalSeML.g:1025:3: rule__Relation__ObjAssignment_1
             {
             pushFollow(FOLLOW_2);
             rule__Relation__ObjAssignment_1();
@@ -3208,22 +3267,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Relation__Group__2"
-    // InternalSeML.g:1013:1: rule__Relation__Group__2 : rule__Relation__Group__2__Impl rule__Relation__Group__3 ;
+    // InternalSeML.g:1033:1: rule__Relation__Group__2 : rule__Relation__Group__2__Impl ;
     public final void rule__Relation__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1017:1: ( rule__Relation__Group__2__Impl rule__Relation__Group__3 )
-            // InternalSeML.g:1018:2: rule__Relation__Group__2__Impl rule__Relation__Group__3
+            // InternalSeML.g:1037:1: ( rule__Relation__Group__2__Impl )
+            // InternalSeML.g:1038:2: rule__Relation__Group__2__Impl
             {
-            pushFollow(FOLLOW_14);
-            rule__Relation__Group__2__Impl();
-
-            state._fsp--;
-
             pushFollow(FOLLOW_2);
-            rule__Relation__Group__3();
+            rule__Relation__Group__2__Impl();
 
             state._fsp--;
 
@@ -3246,21 +3300,21 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Relation__Group__2__Impl"
-    // InternalSeML.g:1025:1: rule__Relation__Group__2__Impl : ( ( rule__Relation__Instance2Assignment_2 ) ) ;
+    // InternalSeML.g:1044:1: rule__Relation__Group__2__Impl : ( ( rule__Relation__Instance2Assignment_2 ) ) ;
     public final void rule__Relation__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1029:1: ( ( ( rule__Relation__Instance2Assignment_2 ) ) )
-            // InternalSeML.g:1030:1: ( ( rule__Relation__Instance2Assignment_2 ) )
+            // InternalSeML.g:1048:1: ( ( ( rule__Relation__Instance2Assignment_2 ) ) )
+            // InternalSeML.g:1049:1: ( ( rule__Relation__Instance2Assignment_2 ) )
             {
-            // InternalSeML.g:1030:1: ( ( rule__Relation__Instance2Assignment_2 ) )
-            // InternalSeML.g:1031:2: ( rule__Relation__Instance2Assignment_2 )
+            // InternalSeML.g:1049:1: ( ( rule__Relation__Instance2Assignment_2 ) )
+            // InternalSeML.g:1050:2: ( rule__Relation__Instance2Assignment_2 )
             {
              before(grammarAccess.getRelationAccess().getInstance2Assignment_2()); 
-            // InternalSeML.g:1032:2: ( rule__Relation__Instance2Assignment_2 )
-            // InternalSeML.g:1032:3: rule__Relation__Instance2Assignment_2
+            // InternalSeML.g:1051:2: ( rule__Relation__Instance2Assignment_2 )
+            // InternalSeML.g:1051:3: rule__Relation__Instance2Assignment_2
             {
             pushFollow(FOLLOW_2);
             rule__Relation__Instance2Assignment_2();
@@ -3292,85 +3346,15 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
     // $ANTLR end "rule__Relation__Group__2__Impl"
 
 
-    // $ANTLR start "rule__Relation__Group__3"
-    // InternalSeML.g:1040:1: rule__Relation__Group__3 : rule__Relation__Group__3__Impl ;
-    public final void rule__Relation__Group__3() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalSeML.g:1044:1: ( rule__Relation__Group__3__Impl )
-            // InternalSeML.g:1045:2: rule__Relation__Group__3__Impl
-            {
-            pushFollow(FOLLOW_2);
-            rule__Relation__Group__3__Impl();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__Relation__Group__3"
-
-
-    // $ANTLR start "rule__Relation__Group__3__Impl"
-    // InternalSeML.g:1051:1: rule__Relation__Group__3__Impl : ( '\\n' ) ;
-    public final void rule__Relation__Group__3__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalSeML.g:1055:1: ( ( '\\n' ) )
-            // InternalSeML.g:1056:1: ( '\\n' )
-            {
-            // InternalSeML.g:1056:1: ( '\\n' )
-            // InternalSeML.g:1057:2: '\\n'
-            {
-             before(grammarAccess.getRelationAccess().getControl000aKeyword_3()); 
-            match(input,15,FOLLOW_2); 
-             after(grammarAccess.getRelationAccess().getControl000aKeyword_3()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__Relation__Group__3__Impl"
-
-
     // $ANTLR start "rule__Component_Process__Group__0"
-    // InternalSeML.g:1067:1: rule__Component_Process__Group__0 : rule__Component_Process__Group__0__Impl rule__Component_Process__Group__1 ;
+    // InternalSeML.g:1060:1: rule__Component_Process__Group__0 : rule__Component_Process__Group__0__Impl rule__Component_Process__Group__1 ;
     public final void rule__Component_Process__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1071:1: ( rule__Component_Process__Group__0__Impl rule__Component_Process__Group__1 )
-            // InternalSeML.g:1072:2: rule__Component_Process__Group__0__Impl rule__Component_Process__Group__1
+            // InternalSeML.g:1064:1: ( rule__Component_Process__Group__0__Impl rule__Component_Process__Group__1 )
+            // InternalSeML.g:1065:2: rule__Component_Process__Group__0__Impl rule__Component_Process__Group__1
             {
             pushFollow(FOLLOW_12);
             rule__Component_Process__Group__0__Impl();
@@ -3401,17 +3385,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Process__Group__0__Impl"
-    // InternalSeML.g:1079:1: rule__Component_Process__Group__0__Impl : ( 'CompProcess' ) ;
+    // InternalSeML.g:1072:1: rule__Component_Process__Group__0__Impl : ( 'CompProcess' ) ;
     public final void rule__Component_Process__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1083:1: ( ( 'CompProcess' ) )
-            // InternalSeML.g:1084:1: ( 'CompProcess' )
+            // InternalSeML.g:1076:1: ( ( 'CompProcess' ) )
+            // InternalSeML.g:1077:1: ( 'CompProcess' )
             {
-            // InternalSeML.g:1084:1: ( 'CompProcess' )
-            // InternalSeML.g:1085:2: 'CompProcess'
+            // InternalSeML.g:1077:1: ( 'CompProcess' )
+            // InternalSeML.g:1078:2: 'CompProcess'
             {
              before(grammarAccess.getComponent_ProcessAccess().getCompProcessKeyword_0()); 
             match(input,17,FOLLOW_2); 
@@ -3438,14 +3422,14 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Process__Group__1"
-    // InternalSeML.g:1094:1: rule__Component_Process__Group__1 : rule__Component_Process__Group__1__Impl rule__Component_Process__Group__2 ;
+    // InternalSeML.g:1087:1: rule__Component_Process__Group__1 : rule__Component_Process__Group__1__Impl rule__Component_Process__Group__2 ;
     public final void rule__Component_Process__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1098:1: ( rule__Component_Process__Group__1__Impl rule__Component_Process__Group__2 )
-            // InternalSeML.g:1099:2: rule__Component_Process__Group__1__Impl rule__Component_Process__Group__2
+            // InternalSeML.g:1091:1: ( rule__Component_Process__Group__1__Impl rule__Component_Process__Group__2 )
+            // InternalSeML.g:1092:2: rule__Component_Process__Group__1__Impl rule__Component_Process__Group__2
             {
             pushFollow(FOLLOW_11);
             rule__Component_Process__Group__1__Impl();
@@ -3476,21 +3460,21 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Process__Group__1__Impl"
-    // InternalSeML.g:1106:1: rule__Component_Process__Group__1__Impl : ( ( rule__Component_Process__NameAssignment_1 ) ) ;
+    // InternalSeML.g:1099:1: rule__Component_Process__Group__1__Impl : ( ( rule__Component_Process__NameAssignment_1 ) ) ;
     public final void rule__Component_Process__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1110:1: ( ( ( rule__Component_Process__NameAssignment_1 ) ) )
-            // InternalSeML.g:1111:1: ( ( rule__Component_Process__NameAssignment_1 ) )
+            // InternalSeML.g:1103:1: ( ( ( rule__Component_Process__NameAssignment_1 ) ) )
+            // InternalSeML.g:1104:1: ( ( rule__Component_Process__NameAssignment_1 ) )
             {
-            // InternalSeML.g:1111:1: ( ( rule__Component_Process__NameAssignment_1 ) )
-            // InternalSeML.g:1112:2: ( rule__Component_Process__NameAssignment_1 )
+            // InternalSeML.g:1104:1: ( ( rule__Component_Process__NameAssignment_1 ) )
+            // InternalSeML.g:1105:2: ( rule__Component_Process__NameAssignment_1 )
             {
              before(grammarAccess.getComponent_ProcessAccess().getNameAssignment_1()); 
-            // InternalSeML.g:1113:2: ( rule__Component_Process__NameAssignment_1 )
-            // InternalSeML.g:1113:3: rule__Component_Process__NameAssignment_1
+            // InternalSeML.g:1106:2: ( rule__Component_Process__NameAssignment_1 )
+            // InternalSeML.g:1106:3: rule__Component_Process__NameAssignment_1
             {
             pushFollow(FOLLOW_2);
             rule__Component_Process__NameAssignment_1();
@@ -3523,14 +3507,14 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Process__Group__2"
-    // InternalSeML.g:1121:1: rule__Component_Process__Group__2 : rule__Component_Process__Group__2__Impl ;
+    // InternalSeML.g:1114:1: rule__Component_Process__Group__2 : rule__Component_Process__Group__2__Impl ;
     public final void rule__Component_Process__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1125:1: ( rule__Component_Process__Group__2__Impl )
-            // InternalSeML.g:1126:2: rule__Component_Process__Group__2__Impl
+            // InternalSeML.g:1118:1: ( rule__Component_Process__Group__2__Impl )
+            // InternalSeML.g:1119:2: rule__Component_Process__Group__2__Impl
             {
             pushFollow(FOLLOW_2);
             rule__Component_Process__Group__2__Impl();
@@ -3556,21 +3540,21 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Process__Group__2__Impl"
-    // InternalSeML.g:1132:1: rule__Component_Process__Group__2__Impl : ( ( rule__Component_Process__IriAssignment_2 ) ) ;
+    // InternalSeML.g:1125:1: rule__Component_Process__Group__2__Impl : ( ( rule__Component_Process__IriAssignment_2 ) ) ;
     public final void rule__Component_Process__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1136:1: ( ( ( rule__Component_Process__IriAssignment_2 ) ) )
-            // InternalSeML.g:1137:1: ( ( rule__Component_Process__IriAssignment_2 ) )
+            // InternalSeML.g:1129:1: ( ( ( rule__Component_Process__IriAssignment_2 ) ) )
+            // InternalSeML.g:1130:1: ( ( rule__Component_Process__IriAssignment_2 ) )
             {
-            // InternalSeML.g:1137:1: ( ( rule__Component_Process__IriAssignment_2 ) )
-            // InternalSeML.g:1138:2: ( rule__Component_Process__IriAssignment_2 )
+            // InternalSeML.g:1130:1: ( ( rule__Component_Process__IriAssignment_2 ) )
+            // InternalSeML.g:1131:2: ( rule__Component_Process__IriAssignment_2 )
             {
              before(grammarAccess.getComponent_ProcessAccess().getIriAssignment_2()); 
-            // InternalSeML.g:1139:2: ( rule__Component_Process__IriAssignment_2 )
-            // InternalSeML.g:1139:3: rule__Component_Process__IriAssignment_2
+            // InternalSeML.g:1132:2: ( rule__Component_Process__IriAssignment_2 )
+            // InternalSeML.g:1132:3: rule__Component_Process__IriAssignment_2
             {
             pushFollow(FOLLOW_2);
             rule__Component_Process__IriAssignment_2();
@@ -3603,14 +3587,14 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Event__Group__0"
-    // InternalSeML.g:1148:1: rule__Component_Event__Group__0 : rule__Component_Event__Group__0__Impl rule__Component_Event__Group__1 ;
+    // InternalSeML.g:1141:1: rule__Component_Event__Group__0 : rule__Component_Event__Group__0__Impl rule__Component_Event__Group__1 ;
     public final void rule__Component_Event__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1152:1: ( rule__Component_Event__Group__0__Impl rule__Component_Event__Group__1 )
-            // InternalSeML.g:1153:2: rule__Component_Event__Group__0__Impl rule__Component_Event__Group__1
+            // InternalSeML.g:1145:1: ( rule__Component_Event__Group__0__Impl rule__Component_Event__Group__1 )
+            // InternalSeML.g:1146:2: rule__Component_Event__Group__0__Impl rule__Component_Event__Group__1
             {
             pushFollow(FOLLOW_12);
             rule__Component_Event__Group__0__Impl();
@@ -3641,17 +3625,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Event__Group__0__Impl"
-    // InternalSeML.g:1160:1: rule__Component_Event__Group__0__Impl : ( 'CompEvent' ) ;
+    // InternalSeML.g:1153:1: rule__Component_Event__Group__0__Impl : ( 'CompEvent' ) ;
     public final void rule__Component_Event__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1164:1: ( ( 'CompEvent' ) )
-            // InternalSeML.g:1165:1: ( 'CompEvent' )
+            // InternalSeML.g:1157:1: ( ( 'CompEvent' ) )
+            // InternalSeML.g:1158:1: ( 'CompEvent' )
             {
-            // InternalSeML.g:1165:1: ( 'CompEvent' )
-            // InternalSeML.g:1166:2: 'CompEvent'
+            // InternalSeML.g:1158:1: ( 'CompEvent' )
+            // InternalSeML.g:1159:2: 'CompEvent'
             {
              before(grammarAccess.getComponent_EventAccess().getCompEventKeyword_0()); 
             match(input,18,FOLLOW_2); 
@@ -3678,14 +3662,14 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Event__Group__1"
-    // InternalSeML.g:1175:1: rule__Component_Event__Group__1 : rule__Component_Event__Group__1__Impl rule__Component_Event__Group__2 ;
+    // InternalSeML.g:1168:1: rule__Component_Event__Group__1 : rule__Component_Event__Group__1__Impl rule__Component_Event__Group__2 ;
     public final void rule__Component_Event__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1179:1: ( rule__Component_Event__Group__1__Impl rule__Component_Event__Group__2 )
-            // InternalSeML.g:1180:2: rule__Component_Event__Group__1__Impl rule__Component_Event__Group__2
+            // InternalSeML.g:1172:1: ( rule__Component_Event__Group__1__Impl rule__Component_Event__Group__2 )
+            // InternalSeML.g:1173:2: rule__Component_Event__Group__1__Impl rule__Component_Event__Group__2
             {
             pushFollow(FOLLOW_11);
             rule__Component_Event__Group__1__Impl();
@@ -3716,21 +3700,21 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Event__Group__1__Impl"
-    // InternalSeML.g:1187:1: rule__Component_Event__Group__1__Impl : ( ( rule__Component_Event__NameAssignment_1 ) ) ;
+    // InternalSeML.g:1180:1: rule__Component_Event__Group__1__Impl : ( ( rule__Component_Event__NameAssignment_1 ) ) ;
     public final void rule__Component_Event__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1191:1: ( ( ( rule__Component_Event__NameAssignment_1 ) ) )
-            // InternalSeML.g:1192:1: ( ( rule__Component_Event__NameAssignment_1 ) )
+            // InternalSeML.g:1184:1: ( ( ( rule__Component_Event__NameAssignment_1 ) ) )
+            // InternalSeML.g:1185:1: ( ( rule__Component_Event__NameAssignment_1 ) )
             {
-            // InternalSeML.g:1192:1: ( ( rule__Component_Event__NameAssignment_1 ) )
-            // InternalSeML.g:1193:2: ( rule__Component_Event__NameAssignment_1 )
+            // InternalSeML.g:1185:1: ( ( rule__Component_Event__NameAssignment_1 ) )
+            // InternalSeML.g:1186:2: ( rule__Component_Event__NameAssignment_1 )
             {
              before(grammarAccess.getComponent_EventAccess().getNameAssignment_1()); 
-            // InternalSeML.g:1194:2: ( rule__Component_Event__NameAssignment_1 )
-            // InternalSeML.g:1194:3: rule__Component_Event__NameAssignment_1
+            // InternalSeML.g:1187:2: ( rule__Component_Event__NameAssignment_1 )
+            // InternalSeML.g:1187:3: rule__Component_Event__NameAssignment_1
             {
             pushFollow(FOLLOW_2);
             rule__Component_Event__NameAssignment_1();
@@ -3763,14 +3747,14 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Event__Group__2"
-    // InternalSeML.g:1202:1: rule__Component_Event__Group__2 : rule__Component_Event__Group__2__Impl ;
+    // InternalSeML.g:1195:1: rule__Component_Event__Group__2 : rule__Component_Event__Group__2__Impl ;
     public final void rule__Component_Event__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1206:1: ( rule__Component_Event__Group__2__Impl )
-            // InternalSeML.g:1207:2: rule__Component_Event__Group__2__Impl
+            // InternalSeML.g:1199:1: ( rule__Component_Event__Group__2__Impl )
+            // InternalSeML.g:1200:2: rule__Component_Event__Group__2__Impl
             {
             pushFollow(FOLLOW_2);
             rule__Component_Event__Group__2__Impl();
@@ -3796,21 +3780,21 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Event__Group__2__Impl"
-    // InternalSeML.g:1213:1: rule__Component_Event__Group__2__Impl : ( ( rule__Component_Event__IriAssignment_2 ) ) ;
+    // InternalSeML.g:1206:1: rule__Component_Event__Group__2__Impl : ( ( rule__Component_Event__IriAssignment_2 ) ) ;
     public final void rule__Component_Event__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1217:1: ( ( ( rule__Component_Event__IriAssignment_2 ) ) )
-            // InternalSeML.g:1218:1: ( ( rule__Component_Event__IriAssignment_2 ) )
+            // InternalSeML.g:1210:1: ( ( ( rule__Component_Event__IriAssignment_2 ) ) )
+            // InternalSeML.g:1211:1: ( ( rule__Component_Event__IriAssignment_2 ) )
             {
-            // InternalSeML.g:1218:1: ( ( rule__Component_Event__IriAssignment_2 ) )
-            // InternalSeML.g:1219:2: ( rule__Component_Event__IriAssignment_2 )
+            // InternalSeML.g:1211:1: ( ( rule__Component_Event__IriAssignment_2 ) )
+            // InternalSeML.g:1212:2: ( rule__Component_Event__IriAssignment_2 )
             {
              before(grammarAccess.getComponent_EventAccess().getIriAssignment_2()); 
-            // InternalSeML.g:1220:2: ( rule__Component_Event__IriAssignment_2 )
-            // InternalSeML.g:1220:3: rule__Component_Event__IriAssignment_2
+            // InternalSeML.g:1213:2: ( rule__Component_Event__IriAssignment_2 )
+            // InternalSeML.g:1213:3: rule__Component_Event__IriAssignment_2
             {
             pushFollow(FOLLOW_2);
             rule__Component_Event__IriAssignment_2();
@@ -3843,14 +3827,14 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Property__Group__0"
-    // InternalSeML.g:1229:1: rule__Component_Property__Group__0 : rule__Component_Property__Group__0__Impl rule__Component_Property__Group__1 ;
+    // InternalSeML.g:1222:1: rule__Component_Property__Group__0 : rule__Component_Property__Group__0__Impl rule__Component_Property__Group__1 ;
     public final void rule__Component_Property__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1233:1: ( rule__Component_Property__Group__0__Impl rule__Component_Property__Group__1 )
-            // InternalSeML.g:1234:2: rule__Component_Property__Group__0__Impl rule__Component_Property__Group__1
+            // InternalSeML.g:1226:1: ( rule__Component_Property__Group__0__Impl rule__Component_Property__Group__1 )
+            // InternalSeML.g:1227:2: rule__Component_Property__Group__0__Impl rule__Component_Property__Group__1
             {
             pushFollow(FOLLOW_12);
             rule__Component_Property__Group__0__Impl();
@@ -3881,17 +3865,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Property__Group__0__Impl"
-    // InternalSeML.g:1241:1: rule__Component_Property__Group__0__Impl : ( 'CompProperty' ) ;
+    // InternalSeML.g:1234:1: rule__Component_Property__Group__0__Impl : ( 'CompProperty' ) ;
     public final void rule__Component_Property__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1245:1: ( ( 'CompProperty' ) )
-            // InternalSeML.g:1246:1: ( 'CompProperty' )
+            // InternalSeML.g:1238:1: ( ( 'CompProperty' ) )
+            // InternalSeML.g:1239:1: ( 'CompProperty' )
             {
-            // InternalSeML.g:1246:1: ( 'CompProperty' )
-            // InternalSeML.g:1247:2: 'CompProperty'
+            // InternalSeML.g:1239:1: ( 'CompProperty' )
+            // InternalSeML.g:1240:2: 'CompProperty'
             {
              before(grammarAccess.getComponent_PropertyAccess().getCompPropertyKeyword_0()); 
             match(input,19,FOLLOW_2); 
@@ -3918,14 +3902,14 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Property__Group__1"
-    // InternalSeML.g:1256:1: rule__Component_Property__Group__1 : rule__Component_Property__Group__1__Impl rule__Component_Property__Group__2 ;
+    // InternalSeML.g:1249:1: rule__Component_Property__Group__1 : rule__Component_Property__Group__1__Impl rule__Component_Property__Group__2 ;
     public final void rule__Component_Property__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1260:1: ( rule__Component_Property__Group__1__Impl rule__Component_Property__Group__2 )
-            // InternalSeML.g:1261:2: rule__Component_Property__Group__1__Impl rule__Component_Property__Group__2
+            // InternalSeML.g:1253:1: ( rule__Component_Property__Group__1__Impl rule__Component_Property__Group__2 )
+            // InternalSeML.g:1254:2: rule__Component_Property__Group__1__Impl rule__Component_Property__Group__2
             {
             pushFollow(FOLLOW_11);
             rule__Component_Property__Group__1__Impl();
@@ -3956,21 +3940,21 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Property__Group__1__Impl"
-    // InternalSeML.g:1268:1: rule__Component_Property__Group__1__Impl : ( ( rule__Component_Property__NameAssignment_1 ) ) ;
+    // InternalSeML.g:1261:1: rule__Component_Property__Group__1__Impl : ( ( rule__Component_Property__NameAssignment_1 ) ) ;
     public final void rule__Component_Property__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1272:1: ( ( ( rule__Component_Property__NameAssignment_1 ) ) )
-            // InternalSeML.g:1273:1: ( ( rule__Component_Property__NameAssignment_1 ) )
+            // InternalSeML.g:1265:1: ( ( ( rule__Component_Property__NameAssignment_1 ) ) )
+            // InternalSeML.g:1266:1: ( ( rule__Component_Property__NameAssignment_1 ) )
             {
-            // InternalSeML.g:1273:1: ( ( rule__Component_Property__NameAssignment_1 ) )
-            // InternalSeML.g:1274:2: ( rule__Component_Property__NameAssignment_1 )
+            // InternalSeML.g:1266:1: ( ( rule__Component_Property__NameAssignment_1 ) )
+            // InternalSeML.g:1267:2: ( rule__Component_Property__NameAssignment_1 )
             {
              before(grammarAccess.getComponent_PropertyAccess().getNameAssignment_1()); 
-            // InternalSeML.g:1275:2: ( rule__Component_Property__NameAssignment_1 )
-            // InternalSeML.g:1275:3: rule__Component_Property__NameAssignment_1
+            // InternalSeML.g:1268:2: ( rule__Component_Property__NameAssignment_1 )
+            // InternalSeML.g:1268:3: rule__Component_Property__NameAssignment_1
             {
             pushFollow(FOLLOW_2);
             rule__Component_Property__NameAssignment_1();
@@ -4003,14 +3987,14 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Property__Group__2"
-    // InternalSeML.g:1283:1: rule__Component_Property__Group__2 : rule__Component_Property__Group__2__Impl ;
+    // InternalSeML.g:1276:1: rule__Component_Property__Group__2 : rule__Component_Property__Group__2__Impl ;
     public final void rule__Component_Property__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1287:1: ( rule__Component_Property__Group__2__Impl )
-            // InternalSeML.g:1288:2: rule__Component_Property__Group__2__Impl
+            // InternalSeML.g:1280:1: ( rule__Component_Property__Group__2__Impl )
+            // InternalSeML.g:1281:2: rule__Component_Property__Group__2__Impl
             {
             pushFollow(FOLLOW_2);
             rule__Component_Property__Group__2__Impl();
@@ -4036,21 +4020,21 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Property__Group__2__Impl"
-    // InternalSeML.g:1294:1: rule__Component_Property__Group__2__Impl : ( ( rule__Component_Property__IriAssignment_2 ) ) ;
+    // InternalSeML.g:1287:1: rule__Component_Property__Group__2__Impl : ( ( rule__Component_Property__IriAssignment_2 ) ) ;
     public final void rule__Component_Property__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1298:1: ( ( ( rule__Component_Property__IriAssignment_2 ) ) )
-            // InternalSeML.g:1299:1: ( ( rule__Component_Property__IriAssignment_2 ) )
+            // InternalSeML.g:1291:1: ( ( ( rule__Component_Property__IriAssignment_2 ) ) )
+            // InternalSeML.g:1292:1: ( ( rule__Component_Property__IriAssignment_2 ) )
             {
-            // InternalSeML.g:1299:1: ( ( rule__Component_Property__IriAssignment_2 ) )
-            // InternalSeML.g:1300:2: ( rule__Component_Property__IriAssignment_2 )
+            // InternalSeML.g:1292:1: ( ( rule__Component_Property__IriAssignment_2 ) )
+            // InternalSeML.g:1293:2: ( rule__Component_Property__IriAssignment_2 )
             {
              before(grammarAccess.getComponent_PropertyAccess().getIriAssignment_2()); 
-            // InternalSeML.g:1301:2: ( rule__Component_Property__IriAssignment_2 )
-            // InternalSeML.g:1301:3: rule__Component_Property__IriAssignment_2
+            // InternalSeML.g:1294:2: ( rule__Component_Property__IriAssignment_2 )
+            // InternalSeML.g:1294:3: rule__Component_Property__IriAssignment_2
             {
             pushFollow(FOLLOW_2);
             rule__Component_Property__IriAssignment_2();
@@ -4083,14 +4067,14 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Entity__Group__0"
-    // InternalSeML.g:1310:1: rule__Component_Entity__Group__0 : rule__Component_Entity__Group__0__Impl rule__Component_Entity__Group__1 ;
+    // InternalSeML.g:1303:1: rule__Component_Entity__Group__0 : rule__Component_Entity__Group__0__Impl rule__Component_Entity__Group__1 ;
     public final void rule__Component_Entity__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1314:1: ( rule__Component_Entity__Group__0__Impl rule__Component_Entity__Group__1 )
-            // InternalSeML.g:1315:2: rule__Component_Entity__Group__0__Impl rule__Component_Entity__Group__1
+            // InternalSeML.g:1307:1: ( rule__Component_Entity__Group__0__Impl rule__Component_Entity__Group__1 )
+            // InternalSeML.g:1308:2: rule__Component_Entity__Group__0__Impl rule__Component_Entity__Group__1
             {
             pushFollow(FOLLOW_12);
             rule__Component_Entity__Group__0__Impl();
@@ -4121,17 +4105,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Entity__Group__0__Impl"
-    // InternalSeML.g:1322:1: rule__Component_Entity__Group__0__Impl : ( 'CompEntity' ) ;
+    // InternalSeML.g:1315:1: rule__Component_Entity__Group__0__Impl : ( 'CompEntity' ) ;
     public final void rule__Component_Entity__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1326:1: ( ( 'CompEntity' ) )
-            // InternalSeML.g:1327:1: ( 'CompEntity' )
+            // InternalSeML.g:1319:1: ( ( 'CompEntity' ) )
+            // InternalSeML.g:1320:1: ( 'CompEntity' )
             {
-            // InternalSeML.g:1327:1: ( 'CompEntity' )
-            // InternalSeML.g:1328:2: 'CompEntity'
+            // InternalSeML.g:1320:1: ( 'CompEntity' )
+            // InternalSeML.g:1321:2: 'CompEntity'
             {
              before(grammarAccess.getComponent_EntityAccess().getCompEntityKeyword_0()); 
             match(input,20,FOLLOW_2); 
@@ -4158,14 +4142,14 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Entity__Group__1"
-    // InternalSeML.g:1337:1: rule__Component_Entity__Group__1 : rule__Component_Entity__Group__1__Impl rule__Component_Entity__Group__2 ;
+    // InternalSeML.g:1330:1: rule__Component_Entity__Group__1 : rule__Component_Entity__Group__1__Impl rule__Component_Entity__Group__2 ;
     public final void rule__Component_Entity__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1341:1: ( rule__Component_Entity__Group__1__Impl rule__Component_Entity__Group__2 )
-            // InternalSeML.g:1342:2: rule__Component_Entity__Group__1__Impl rule__Component_Entity__Group__2
+            // InternalSeML.g:1334:1: ( rule__Component_Entity__Group__1__Impl rule__Component_Entity__Group__2 )
+            // InternalSeML.g:1335:2: rule__Component_Entity__Group__1__Impl rule__Component_Entity__Group__2
             {
             pushFollow(FOLLOW_11);
             rule__Component_Entity__Group__1__Impl();
@@ -4196,21 +4180,21 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Entity__Group__1__Impl"
-    // InternalSeML.g:1349:1: rule__Component_Entity__Group__1__Impl : ( ( rule__Component_Entity__NameAssignment_1 ) ) ;
+    // InternalSeML.g:1342:1: rule__Component_Entity__Group__1__Impl : ( ( rule__Component_Entity__NameAssignment_1 ) ) ;
     public final void rule__Component_Entity__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1353:1: ( ( ( rule__Component_Entity__NameAssignment_1 ) ) )
-            // InternalSeML.g:1354:1: ( ( rule__Component_Entity__NameAssignment_1 ) )
+            // InternalSeML.g:1346:1: ( ( ( rule__Component_Entity__NameAssignment_1 ) ) )
+            // InternalSeML.g:1347:1: ( ( rule__Component_Entity__NameAssignment_1 ) )
             {
-            // InternalSeML.g:1354:1: ( ( rule__Component_Entity__NameAssignment_1 ) )
-            // InternalSeML.g:1355:2: ( rule__Component_Entity__NameAssignment_1 )
+            // InternalSeML.g:1347:1: ( ( rule__Component_Entity__NameAssignment_1 ) )
+            // InternalSeML.g:1348:2: ( rule__Component_Entity__NameAssignment_1 )
             {
              before(grammarAccess.getComponent_EntityAccess().getNameAssignment_1()); 
-            // InternalSeML.g:1356:2: ( rule__Component_Entity__NameAssignment_1 )
-            // InternalSeML.g:1356:3: rule__Component_Entity__NameAssignment_1
+            // InternalSeML.g:1349:2: ( rule__Component_Entity__NameAssignment_1 )
+            // InternalSeML.g:1349:3: rule__Component_Entity__NameAssignment_1
             {
             pushFollow(FOLLOW_2);
             rule__Component_Entity__NameAssignment_1();
@@ -4243,14 +4227,14 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Entity__Group__2"
-    // InternalSeML.g:1364:1: rule__Component_Entity__Group__2 : rule__Component_Entity__Group__2__Impl ;
+    // InternalSeML.g:1357:1: rule__Component_Entity__Group__2 : rule__Component_Entity__Group__2__Impl ;
     public final void rule__Component_Entity__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1368:1: ( rule__Component_Entity__Group__2__Impl )
-            // InternalSeML.g:1369:2: rule__Component_Entity__Group__2__Impl
+            // InternalSeML.g:1361:1: ( rule__Component_Entity__Group__2__Impl )
+            // InternalSeML.g:1362:2: rule__Component_Entity__Group__2__Impl
             {
             pushFollow(FOLLOW_2);
             rule__Component_Entity__Group__2__Impl();
@@ -4276,21 +4260,21 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Entity__Group__2__Impl"
-    // InternalSeML.g:1375:1: rule__Component_Entity__Group__2__Impl : ( ( rule__Component_Entity__IriAssignment_2 ) ) ;
+    // InternalSeML.g:1368:1: rule__Component_Entity__Group__2__Impl : ( ( rule__Component_Entity__IriAssignment_2 ) ) ;
     public final void rule__Component_Entity__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1379:1: ( ( ( rule__Component_Entity__IriAssignment_2 ) ) )
-            // InternalSeML.g:1380:1: ( ( rule__Component_Entity__IriAssignment_2 ) )
+            // InternalSeML.g:1372:1: ( ( ( rule__Component_Entity__IriAssignment_2 ) ) )
+            // InternalSeML.g:1373:1: ( ( rule__Component_Entity__IriAssignment_2 ) )
             {
-            // InternalSeML.g:1380:1: ( ( rule__Component_Entity__IriAssignment_2 ) )
-            // InternalSeML.g:1381:2: ( rule__Component_Entity__IriAssignment_2 )
+            // InternalSeML.g:1373:1: ( ( rule__Component_Entity__IriAssignment_2 ) )
+            // InternalSeML.g:1374:2: ( rule__Component_Entity__IriAssignment_2 )
             {
              before(grammarAccess.getComponent_EntityAccess().getIriAssignment_2()); 
-            // InternalSeML.g:1382:2: ( rule__Component_Entity__IriAssignment_2 )
-            // InternalSeML.g:1382:3: rule__Component_Entity__IriAssignment_2
+            // InternalSeML.g:1375:2: ( rule__Component_Entity__IriAssignment_2 )
+            // InternalSeML.g:1375:3: rule__Component_Entity__IriAssignment_2
             {
             pushFollow(FOLLOW_2);
             rule__Component_Entity__IriAssignment_2();
@@ -4323,14 +4307,14 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ObjectProperty__Group__0"
-    // InternalSeML.g:1391:1: rule__ObjectProperty__Group__0 : rule__ObjectProperty__Group__0__Impl rule__ObjectProperty__Group__1 ;
+    // InternalSeML.g:1384:1: rule__ObjectProperty__Group__0 : rule__ObjectProperty__Group__0__Impl rule__ObjectProperty__Group__1 ;
     public final void rule__ObjectProperty__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1395:1: ( rule__ObjectProperty__Group__0__Impl rule__ObjectProperty__Group__1 )
-            // InternalSeML.g:1396:2: rule__ObjectProperty__Group__0__Impl rule__ObjectProperty__Group__1
+            // InternalSeML.g:1388:1: ( rule__ObjectProperty__Group__0__Impl rule__ObjectProperty__Group__1 )
+            // InternalSeML.g:1389:2: rule__ObjectProperty__Group__0__Impl rule__ObjectProperty__Group__1
             {
             pushFollow(FOLLOW_12);
             rule__ObjectProperty__Group__0__Impl();
@@ -4361,17 +4345,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ObjectProperty__Group__0__Impl"
-    // InternalSeML.g:1403:1: rule__ObjectProperty__Group__0__Impl : ( 'ObjectProperty' ) ;
+    // InternalSeML.g:1396:1: rule__ObjectProperty__Group__0__Impl : ( 'ObjectProperty' ) ;
     public final void rule__ObjectProperty__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1407:1: ( ( 'ObjectProperty' ) )
-            // InternalSeML.g:1408:1: ( 'ObjectProperty' )
+            // InternalSeML.g:1400:1: ( ( 'ObjectProperty' ) )
+            // InternalSeML.g:1401:1: ( 'ObjectProperty' )
             {
-            // InternalSeML.g:1408:1: ( 'ObjectProperty' )
-            // InternalSeML.g:1409:2: 'ObjectProperty'
+            // InternalSeML.g:1401:1: ( 'ObjectProperty' )
+            // InternalSeML.g:1402:2: 'ObjectProperty'
             {
              before(grammarAccess.getObjectPropertyAccess().getObjectPropertyKeyword_0()); 
             match(input,21,FOLLOW_2); 
@@ -4398,14 +4382,14 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ObjectProperty__Group__1"
-    // InternalSeML.g:1418:1: rule__ObjectProperty__Group__1 : rule__ObjectProperty__Group__1__Impl rule__ObjectProperty__Group__2 ;
+    // InternalSeML.g:1411:1: rule__ObjectProperty__Group__1 : rule__ObjectProperty__Group__1__Impl rule__ObjectProperty__Group__2 ;
     public final void rule__ObjectProperty__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1422:1: ( rule__ObjectProperty__Group__1__Impl rule__ObjectProperty__Group__2 )
-            // InternalSeML.g:1423:2: rule__ObjectProperty__Group__1__Impl rule__ObjectProperty__Group__2
+            // InternalSeML.g:1415:1: ( rule__ObjectProperty__Group__1__Impl rule__ObjectProperty__Group__2 )
+            // InternalSeML.g:1416:2: rule__ObjectProperty__Group__1__Impl rule__ObjectProperty__Group__2
             {
             pushFollow(FOLLOW_11);
             rule__ObjectProperty__Group__1__Impl();
@@ -4436,21 +4420,21 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ObjectProperty__Group__1__Impl"
-    // InternalSeML.g:1430:1: rule__ObjectProperty__Group__1__Impl : ( ( rule__ObjectProperty__NameAssignment_1 ) ) ;
+    // InternalSeML.g:1423:1: rule__ObjectProperty__Group__1__Impl : ( ( rule__ObjectProperty__NameAssignment_1 ) ) ;
     public final void rule__ObjectProperty__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1434:1: ( ( ( rule__ObjectProperty__NameAssignment_1 ) ) )
-            // InternalSeML.g:1435:1: ( ( rule__ObjectProperty__NameAssignment_1 ) )
+            // InternalSeML.g:1427:1: ( ( ( rule__ObjectProperty__NameAssignment_1 ) ) )
+            // InternalSeML.g:1428:1: ( ( rule__ObjectProperty__NameAssignment_1 ) )
             {
-            // InternalSeML.g:1435:1: ( ( rule__ObjectProperty__NameAssignment_1 ) )
-            // InternalSeML.g:1436:2: ( rule__ObjectProperty__NameAssignment_1 )
+            // InternalSeML.g:1428:1: ( ( rule__ObjectProperty__NameAssignment_1 ) )
+            // InternalSeML.g:1429:2: ( rule__ObjectProperty__NameAssignment_1 )
             {
              before(grammarAccess.getObjectPropertyAccess().getNameAssignment_1()); 
-            // InternalSeML.g:1437:2: ( rule__ObjectProperty__NameAssignment_1 )
-            // InternalSeML.g:1437:3: rule__ObjectProperty__NameAssignment_1
+            // InternalSeML.g:1430:2: ( rule__ObjectProperty__NameAssignment_1 )
+            // InternalSeML.g:1430:3: rule__ObjectProperty__NameAssignment_1
             {
             pushFollow(FOLLOW_2);
             rule__ObjectProperty__NameAssignment_1();
@@ -4483,14 +4467,14 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ObjectProperty__Group__2"
-    // InternalSeML.g:1445:1: rule__ObjectProperty__Group__2 : rule__ObjectProperty__Group__2__Impl ;
+    // InternalSeML.g:1438:1: rule__ObjectProperty__Group__2 : rule__ObjectProperty__Group__2__Impl ;
     public final void rule__ObjectProperty__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1449:1: ( rule__ObjectProperty__Group__2__Impl )
-            // InternalSeML.g:1450:2: rule__ObjectProperty__Group__2__Impl
+            // InternalSeML.g:1442:1: ( rule__ObjectProperty__Group__2__Impl )
+            // InternalSeML.g:1443:2: rule__ObjectProperty__Group__2__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ObjectProperty__Group__2__Impl();
@@ -4516,21 +4500,21 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ObjectProperty__Group__2__Impl"
-    // InternalSeML.g:1456:1: rule__ObjectProperty__Group__2__Impl : ( ( rule__ObjectProperty__IriAssignment_2 ) ) ;
+    // InternalSeML.g:1449:1: rule__ObjectProperty__Group__2__Impl : ( ( rule__ObjectProperty__IriAssignment_2 ) ) ;
     public final void rule__ObjectProperty__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1460:1: ( ( ( rule__ObjectProperty__IriAssignment_2 ) ) )
-            // InternalSeML.g:1461:1: ( ( rule__ObjectProperty__IriAssignment_2 ) )
+            // InternalSeML.g:1453:1: ( ( ( rule__ObjectProperty__IriAssignment_2 ) ) )
+            // InternalSeML.g:1454:1: ( ( rule__ObjectProperty__IriAssignment_2 ) )
             {
-            // InternalSeML.g:1461:1: ( ( rule__ObjectProperty__IriAssignment_2 ) )
-            // InternalSeML.g:1462:2: ( rule__ObjectProperty__IriAssignment_2 )
+            // InternalSeML.g:1454:1: ( ( rule__ObjectProperty__IriAssignment_2 ) )
+            // InternalSeML.g:1455:2: ( rule__ObjectProperty__IriAssignment_2 )
             {
              before(grammarAccess.getObjectPropertyAccess().getIriAssignment_2()); 
-            // InternalSeML.g:1463:2: ( rule__ObjectProperty__IriAssignment_2 )
-            // InternalSeML.g:1463:3: rule__ObjectProperty__IriAssignment_2
+            // InternalSeML.g:1456:2: ( rule__ObjectProperty__IriAssignment_2 )
+            // InternalSeML.g:1456:3: rule__ObjectProperty__IriAssignment_2
             {
             pushFollow(FOLLOW_2);
             rule__ObjectProperty__IriAssignment_2();
@@ -4563,14 +4547,14 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Characteristic__Group__0"
-    // InternalSeML.g:1472:1: rule__Characteristic__Group__0 : rule__Characteristic__Group__0__Impl rule__Characteristic__Group__1 ;
+    // InternalSeML.g:1465:1: rule__Characteristic__Group__0 : rule__Characteristic__Group__0__Impl rule__Characteristic__Group__1 ;
     public final void rule__Characteristic__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1476:1: ( rule__Characteristic__Group__0__Impl rule__Characteristic__Group__1 )
-            // InternalSeML.g:1477:2: rule__Characteristic__Group__0__Impl rule__Characteristic__Group__1
+            // InternalSeML.g:1469:1: ( rule__Characteristic__Group__0__Impl rule__Characteristic__Group__1 )
+            // InternalSeML.g:1470:2: rule__Characteristic__Group__0__Impl rule__Characteristic__Group__1
             {
             pushFollow(FOLLOW_12);
             rule__Characteristic__Group__0__Impl();
@@ -4601,17 +4585,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Characteristic__Group__0__Impl"
-    // InternalSeML.g:1484:1: rule__Characteristic__Group__0__Impl : ( 'Characteristic' ) ;
+    // InternalSeML.g:1477:1: rule__Characteristic__Group__0__Impl : ( 'Characteristic' ) ;
     public final void rule__Characteristic__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1488:1: ( ( 'Characteristic' ) )
-            // InternalSeML.g:1489:1: ( 'Characteristic' )
+            // InternalSeML.g:1481:1: ( ( 'Characteristic' ) )
+            // InternalSeML.g:1482:1: ( 'Characteristic' )
             {
-            // InternalSeML.g:1489:1: ( 'Characteristic' )
-            // InternalSeML.g:1490:2: 'Characteristic'
+            // InternalSeML.g:1482:1: ( 'Characteristic' )
+            // InternalSeML.g:1483:2: 'Characteristic'
             {
              before(grammarAccess.getCharacteristicAccess().getCharacteristicKeyword_0()); 
             match(input,22,FOLLOW_2); 
@@ -4638,14 +4622,14 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Characteristic__Group__1"
-    // InternalSeML.g:1499:1: rule__Characteristic__Group__1 : rule__Characteristic__Group__1__Impl rule__Characteristic__Group__2 ;
+    // InternalSeML.g:1492:1: rule__Characteristic__Group__1 : rule__Characteristic__Group__1__Impl rule__Characteristic__Group__2 ;
     public final void rule__Characteristic__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1503:1: ( rule__Characteristic__Group__1__Impl rule__Characteristic__Group__2 )
-            // InternalSeML.g:1504:2: rule__Characteristic__Group__1__Impl rule__Characteristic__Group__2
+            // InternalSeML.g:1496:1: ( rule__Characteristic__Group__1__Impl rule__Characteristic__Group__2 )
+            // InternalSeML.g:1497:2: rule__Characteristic__Group__1__Impl rule__Characteristic__Group__2
             {
             pushFollow(FOLLOW_11);
             rule__Characteristic__Group__1__Impl();
@@ -4676,21 +4660,21 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Characteristic__Group__1__Impl"
-    // InternalSeML.g:1511:1: rule__Characteristic__Group__1__Impl : ( ( rule__Characteristic__NameAssignment_1 ) ) ;
+    // InternalSeML.g:1504:1: rule__Characteristic__Group__1__Impl : ( ( rule__Characteristic__NameAssignment_1 ) ) ;
     public final void rule__Characteristic__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1515:1: ( ( ( rule__Characteristic__NameAssignment_1 ) ) )
-            // InternalSeML.g:1516:1: ( ( rule__Characteristic__NameAssignment_1 ) )
+            // InternalSeML.g:1508:1: ( ( ( rule__Characteristic__NameAssignment_1 ) ) )
+            // InternalSeML.g:1509:1: ( ( rule__Characteristic__NameAssignment_1 ) )
             {
-            // InternalSeML.g:1516:1: ( ( rule__Characteristic__NameAssignment_1 ) )
-            // InternalSeML.g:1517:2: ( rule__Characteristic__NameAssignment_1 )
+            // InternalSeML.g:1509:1: ( ( rule__Characteristic__NameAssignment_1 ) )
+            // InternalSeML.g:1510:2: ( rule__Characteristic__NameAssignment_1 )
             {
              before(grammarAccess.getCharacteristicAccess().getNameAssignment_1()); 
-            // InternalSeML.g:1518:2: ( rule__Characteristic__NameAssignment_1 )
-            // InternalSeML.g:1518:3: rule__Characteristic__NameAssignment_1
+            // InternalSeML.g:1511:2: ( rule__Characteristic__NameAssignment_1 )
+            // InternalSeML.g:1511:3: rule__Characteristic__NameAssignment_1
             {
             pushFollow(FOLLOW_2);
             rule__Characteristic__NameAssignment_1();
@@ -4723,14 +4707,14 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Characteristic__Group__2"
-    // InternalSeML.g:1526:1: rule__Characteristic__Group__2 : rule__Characteristic__Group__2__Impl ;
+    // InternalSeML.g:1519:1: rule__Characteristic__Group__2 : rule__Characteristic__Group__2__Impl ;
     public final void rule__Characteristic__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1530:1: ( rule__Characteristic__Group__2__Impl )
-            // InternalSeML.g:1531:2: rule__Characteristic__Group__2__Impl
+            // InternalSeML.g:1523:1: ( rule__Characteristic__Group__2__Impl )
+            // InternalSeML.g:1524:2: rule__Characteristic__Group__2__Impl
             {
             pushFollow(FOLLOW_2);
             rule__Characteristic__Group__2__Impl();
@@ -4756,21 +4740,21 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Characteristic__Group__2__Impl"
-    // InternalSeML.g:1537:1: rule__Characteristic__Group__2__Impl : ( ( rule__Characteristic__IriAssignment_2 ) ) ;
+    // InternalSeML.g:1530:1: rule__Characteristic__Group__2__Impl : ( ( rule__Characteristic__IriAssignment_2 ) ) ;
     public final void rule__Characteristic__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1541:1: ( ( ( rule__Characteristic__IriAssignment_2 ) ) )
-            // InternalSeML.g:1542:1: ( ( rule__Characteristic__IriAssignment_2 ) )
+            // InternalSeML.g:1534:1: ( ( ( rule__Characteristic__IriAssignment_2 ) ) )
+            // InternalSeML.g:1535:1: ( ( rule__Characteristic__IriAssignment_2 ) )
             {
-            // InternalSeML.g:1542:1: ( ( rule__Characteristic__IriAssignment_2 ) )
-            // InternalSeML.g:1543:2: ( rule__Characteristic__IriAssignment_2 )
+            // InternalSeML.g:1535:1: ( ( rule__Characteristic__IriAssignment_2 ) )
+            // InternalSeML.g:1536:2: ( rule__Characteristic__IriAssignment_2 )
             {
              before(grammarAccess.getCharacteristicAccess().getIriAssignment_2()); 
-            // InternalSeML.g:1544:2: ( rule__Characteristic__IriAssignment_2 )
-            // InternalSeML.g:1544:3: rule__Characteristic__IriAssignment_2
+            // InternalSeML.g:1537:2: ( rule__Characteristic__IriAssignment_2 )
+            // InternalSeML.g:1537:3: rule__Characteristic__IriAssignment_2
             {
             pushFollow(FOLLOW_2);
             rule__Characteristic__IriAssignment_2();
@@ -4803,14 +4787,14 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__MetaIndividual__Group__0"
-    // InternalSeML.g:1553:1: rule__MetaIndividual__Group__0 : rule__MetaIndividual__Group__0__Impl rule__MetaIndividual__Group__1 ;
+    // InternalSeML.g:1546:1: rule__MetaIndividual__Group__0 : rule__MetaIndividual__Group__0__Impl rule__MetaIndividual__Group__1 ;
     public final void rule__MetaIndividual__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1557:1: ( rule__MetaIndividual__Group__0__Impl rule__MetaIndividual__Group__1 )
-            // InternalSeML.g:1558:2: rule__MetaIndividual__Group__0__Impl rule__MetaIndividual__Group__1
+            // InternalSeML.g:1550:1: ( rule__MetaIndividual__Group__0__Impl rule__MetaIndividual__Group__1 )
+            // InternalSeML.g:1551:2: rule__MetaIndividual__Group__0__Impl rule__MetaIndividual__Group__1
             {
             pushFollow(FOLLOW_11);
             rule__MetaIndividual__Group__0__Impl();
@@ -4841,17 +4825,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__MetaIndividual__Group__0__Impl"
-    // InternalSeML.g:1565:1: rule__MetaIndividual__Group__0__Impl : ( 'MetaIndividual' ) ;
+    // InternalSeML.g:1558:1: rule__MetaIndividual__Group__0__Impl : ( 'MetaIndividual' ) ;
     public final void rule__MetaIndividual__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1569:1: ( ( 'MetaIndividual' ) )
-            // InternalSeML.g:1570:1: ( 'MetaIndividual' )
+            // InternalSeML.g:1562:1: ( ( 'MetaIndividual' ) )
+            // InternalSeML.g:1563:1: ( 'MetaIndividual' )
             {
-            // InternalSeML.g:1570:1: ( 'MetaIndividual' )
-            // InternalSeML.g:1571:2: 'MetaIndividual'
+            // InternalSeML.g:1563:1: ( 'MetaIndividual' )
+            // InternalSeML.g:1564:2: 'MetaIndividual'
             {
              before(grammarAccess.getMetaIndividualAccess().getMetaIndividualKeyword_0()); 
             match(input,23,FOLLOW_2); 
@@ -4878,14 +4862,14 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__MetaIndividual__Group__1"
-    // InternalSeML.g:1580:1: rule__MetaIndividual__Group__1 : rule__MetaIndividual__Group__1__Impl rule__MetaIndividual__Group__2 ;
+    // InternalSeML.g:1573:1: rule__MetaIndividual__Group__1 : rule__MetaIndividual__Group__1__Impl rule__MetaIndividual__Group__2 ;
     public final void rule__MetaIndividual__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1584:1: ( rule__MetaIndividual__Group__1__Impl rule__MetaIndividual__Group__2 )
-            // InternalSeML.g:1585:2: rule__MetaIndividual__Group__1__Impl rule__MetaIndividual__Group__2
+            // InternalSeML.g:1577:1: ( rule__MetaIndividual__Group__1__Impl rule__MetaIndividual__Group__2 )
+            // InternalSeML.g:1578:2: rule__MetaIndividual__Group__1__Impl rule__MetaIndividual__Group__2
             {
             pushFollow(FOLLOW_12);
             rule__MetaIndividual__Group__1__Impl();
@@ -4916,24 +4900,24 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__MetaIndividual__Group__1__Impl"
-    // InternalSeML.g:1592:1: rule__MetaIndividual__Group__1__Impl : ( ( ( rule__MetaIndividual__ClsAssignment_1 ) ) ( ( rule__MetaIndividual__ClsAssignment_1 )* ) ) ;
+    // InternalSeML.g:1585:1: rule__MetaIndividual__Group__1__Impl : ( ( ( rule__MetaIndividual__ClsAssignment_1 ) ) ( ( rule__MetaIndividual__ClsAssignment_1 )* ) ) ;
     public final void rule__MetaIndividual__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1596:1: ( ( ( ( rule__MetaIndividual__ClsAssignment_1 ) ) ( ( rule__MetaIndividual__ClsAssignment_1 )* ) ) )
-            // InternalSeML.g:1597:1: ( ( ( rule__MetaIndividual__ClsAssignment_1 ) ) ( ( rule__MetaIndividual__ClsAssignment_1 )* ) )
+            // InternalSeML.g:1589:1: ( ( ( ( rule__MetaIndividual__ClsAssignment_1 ) ) ( ( rule__MetaIndividual__ClsAssignment_1 )* ) ) )
+            // InternalSeML.g:1590:1: ( ( ( rule__MetaIndividual__ClsAssignment_1 ) ) ( ( rule__MetaIndividual__ClsAssignment_1 )* ) )
             {
-            // InternalSeML.g:1597:1: ( ( ( rule__MetaIndividual__ClsAssignment_1 ) ) ( ( rule__MetaIndividual__ClsAssignment_1 )* ) )
-            // InternalSeML.g:1598:2: ( ( rule__MetaIndividual__ClsAssignment_1 ) ) ( ( rule__MetaIndividual__ClsAssignment_1 )* )
+            // InternalSeML.g:1590:1: ( ( ( rule__MetaIndividual__ClsAssignment_1 ) ) ( ( rule__MetaIndividual__ClsAssignment_1 )* ) )
+            // InternalSeML.g:1591:2: ( ( rule__MetaIndividual__ClsAssignment_1 ) ) ( ( rule__MetaIndividual__ClsAssignment_1 )* )
             {
-            // InternalSeML.g:1598:2: ( ( rule__MetaIndividual__ClsAssignment_1 ) )
-            // InternalSeML.g:1599:3: ( rule__MetaIndividual__ClsAssignment_1 )
+            // InternalSeML.g:1591:2: ( ( rule__MetaIndividual__ClsAssignment_1 ) )
+            // InternalSeML.g:1592:3: ( rule__MetaIndividual__ClsAssignment_1 )
             {
              before(grammarAccess.getMetaIndividualAccess().getClsAssignment_1()); 
-            // InternalSeML.g:1600:3: ( rule__MetaIndividual__ClsAssignment_1 )
-            // InternalSeML.g:1600:4: rule__MetaIndividual__ClsAssignment_1
+            // InternalSeML.g:1593:3: ( rule__MetaIndividual__ClsAssignment_1 )
+            // InternalSeML.g:1593:4: rule__MetaIndividual__ClsAssignment_1
             {
             pushFollow(FOLLOW_15);
             rule__MetaIndividual__ClsAssignment_1();
@@ -4947,11 +4931,11 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
             }
 
-            // InternalSeML.g:1603:2: ( ( rule__MetaIndividual__ClsAssignment_1 )* )
-            // InternalSeML.g:1604:3: ( rule__MetaIndividual__ClsAssignment_1 )*
+            // InternalSeML.g:1596:2: ( ( rule__MetaIndividual__ClsAssignment_1 )* )
+            // InternalSeML.g:1597:3: ( rule__MetaIndividual__ClsAssignment_1 )*
             {
              before(grammarAccess.getMetaIndividualAccess().getClsAssignment_1()); 
-            // InternalSeML.g:1605:3: ( rule__MetaIndividual__ClsAssignment_1 )*
+            // InternalSeML.g:1598:3: ( rule__MetaIndividual__ClsAssignment_1 )*
             loop11:
             do {
                 int alt11=2;
@@ -4964,7 +4948,7 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
                 switch (alt11) {
             	case 1 :
-            	    // InternalSeML.g:1605:4: rule__MetaIndividual__ClsAssignment_1
+            	    // InternalSeML.g:1598:4: rule__MetaIndividual__ClsAssignment_1
             	    {
             	    pushFollow(FOLLOW_15);
             	    rule__MetaIndividual__ClsAssignment_1();
@@ -5006,14 +4990,14 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__MetaIndividual__Group__2"
-    // InternalSeML.g:1614:1: rule__MetaIndividual__Group__2 : rule__MetaIndividual__Group__2__Impl rule__MetaIndividual__Group__3 ;
+    // InternalSeML.g:1607:1: rule__MetaIndividual__Group__2 : rule__MetaIndividual__Group__2__Impl rule__MetaIndividual__Group__3 ;
     public final void rule__MetaIndividual__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1618:1: ( rule__MetaIndividual__Group__2__Impl rule__MetaIndividual__Group__3 )
-            // InternalSeML.g:1619:2: rule__MetaIndividual__Group__2__Impl rule__MetaIndividual__Group__3
+            // InternalSeML.g:1611:1: ( rule__MetaIndividual__Group__2__Impl rule__MetaIndividual__Group__3 )
+            // InternalSeML.g:1612:2: rule__MetaIndividual__Group__2__Impl rule__MetaIndividual__Group__3
             {
             pushFollow(FOLLOW_11);
             rule__MetaIndividual__Group__2__Impl();
@@ -5044,21 +5028,21 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__MetaIndividual__Group__2__Impl"
-    // InternalSeML.g:1626:1: rule__MetaIndividual__Group__2__Impl : ( ( rule__MetaIndividual__NameAssignment_2 ) ) ;
+    // InternalSeML.g:1619:1: rule__MetaIndividual__Group__2__Impl : ( ( rule__MetaIndividual__NameAssignment_2 ) ) ;
     public final void rule__MetaIndividual__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1630:1: ( ( ( rule__MetaIndividual__NameAssignment_2 ) ) )
-            // InternalSeML.g:1631:1: ( ( rule__MetaIndividual__NameAssignment_2 ) )
+            // InternalSeML.g:1623:1: ( ( ( rule__MetaIndividual__NameAssignment_2 ) ) )
+            // InternalSeML.g:1624:1: ( ( rule__MetaIndividual__NameAssignment_2 ) )
             {
-            // InternalSeML.g:1631:1: ( ( rule__MetaIndividual__NameAssignment_2 ) )
-            // InternalSeML.g:1632:2: ( rule__MetaIndividual__NameAssignment_2 )
+            // InternalSeML.g:1624:1: ( ( rule__MetaIndividual__NameAssignment_2 ) )
+            // InternalSeML.g:1625:2: ( rule__MetaIndividual__NameAssignment_2 )
             {
              before(grammarAccess.getMetaIndividualAccess().getNameAssignment_2()); 
-            // InternalSeML.g:1633:2: ( rule__MetaIndividual__NameAssignment_2 )
-            // InternalSeML.g:1633:3: rule__MetaIndividual__NameAssignment_2
+            // InternalSeML.g:1626:2: ( rule__MetaIndividual__NameAssignment_2 )
+            // InternalSeML.g:1626:3: rule__MetaIndividual__NameAssignment_2
             {
             pushFollow(FOLLOW_2);
             rule__MetaIndividual__NameAssignment_2();
@@ -5091,14 +5075,14 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__MetaIndividual__Group__3"
-    // InternalSeML.g:1641:1: rule__MetaIndividual__Group__3 : rule__MetaIndividual__Group__3__Impl ;
+    // InternalSeML.g:1634:1: rule__MetaIndividual__Group__3 : rule__MetaIndividual__Group__3__Impl ;
     public final void rule__MetaIndividual__Group__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1645:1: ( rule__MetaIndividual__Group__3__Impl )
-            // InternalSeML.g:1646:2: rule__MetaIndividual__Group__3__Impl
+            // InternalSeML.g:1638:1: ( rule__MetaIndividual__Group__3__Impl )
+            // InternalSeML.g:1639:2: rule__MetaIndividual__Group__3__Impl
             {
             pushFollow(FOLLOW_2);
             rule__MetaIndividual__Group__3__Impl();
@@ -5124,21 +5108,21 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__MetaIndividual__Group__3__Impl"
-    // InternalSeML.g:1652:1: rule__MetaIndividual__Group__3__Impl : ( ( rule__MetaIndividual__IriAssignment_3 ) ) ;
+    // InternalSeML.g:1645:1: rule__MetaIndividual__Group__3__Impl : ( ( rule__MetaIndividual__IriAssignment_3 ) ) ;
     public final void rule__MetaIndividual__Group__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1656:1: ( ( ( rule__MetaIndividual__IriAssignment_3 ) ) )
-            // InternalSeML.g:1657:1: ( ( rule__MetaIndividual__IriAssignment_3 ) )
+            // InternalSeML.g:1649:1: ( ( ( rule__MetaIndividual__IriAssignment_3 ) ) )
+            // InternalSeML.g:1650:1: ( ( rule__MetaIndividual__IriAssignment_3 ) )
             {
-            // InternalSeML.g:1657:1: ( ( rule__MetaIndividual__IriAssignment_3 ) )
-            // InternalSeML.g:1658:2: ( rule__MetaIndividual__IriAssignment_3 )
+            // InternalSeML.g:1650:1: ( ( rule__MetaIndividual__IriAssignment_3 ) )
+            // InternalSeML.g:1651:2: ( rule__MetaIndividual__IriAssignment_3 )
             {
              before(grammarAccess.getMetaIndividualAccess().getIriAssignment_3()); 
-            // InternalSeML.g:1659:2: ( rule__MetaIndividual__IriAssignment_3 )
-            // InternalSeML.g:1659:3: rule__MetaIndividual__IriAssignment_3
+            // InternalSeML.g:1652:2: ( rule__MetaIndividual__IriAssignment_3 )
+            // InternalSeML.g:1652:3: rule__MetaIndividual__IriAssignment_3
             {
             pushFollow(FOLLOW_2);
             rule__MetaIndividual__IriAssignment_3();
@@ -5171,17 +5155,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__MainModel__ImportsAssignment_0"
-    // InternalSeML.g:1668:1: rule__MainModel__ImportsAssignment_0 : ( ruleImport ) ;
+    // InternalSeML.g:1661:1: rule__MainModel__ImportsAssignment_0 : ( ruleImport ) ;
     public final void rule__MainModel__ImportsAssignment_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1672:1: ( ( ruleImport ) )
-            // InternalSeML.g:1673:2: ( ruleImport )
+            // InternalSeML.g:1665:1: ( ( ruleImport ) )
+            // InternalSeML.g:1666:2: ( ruleImport )
             {
-            // InternalSeML.g:1673:2: ( ruleImport )
-            // InternalSeML.g:1674:3: ruleImport
+            // InternalSeML.g:1666:2: ( ruleImport )
+            // InternalSeML.g:1667:3: ruleImport
             {
              before(grammarAccess.getMainModelAccess().getImportsImportParserRuleCall_0_0()); 
             pushFollow(FOLLOW_2);
@@ -5212,17 +5196,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__MainModel__SentencesAssignment_1"
-    // InternalSeML.g:1683:1: rule__MainModel__SentencesAssignment_1 : ( ruleSentence ) ;
+    // InternalSeML.g:1676:1: rule__MainModel__SentencesAssignment_1 : ( ruleSentence ) ;
     public final void rule__MainModel__SentencesAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1687:1: ( ( ruleSentence ) )
-            // InternalSeML.g:1688:2: ( ruleSentence )
+            // InternalSeML.g:1680:1: ( ( ruleSentence ) )
+            // InternalSeML.g:1681:2: ( ruleSentence )
             {
-            // InternalSeML.g:1688:2: ( ruleSentence )
-            // InternalSeML.g:1689:3: ruleSentence
+            // InternalSeML.g:1681:2: ( ruleSentence )
+            // InternalSeML.g:1682:3: ruleSentence
             {
              before(grammarAccess.getMainModelAccess().getSentencesSentenceParserRuleCall_1_0()); 
             pushFollow(FOLLOW_2);
@@ -5253,17 +5237,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ImportModel__ComponentsAssignment_0"
-    // InternalSeML.g:1698:1: rule__ImportModel__ComponentsAssignment_0 : ( ruleComponent ) ;
+    // InternalSeML.g:1691:1: rule__ImportModel__ComponentsAssignment_0 : ( ruleComponent ) ;
     public final void rule__ImportModel__ComponentsAssignment_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1702:1: ( ( ruleComponent ) )
-            // InternalSeML.g:1703:2: ( ruleComponent )
+            // InternalSeML.g:1695:1: ( ( ruleComponent ) )
+            // InternalSeML.g:1696:2: ( ruleComponent )
             {
-            // InternalSeML.g:1703:2: ( ruleComponent )
-            // InternalSeML.g:1704:3: ruleComponent
+            // InternalSeML.g:1696:2: ( ruleComponent )
+            // InternalSeML.g:1697:3: ruleComponent
             {
              before(grammarAccess.getImportModelAccess().getComponentsComponentParserRuleCall_0_0()); 
             pushFollow(FOLLOW_2);
@@ -5294,17 +5278,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ImportModel__CharacteristicsAssignment_1"
-    // InternalSeML.g:1713:1: rule__ImportModel__CharacteristicsAssignment_1 : ( ruleCharacteristic ) ;
+    // InternalSeML.g:1706:1: rule__ImportModel__CharacteristicsAssignment_1 : ( ruleCharacteristic ) ;
     public final void rule__ImportModel__CharacteristicsAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1717:1: ( ( ruleCharacteristic ) )
-            // InternalSeML.g:1718:2: ( ruleCharacteristic )
+            // InternalSeML.g:1710:1: ( ( ruleCharacteristic ) )
+            // InternalSeML.g:1711:2: ( ruleCharacteristic )
             {
-            // InternalSeML.g:1718:2: ( ruleCharacteristic )
-            // InternalSeML.g:1719:3: ruleCharacteristic
+            // InternalSeML.g:1711:2: ( ruleCharacteristic )
+            // InternalSeML.g:1712:3: ruleCharacteristic
             {
              before(grammarAccess.getImportModelAccess().getCharacteristicsCharacteristicParserRuleCall_1_0()); 
             pushFollow(FOLLOW_2);
@@ -5335,17 +5319,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ImportModel__ObjectPropertiesAssignment_2"
-    // InternalSeML.g:1728:1: rule__ImportModel__ObjectPropertiesAssignment_2 : ( ruleObjectProperty ) ;
+    // InternalSeML.g:1721:1: rule__ImportModel__ObjectPropertiesAssignment_2 : ( ruleObjectProperty ) ;
     public final void rule__ImportModel__ObjectPropertiesAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1732:1: ( ( ruleObjectProperty ) )
-            // InternalSeML.g:1733:2: ( ruleObjectProperty )
+            // InternalSeML.g:1725:1: ( ( ruleObjectProperty ) )
+            // InternalSeML.g:1726:2: ( ruleObjectProperty )
             {
-            // InternalSeML.g:1733:2: ( ruleObjectProperty )
-            // InternalSeML.g:1734:3: ruleObjectProperty
+            // InternalSeML.g:1726:2: ( ruleObjectProperty )
+            // InternalSeML.g:1727:3: ruleObjectProperty
             {
              before(grammarAccess.getImportModelAccess().getObjectPropertiesObjectPropertyParserRuleCall_2_0()); 
             pushFollow(FOLLOW_2);
@@ -5376,17 +5360,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ImportModel__MetaIndividualsAssignment_3"
-    // InternalSeML.g:1743:1: rule__ImportModel__MetaIndividualsAssignment_3 : ( ruleMetaIndividual ) ;
+    // InternalSeML.g:1736:1: rule__ImportModel__MetaIndividualsAssignment_3 : ( ruleMetaIndividual ) ;
     public final void rule__ImportModel__MetaIndividualsAssignment_3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1747:1: ( ( ruleMetaIndividual ) )
-            // InternalSeML.g:1748:2: ( ruleMetaIndividual )
+            // InternalSeML.g:1740:1: ( ( ruleMetaIndividual ) )
+            // InternalSeML.g:1741:2: ( ruleMetaIndividual )
             {
-            // InternalSeML.g:1748:2: ( ruleMetaIndividual )
-            // InternalSeML.g:1749:3: ruleMetaIndividual
+            // InternalSeML.g:1741:2: ( ruleMetaIndividual )
+            // InternalSeML.g:1742:3: ruleMetaIndividual
             {
              before(grammarAccess.getImportModelAccess().getMetaIndividualsMetaIndividualParserRuleCall_3_0()); 
             pushFollow(FOLLOW_2);
@@ -5417,17 +5401,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Import__NameAssignment_1"
-    // InternalSeML.g:1758:1: rule__Import__NameAssignment_1 : ( RULE_STRING ) ;
+    // InternalSeML.g:1751:1: rule__Import__NameAssignment_1 : ( RULE_STRING ) ;
     public final void rule__Import__NameAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1762:1: ( ( RULE_STRING ) )
-            // InternalSeML.g:1763:2: ( RULE_STRING )
+            // InternalSeML.g:1755:1: ( ( RULE_STRING ) )
+            // InternalSeML.g:1756:2: ( RULE_STRING )
             {
-            // InternalSeML.g:1763:2: ( RULE_STRING )
-            // InternalSeML.g:1764:3: RULE_STRING
+            // InternalSeML.g:1756:2: ( RULE_STRING )
+            // InternalSeML.g:1757:3: RULE_STRING
             {
              before(grammarAccess.getImportAccess().getNameSTRINGTerminalRuleCall_1_0()); 
             match(input,RULE_STRING,FOLLOW_2); 
@@ -5454,21 +5438,21 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Individual__ClsAssignment_1"
-    // InternalSeML.g:1773:1: rule__Individual__ClsAssignment_1 : ( ( RULE_IRI ) ) ;
+    // InternalSeML.g:1766:1: rule__Individual__ClsAssignment_1 : ( ( RULE_IRI ) ) ;
     public final void rule__Individual__ClsAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1777:1: ( ( ( RULE_IRI ) ) )
-            // InternalSeML.g:1778:2: ( ( RULE_IRI ) )
+            // InternalSeML.g:1770:1: ( ( ( RULE_IRI ) ) )
+            // InternalSeML.g:1771:2: ( ( RULE_IRI ) )
             {
-            // InternalSeML.g:1778:2: ( ( RULE_IRI ) )
-            // InternalSeML.g:1779:3: ( RULE_IRI )
+            // InternalSeML.g:1771:2: ( ( RULE_IRI ) )
+            // InternalSeML.g:1772:3: ( RULE_IRI )
             {
              before(grammarAccess.getIndividualAccess().getClsComponentCrossReference_1_0()); 
-            // InternalSeML.g:1780:3: ( RULE_IRI )
-            // InternalSeML.g:1781:4: RULE_IRI
+            // InternalSeML.g:1773:3: ( RULE_IRI )
+            // InternalSeML.g:1774:4: RULE_IRI
             {
              before(grammarAccess.getIndividualAccess().getClsComponentIRITerminalRuleCall_1_0_1()); 
             match(input,RULE_IRI,FOLLOW_2); 
@@ -5498,22 +5482,30 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
     // $ANTLR end "rule__Individual__ClsAssignment_1"
 
 
-    // $ANTLR start "rule__Individual__NameAssignment_2"
-    // InternalSeML.g:1792:1: rule__Individual__NameAssignment_2 : ( RULE_IRI ) ;
-    public final void rule__Individual__NameAssignment_2() throws RecognitionException {
+    // $ANTLR start "rule__Individual__ClsAssignment_2_1"
+    // InternalSeML.g:1785:1: rule__Individual__ClsAssignment_2_1 : ( ( RULE_IRI ) ) ;
+    public final void rule__Individual__ClsAssignment_2_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1796:1: ( ( RULE_IRI ) )
-            // InternalSeML.g:1797:2: ( RULE_IRI )
+            // InternalSeML.g:1789:1: ( ( ( RULE_IRI ) ) )
+            // InternalSeML.g:1790:2: ( ( RULE_IRI ) )
             {
-            // InternalSeML.g:1797:2: ( RULE_IRI )
-            // InternalSeML.g:1798:3: RULE_IRI
+            // InternalSeML.g:1790:2: ( ( RULE_IRI ) )
+            // InternalSeML.g:1791:3: ( RULE_IRI )
             {
-             before(grammarAccess.getIndividualAccess().getNameIRITerminalRuleCall_2_0()); 
+             before(grammarAccess.getIndividualAccess().getClsComponentCrossReference_2_1_0()); 
+            // InternalSeML.g:1792:3: ( RULE_IRI )
+            // InternalSeML.g:1793:4: RULE_IRI
+            {
+             before(grammarAccess.getIndividualAccess().getClsComponentIRITerminalRuleCall_2_1_0_1()); 
             match(input,RULE_IRI,FOLLOW_2); 
-             after(grammarAccess.getIndividualAccess().getNameIRITerminalRuleCall_2_0()); 
+             after(grammarAccess.getIndividualAccess().getClsComponentIRITerminalRuleCall_2_1_0_1()); 
+
+            }
+
+             after(grammarAccess.getIndividualAccess().getClsComponentCrossReference_2_1_0()); 
 
             }
 
@@ -5532,25 +5524,62 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__Individual__NameAssignment_2"
+    // $ANTLR end "rule__Individual__ClsAssignment_2_1"
+
+
+    // $ANTLR start "rule__Individual__NameAssignment_3"
+    // InternalSeML.g:1804:1: rule__Individual__NameAssignment_3 : ( RULE_IRI ) ;
+    public final void rule__Individual__NameAssignment_3() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalSeML.g:1808:1: ( ( RULE_IRI ) )
+            // InternalSeML.g:1809:2: ( RULE_IRI )
+            {
+            // InternalSeML.g:1809:2: ( RULE_IRI )
+            // InternalSeML.g:1810:3: RULE_IRI
+            {
+             before(grammarAccess.getIndividualAccess().getNameIRITerminalRuleCall_3_0()); 
+            match(input,RULE_IRI,FOLLOW_2); 
+             after(grammarAccess.getIndividualAccess().getNameIRITerminalRuleCall_3_0()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__Individual__NameAssignment_3"
 
 
     // $ANTLR start "rule__UseCharacteristic__NameAssignment_1"
-    // InternalSeML.g:1807:1: rule__UseCharacteristic__NameAssignment_1 : ( ( RULE_IRI ) ) ;
+    // InternalSeML.g:1819:1: rule__UseCharacteristic__NameAssignment_1 : ( ( RULE_IRI ) ) ;
     public final void rule__UseCharacteristic__NameAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1811:1: ( ( ( RULE_IRI ) ) )
-            // InternalSeML.g:1812:2: ( ( RULE_IRI ) )
+            // InternalSeML.g:1823:1: ( ( ( RULE_IRI ) ) )
+            // InternalSeML.g:1824:2: ( ( RULE_IRI ) )
             {
-            // InternalSeML.g:1812:2: ( ( RULE_IRI ) )
-            // InternalSeML.g:1813:3: ( RULE_IRI )
+            // InternalSeML.g:1824:2: ( ( RULE_IRI ) )
+            // InternalSeML.g:1825:3: ( RULE_IRI )
             {
              before(grammarAccess.getUseCharacteristicAccess().getNameCharacteristicCrossReference_1_0()); 
-            // InternalSeML.g:1814:3: ( RULE_IRI )
-            // InternalSeML.g:1815:4: RULE_IRI
+            // InternalSeML.g:1826:3: ( RULE_IRI )
+            // InternalSeML.g:1827:4: RULE_IRI
             {
              before(grammarAccess.getUseCharacteristicAccess().getNameCharacteristicIRITerminalRuleCall_1_0_1()); 
             match(input,RULE_IRI,FOLLOW_2); 
@@ -5581,21 +5610,21 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Relation__Instance1Assignment_0"
-    // InternalSeML.g:1826:1: rule__Relation__Instance1Assignment_0 : ( ( RULE_IRI ) ) ;
+    // InternalSeML.g:1838:1: rule__Relation__Instance1Assignment_0 : ( ( RULE_IRI ) ) ;
     public final void rule__Relation__Instance1Assignment_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1830:1: ( ( ( RULE_IRI ) ) )
-            // InternalSeML.g:1831:2: ( ( RULE_IRI ) )
+            // InternalSeML.g:1842:1: ( ( ( RULE_IRI ) ) )
+            // InternalSeML.g:1843:2: ( ( RULE_IRI ) )
             {
-            // InternalSeML.g:1831:2: ( ( RULE_IRI ) )
-            // InternalSeML.g:1832:3: ( RULE_IRI )
+            // InternalSeML.g:1843:2: ( ( RULE_IRI ) )
+            // InternalSeML.g:1844:3: ( RULE_IRI )
             {
              before(grammarAccess.getRelationAccess().getInstance1AnyIndividualCrossReference_0_0()); 
-            // InternalSeML.g:1833:3: ( RULE_IRI )
-            // InternalSeML.g:1834:4: RULE_IRI
+            // InternalSeML.g:1845:3: ( RULE_IRI )
+            // InternalSeML.g:1846:4: RULE_IRI
             {
              before(grammarAccess.getRelationAccess().getInstance1AnyIndividualIRITerminalRuleCall_0_0_1()); 
             match(input,RULE_IRI,FOLLOW_2); 
@@ -5626,21 +5655,21 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Relation__ObjAssignment_1"
-    // InternalSeML.g:1845:1: rule__Relation__ObjAssignment_1 : ( ( RULE_IRI ) ) ;
+    // InternalSeML.g:1857:1: rule__Relation__ObjAssignment_1 : ( ( RULE_IRI ) ) ;
     public final void rule__Relation__ObjAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1849:1: ( ( ( RULE_IRI ) ) )
-            // InternalSeML.g:1850:2: ( ( RULE_IRI ) )
+            // InternalSeML.g:1861:1: ( ( ( RULE_IRI ) ) )
+            // InternalSeML.g:1862:2: ( ( RULE_IRI ) )
             {
-            // InternalSeML.g:1850:2: ( ( RULE_IRI ) )
-            // InternalSeML.g:1851:3: ( RULE_IRI )
+            // InternalSeML.g:1862:2: ( ( RULE_IRI ) )
+            // InternalSeML.g:1863:3: ( RULE_IRI )
             {
              before(grammarAccess.getRelationAccess().getObjObjectPropertyCrossReference_1_0()); 
-            // InternalSeML.g:1852:3: ( RULE_IRI )
-            // InternalSeML.g:1853:4: RULE_IRI
+            // InternalSeML.g:1864:3: ( RULE_IRI )
+            // InternalSeML.g:1865:4: RULE_IRI
             {
              before(grammarAccess.getRelationAccess().getObjObjectPropertyIRITerminalRuleCall_1_0_1()); 
             match(input,RULE_IRI,FOLLOW_2); 
@@ -5671,21 +5700,21 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Relation__Instance2Assignment_2"
-    // InternalSeML.g:1864:1: rule__Relation__Instance2Assignment_2 : ( ( RULE_IRI ) ) ;
+    // InternalSeML.g:1876:1: rule__Relation__Instance2Assignment_2 : ( ( RULE_IRI ) ) ;
     public final void rule__Relation__Instance2Assignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1868:1: ( ( ( RULE_IRI ) ) )
-            // InternalSeML.g:1869:2: ( ( RULE_IRI ) )
+            // InternalSeML.g:1880:1: ( ( ( RULE_IRI ) ) )
+            // InternalSeML.g:1881:2: ( ( RULE_IRI ) )
             {
-            // InternalSeML.g:1869:2: ( ( RULE_IRI ) )
-            // InternalSeML.g:1870:3: ( RULE_IRI )
+            // InternalSeML.g:1881:2: ( ( RULE_IRI ) )
+            // InternalSeML.g:1882:3: ( RULE_IRI )
             {
              before(grammarAccess.getRelationAccess().getInstance2AnyIndividualCrossReference_2_0()); 
-            // InternalSeML.g:1871:3: ( RULE_IRI )
-            // InternalSeML.g:1872:4: RULE_IRI
+            // InternalSeML.g:1883:3: ( RULE_IRI )
+            // InternalSeML.g:1884:4: RULE_IRI
             {
              before(grammarAccess.getRelationAccess().getInstance2AnyIndividualIRITerminalRuleCall_2_0_1()); 
             match(input,RULE_IRI,FOLLOW_2); 
@@ -5716,17 +5745,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Process__NameAssignment_1"
-    // InternalSeML.g:1883:1: rule__Component_Process__NameAssignment_1 : ( RULE_IRI ) ;
+    // InternalSeML.g:1895:1: rule__Component_Process__NameAssignment_1 : ( RULE_IRI ) ;
     public final void rule__Component_Process__NameAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1887:1: ( ( RULE_IRI ) )
-            // InternalSeML.g:1888:2: ( RULE_IRI )
+            // InternalSeML.g:1899:1: ( ( RULE_IRI ) )
+            // InternalSeML.g:1900:2: ( RULE_IRI )
             {
-            // InternalSeML.g:1888:2: ( RULE_IRI )
-            // InternalSeML.g:1889:3: RULE_IRI
+            // InternalSeML.g:1900:2: ( RULE_IRI )
+            // InternalSeML.g:1901:3: RULE_IRI
             {
              before(grammarAccess.getComponent_ProcessAccess().getNameIRITerminalRuleCall_1_0()); 
             match(input,RULE_IRI,FOLLOW_2); 
@@ -5753,17 +5782,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Process__IriAssignment_2"
-    // InternalSeML.g:1898:1: rule__Component_Process__IriAssignment_2 : ( RULE_STRING ) ;
+    // InternalSeML.g:1910:1: rule__Component_Process__IriAssignment_2 : ( RULE_STRING ) ;
     public final void rule__Component_Process__IriAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1902:1: ( ( RULE_STRING ) )
-            // InternalSeML.g:1903:2: ( RULE_STRING )
+            // InternalSeML.g:1914:1: ( ( RULE_STRING ) )
+            // InternalSeML.g:1915:2: ( RULE_STRING )
             {
-            // InternalSeML.g:1903:2: ( RULE_STRING )
-            // InternalSeML.g:1904:3: RULE_STRING
+            // InternalSeML.g:1915:2: ( RULE_STRING )
+            // InternalSeML.g:1916:3: RULE_STRING
             {
              before(grammarAccess.getComponent_ProcessAccess().getIriSTRINGTerminalRuleCall_2_0()); 
             match(input,RULE_STRING,FOLLOW_2); 
@@ -5790,17 +5819,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Event__NameAssignment_1"
-    // InternalSeML.g:1913:1: rule__Component_Event__NameAssignment_1 : ( RULE_IRI ) ;
+    // InternalSeML.g:1925:1: rule__Component_Event__NameAssignment_1 : ( RULE_IRI ) ;
     public final void rule__Component_Event__NameAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1917:1: ( ( RULE_IRI ) )
-            // InternalSeML.g:1918:2: ( RULE_IRI )
+            // InternalSeML.g:1929:1: ( ( RULE_IRI ) )
+            // InternalSeML.g:1930:2: ( RULE_IRI )
             {
-            // InternalSeML.g:1918:2: ( RULE_IRI )
-            // InternalSeML.g:1919:3: RULE_IRI
+            // InternalSeML.g:1930:2: ( RULE_IRI )
+            // InternalSeML.g:1931:3: RULE_IRI
             {
              before(grammarAccess.getComponent_EventAccess().getNameIRITerminalRuleCall_1_0()); 
             match(input,RULE_IRI,FOLLOW_2); 
@@ -5827,17 +5856,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Event__IriAssignment_2"
-    // InternalSeML.g:1928:1: rule__Component_Event__IriAssignment_2 : ( RULE_STRING ) ;
+    // InternalSeML.g:1940:1: rule__Component_Event__IriAssignment_2 : ( RULE_STRING ) ;
     public final void rule__Component_Event__IriAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1932:1: ( ( RULE_STRING ) )
-            // InternalSeML.g:1933:2: ( RULE_STRING )
+            // InternalSeML.g:1944:1: ( ( RULE_STRING ) )
+            // InternalSeML.g:1945:2: ( RULE_STRING )
             {
-            // InternalSeML.g:1933:2: ( RULE_STRING )
-            // InternalSeML.g:1934:3: RULE_STRING
+            // InternalSeML.g:1945:2: ( RULE_STRING )
+            // InternalSeML.g:1946:3: RULE_STRING
             {
              before(grammarAccess.getComponent_EventAccess().getIriSTRINGTerminalRuleCall_2_0()); 
             match(input,RULE_STRING,FOLLOW_2); 
@@ -5864,17 +5893,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Property__NameAssignment_1"
-    // InternalSeML.g:1943:1: rule__Component_Property__NameAssignment_1 : ( RULE_IRI ) ;
+    // InternalSeML.g:1955:1: rule__Component_Property__NameAssignment_1 : ( RULE_IRI ) ;
     public final void rule__Component_Property__NameAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1947:1: ( ( RULE_IRI ) )
-            // InternalSeML.g:1948:2: ( RULE_IRI )
+            // InternalSeML.g:1959:1: ( ( RULE_IRI ) )
+            // InternalSeML.g:1960:2: ( RULE_IRI )
             {
-            // InternalSeML.g:1948:2: ( RULE_IRI )
-            // InternalSeML.g:1949:3: RULE_IRI
+            // InternalSeML.g:1960:2: ( RULE_IRI )
+            // InternalSeML.g:1961:3: RULE_IRI
             {
              before(grammarAccess.getComponent_PropertyAccess().getNameIRITerminalRuleCall_1_0()); 
             match(input,RULE_IRI,FOLLOW_2); 
@@ -5901,17 +5930,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Property__IriAssignment_2"
-    // InternalSeML.g:1958:1: rule__Component_Property__IriAssignment_2 : ( RULE_STRING ) ;
+    // InternalSeML.g:1970:1: rule__Component_Property__IriAssignment_2 : ( RULE_STRING ) ;
     public final void rule__Component_Property__IriAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1962:1: ( ( RULE_STRING ) )
-            // InternalSeML.g:1963:2: ( RULE_STRING )
+            // InternalSeML.g:1974:1: ( ( RULE_STRING ) )
+            // InternalSeML.g:1975:2: ( RULE_STRING )
             {
-            // InternalSeML.g:1963:2: ( RULE_STRING )
-            // InternalSeML.g:1964:3: RULE_STRING
+            // InternalSeML.g:1975:2: ( RULE_STRING )
+            // InternalSeML.g:1976:3: RULE_STRING
             {
              before(grammarAccess.getComponent_PropertyAccess().getIriSTRINGTerminalRuleCall_2_0()); 
             match(input,RULE_STRING,FOLLOW_2); 
@@ -5938,17 +5967,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Entity__NameAssignment_1"
-    // InternalSeML.g:1973:1: rule__Component_Entity__NameAssignment_1 : ( RULE_IRI ) ;
+    // InternalSeML.g:1985:1: rule__Component_Entity__NameAssignment_1 : ( RULE_IRI ) ;
     public final void rule__Component_Entity__NameAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1977:1: ( ( RULE_IRI ) )
-            // InternalSeML.g:1978:2: ( RULE_IRI )
+            // InternalSeML.g:1989:1: ( ( RULE_IRI ) )
+            // InternalSeML.g:1990:2: ( RULE_IRI )
             {
-            // InternalSeML.g:1978:2: ( RULE_IRI )
-            // InternalSeML.g:1979:3: RULE_IRI
+            // InternalSeML.g:1990:2: ( RULE_IRI )
+            // InternalSeML.g:1991:3: RULE_IRI
             {
              before(grammarAccess.getComponent_EntityAccess().getNameIRITerminalRuleCall_1_0()); 
             match(input,RULE_IRI,FOLLOW_2); 
@@ -5975,17 +6004,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Component_Entity__IriAssignment_2"
-    // InternalSeML.g:1988:1: rule__Component_Entity__IriAssignment_2 : ( RULE_STRING ) ;
+    // InternalSeML.g:2000:1: rule__Component_Entity__IriAssignment_2 : ( RULE_STRING ) ;
     public final void rule__Component_Entity__IriAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:1992:1: ( ( RULE_STRING ) )
-            // InternalSeML.g:1993:2: ( RULE_STRING )
+            // InternalSeML.g:2004:1: ( ( RULE_STRING ) )
+            // InternalSeML.g:2005:2: ( RULE_STRING )
             {
-            // InternalSeML.g:1993:2: ( RULE_STRING )
-            // InternalSeML.g:1994:3: RULE_STRING
+            // InternalSeML.g:2005:2: ( RULE_STRING )
+            // InternalSeML.g:2006:3: RULE_STRING
             {
              before(grammarAccess.getComponent_EntityAccess().getIriSTRINGTerminalRuleCall_2_0()); 
             match(input,RULE_STRING,FOLLOW_2); 
@@ -6012,17 +6041,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ObjectProperty__NameAssignment_1"
-    // InternalSeML.g:2003:1: rule__ObjectProperty__NameAssignment_1 : ( RULE_IRI ) ;
+    // InternalSeML.g:2015:1: rule__ObjectProperty__NameAssignment_1 : ( RULE_IRI ) ;
     public final void rule__ObjectProperty__NameAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:2007:1: ( ( RULE_IRI ) )
-            // InternalSeML.g:2008:2: ( RULE_IRI )
+            // InternalSeML.g:2019:1: ( ( RULE_IRI ) )
+            // InternalSeML.g:2020:2: ( RULE_IRI )
             {
-            // InternalSeML.g:2008:2: ( RULE_IRI )
-            // InternalSeML.g:2009:3: RULE_IRI
+            // InternalSeML.g:2020:2: ( RULE_IRI )
+            // InternalSeML.g:2021:3: RULE_IRI
             {
              before(grammarAccess.getObjectPropertyAccess().getNameIRITerminalRuleCall_1_0()); 
             match(input,RULE_IRI,FOLLOW_2); 
@@ -6049,17 +6078,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ObjectProperty__IriAssignment_2"
-    // InternalSeML.g:2018:1: rule__ObjectProperty__IriAssignment_2 : ( RULE_STRING ) ;
+    // InternalSeML.g:2030:1: rule__ObjectProperty__IriAssignment_2 : ( RULE_STRING ) ;
     public final void rule__ObjectProperty__IriAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:2022:1: ( ( RULE_STRING ) )
-            // InternalSeML.g:2023:2: ( RULE_STRING )
+            // InternalSeML.g:2034:1: ( ( RULE_STRING ) )
+            // InternalSeML.g:2035:2: ( RULE_STRING )
             {
-            // InternalSeML.g:2023:2: ( RULE_STRING )
-            // InternalSeML.g:2024:3: RULE_STRING
+            // InternalSeML.g:2035:2: ( RULE_STRING )
+            // InternalSeML.g:2036:3: RULE_STRING
             {
              before(grammarAccess.getObjectPropertyAccess().getIriSTRINGTerminalRuleCall_2_0()); 
             match(input,RULE_STRING,FOLLOW_2); 
@@ -6086,17 +6115,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Characteristic__NameAssignment_1"
-    // InternalSeML.g:2033:1: rule__Characteristic__NameAssignment_1 : ( RULE_IRI ) ;
+    // InternalSeML.g:2045:1: rule__Characteristic__NameAssignment_1 : ( RULE_IRI ) ;
     public final void rule__Characteristic__NameAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:2037:1: ( ( RULE_IRI ) )
-            // InternalSeML.g:2038:2: ( RULE_IRI )
+            // InternalSeML.g:2049:1: ( ( RULE_IRI ) )
+            // InternalSeML.g:2050:2: ( RULE_IRI )
             {
-            // InternalSeML.g:2038:2: ( RULE_IRI )
-            // InternalSeML.g:2039:3: RULE_IRI
+            // InternalSeML.g:2050:2: ( RULE_IRI )
+            // InternalSeML.g:2051:3: RULE_IRI
             {
              before(grammarAccess.getCharacteristicAccess().getNameIRITerminalRuleCall_1_0()); 
             match(input,RULE_IRI,FOLLOW_2); 
@@ -6123,17 +6152,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Characteristic__IriAssignment_2"
-    // InternalSeML.g:2048:1: rule__Characteristic__IriAssignment_2 : ( RULE_STRING ) ;
+    // InternalSeML.g:2060:1: rule__Characteristic__IriAssignment_2 : ( RULE_STRING ) ;
     public final void rule__Characteristic__IriAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:2052:1: ( ( RULE_STRING ) )
-            // InternalSeML.g:2053:2: ( RULE_STRING )
+            // InternalSeML.g:2064:1: ( ( RULE_STRING ) )
+            // InternalSeML.g:2065:2: ( RULE_STRING )
             {
-            // InternalSeML.g:2053:2: ( RULE_STRING )
-            // InternalSeML.g:2054:3: RULE_STRING
+            // InternalSeML.g:2065:2: ( RULE_STRING )
+            // InternalSeML.g:2066:3: RULE_STRING
             {
              before(grammarAccess.getCharacteristicAccess().getIriSTRINGTerminalRuleCall_2_0()); 
             match(input,RULE_STRING,FOLLOW_2); 
@@ -6160,17 +6189,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__MetaIndividual__ClsAssignment_1"
-    // InternalSeML.g:2063:1: rule__MetaIndividual__ClsAssignment_1 : ( RULE_STRING ) ;
+    // InternalSeML.g:2075:1: rule__MetaIndividual__ClsAssignment_1 : ( RULE_STRING ) ;
     public final void rule__MetaIndividual__ClsAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:2067:1: ( ( RULE_STRING ) )
-            // InternalSeML.g:2068:2: ( RULE_STRING )
+            // InternalSeML.g:2079:1: ( ( RULE_STRING ) )
+            // InternalSeML.g:2080:2: ( RULE_STRING )
             {
-            // InternalSeML.g:2068:2: ( RULE_STRING )
-            // InternalSeML.g:2069:3: RULE_STRING
+            // InternalSeML.g:2080:2: ( RULE_STRING )
+            // InternalSeML.g:2081:3: RULE_STRING
             {
              before(grammarAccess.getMetaIndividualAccess().getClsSTRINGTerminalRuleCall_1_0()); 
             match(input,RULE_STRING,FOLLOW_2); 
@@ -6197,17 +6226,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__MetaIndividual__NameAssignment_2"
-    // InternalSeML.g:2078:1: rule__MetaIndividual__NameAssignment_2 : ( RULE_IRI ) ;
+    // InternalSeML.g:2090:1: rule__MetaIndividual__NameAssignment_2 : ( RULE_IRI ) ;
     public final void rule__MetaIndividual__NameAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:2082:1: ( ( RULE_IRI ) )
-            // InternalSeML.g:2083:2: ( RULE_IRI )
+            // InternalSeML.g:2094:1: ( ( RULE_IRI ) )
+            // InternalSeML.g:2095:2: ( RULE_IRI )
             {
-            // InternalSeML.g:2083:2: ( RULE_IRI )
-            // InternalSeML.g:2084:3: RULE_IRI
+            // InternalSeML.g:2095:2: ( RULE_IRI )
+            // InternalSeML.g:2096:3: RULE_IRI
             {
              before(grammarAccess.getMetaIndividualAccess().getNameIRITerminalRuleCall_2_0()); 
             match(input,RULE_IRI,FOLLOW_2); 
@@ -6234,17 +6263,17 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__MetaIndividual__IriAssignment_3"
-    // InternalSeML.g:2093:1: rule__MetaIndividual__IriAssignment_3 : ( RULE_STRING ) ;
+    // InternalSeML.g:2105:1: rule__MetaIndividual__IriAssignment_3 : ( RULE_STRING ) ;
     public final void rule__MetaIndividual__IriAssignment_3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalSeML.g:2097:1: ( ( RULE_STRING ) )
-            // InternalSeML.g:2098:2: ( RULE_STRING )
+            // InternalSeML.g:2109:1: ( ( RULE_STRING ) )
+            // InternalSeML.g:2110:2: ( RULE_STRING )
             {
-            // InternalSeML.g:2098:2: ( RULE_STRING )
-            // InternalSeML.g:2099:3: RULE_STRING
+            // InternalSeML.g:2110:2: ( RULE_STRING )
+            // InternalSeML.g:2111:3: RULE_STRING
             {
              before(grammarAccess.getMetaIndividualAccess().getIriSTRINGTerminalRuleCall_3_0()); 
             match(input,RULE_STRING,FOLLOW_2); 
@@ -6286,8 +6315,8 @@ public class InternalSeMLParser extends AbstractInternalContentAssistParser {
     public static final BitSet FOLLOW_10 = new BitSet(new long[]{0x0000000000800002L});
     public static final BitSet FOLLOW_11 = new BitSet(new long[]{0x0000000000000010L});
     public static final BitSet FOLLOW_12 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_13 = new BitSet(new long[]{0x0000000000000022L});
-    public static final BitSet FOLLOW_14 = new BitSet(new long[]{0x0000000000008000L});
+    public static final BitSet FOLLOW_13 = new BitSet(new long[]{0x0000000000008020L});
+    public static final BitSet FOLLOW_14 = new BitSet(new long[]{0x0000000000008002L});
     public static final BitSet FOLLOW_15 = new BitSet(new long[]{0x0000000000000012L});
 
 }

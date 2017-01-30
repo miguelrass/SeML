@@ -7,6 +7,7 @@ import com.clarkparsia.pellet.owlapi.PelletReasoner;
 
 import javax.annotation.Nonnull;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -18,7 +19,15 @@ public class RestrictionOverseer implements OWLClassExpressionVisitor {
 	private OWLNamedIndividual individual;
 	private PelletReasoner reasoner;
 	private String report;
+	private static final String OWL_OP_demands = Ontologies.OWL_Upper + "demands";
+	private static final String OWL_OP_hasValue = Ontologies.OWL_Upper + "hasValue";
+	private static final String OWL_OP_characterizes = Ontologies.OWL_Upper + "characterizes";
+	private static final String OWL_OP_isCharacterizedBy = Ontologies.OWL_Upper + "isCharacterizedBy";
+	List<String> IgnoreOPs = Arrays.asList(OWL_OP_hasValue, OWL_OP_characterizes, OWL_OP_isCharacterizedBy);
 	
+	public enum RestrType {
+	    MIN, EXACT, SOME
+	}
 
     public RestrictionOverseer(OWLNamedIndividual i, PelletReasoner r) {
     	individual = i;
@@ -81,50 +90,99 @@ public class RestrictionOverseer implements OWLClassExpressionVisitor {
 	//- Mix of the preceding characteristics
     //-----------------------------------
     
-   
+    //======================================================================== Restrictions which close the World
+    
     @Override
     public void visit(@Nonnull OWLObjectMinCardinality owlObjectMinCardinality) {
     	OWLObjectPropertyExpression property = owlObjectMinCardinality.getProperty(); //object property
-    	OWLClassExpression second = owlObjectMinCardinality.getFiller(); //second individual        
-    	long cardinality = reasoner.getObjectPropertyValues(individual, property).entities().count(); //no. of relations
-        
-        if(cardinality < owlObjectMinCardinality.getCardinality()){
-        	report += "Restriction: " + property.getNamedProperty() + " min " + owlObjectMinCardinality.getCardinality() + " " + second
-        			+ "\nIssue: " + cardinality + " < " + owlObjectMinCardinality.getCardinality() + "\n";
+    	String propertyIRI = property.getNamedProperty().getIRI().toString(); //object property IRI
+    	OWLClassExpression second = owlObjectMinCardinality.getFiller(); //second individual   
+    	long MinCardinality = owlObjectMinCardinality.getCardinality();
+    	long cardinality;
+    	
+    	//-------------------------------------------------------------------------- Process "characteristic" related tasks
+    	if(IgnoreOPs.contains(propertyIRI)) return; //ignore these ObjProperties
+    	
+    	if(propertyIRI.equals(OWL_OP_demands)) //if ObjProp is "demands" cardinality is not calculated based on no. of relations
+    		cardinality = reasoner.getInstances(second, false).entities().count(); //get no. of instances of the restricted component
+    	else
+    	//-----------------------------------------------------------------------------------------------------------------
+    		cardinality = reasoner.getObjectPropertyValues(individual, property).entities().count(); //no. of relations
+    	
+        if(cardinality < MinCardinality){
+        	report += "Restriction: " + property.getNamedProperty() + " min " + MinCardinality + " " + second
+        			+ "\nIssue: " + cardinality + " < " + MinCardinality + "\n";
         }
     }
 
     @Override
     public void visit(@Nonnull OWLObjectExactCardinality owlObjectExactCardinality) {
     	OWLObjectPropertyExpression property = owlObjectExactCardinality.getProperty(); //object property
+    	String propertyIRI = property.getNamedProperty().getIRI().toString(); //object property IRI
     	OWLClassExpression second = owlObjectExactCardinality.getFiller(); //second individual
-    	long cardinality = reasoner.getObjectPropertyValues(individual, property).entities().count(); //no. of relations
-        
-        if(cardinality != owlObjectExactCardinality.getCardinality()){ //if cardinality > restriction the ontology is inconsistent anyway
-        	report += "Restriction: " + property.getNamedProperty() + " exactly " + owlObjectExactCardinality.getCardinality() + " " + second
-        			+ "\nIssue: " + cardinality + " =/= " + owlObjectExactCardinality.getCardinality() + "\n";
+    	long ExactCardinality = owlObjectExactCardinality.getCardinality();
+    	long cardinality;
+    	
+    	//-------------------------------------------------------------------------- Process "characteristic" related tasks
+    	if(IgnoreOPs.contains(propertyIRI)) return; //ignore these ObjProperties
+    	
+    	if(propertyIRI.equals(OWL_OP_demands)) //if ObjProp is "demands" cardinality is not calculated based on no. of relations
+    		cardinality = reasoner.getInstances(second, false).entities().count(); //get no. of instances of the restricted component
+    	else
+    	//-----------------------------------------------------------------------------------------------------------------
+    		cardinality = reasoner.getObjectPropertyValues(individual, property).entities().count(); //no. of relations
+    	
+        if(cardinality != ExactCardinality){ //if cardinality > restriction the ontology is inconsistent anyway
+        	report += "Restriction: " + property.getNamedProperty() + " exactly " + ExactCardinality + " " + second
+        			+ "\nIssue: " + cardinality + " =/= " + ExactCardinality + "\n";
         }
     }
 
     @Override
     public void visit(@Nonnull OWLObjectSomeValuesFrom owlObjectSomeValuesFrom) {
     	OWLObjectPropertyExpression property = owlObjectSomeValuesFrom.getProperty(); //object property
+    	String propertyIRI = property.getNamedProperty().getIRI().toString(); //object property IRI
     	OWLClassExpression second = owlObjectSomeValuesFrom.getFiller(); //second individual        
-    	long cardinality = reasoner.getObjectPropertyValues(individual, property).entities().count(); //no. of relations
+    	long cardinality;
+    	
+    	//-------------------------------------------------------------------------- Process "characteristic" related tasks
+    	if(IgnoreOPs.contains(propertyIRI)) return; //ignore these ObjProperties
+    	
+    	if(propertyIRI.equals(OWL_OP_demands)) //if ObjProp is "demands" cardinality is not calculated based on no. of relations
+    		cardinality = reasoner.getInstances(second, false).entities().count(); //get no. of instances of the restricted component
+    	else
+    	//-----------------------------------------------------------------------------------------------------------------
+    		cardinality = reasoner.getObjectPropertyValues(individual, property).entities().count(); //no. of relations
         
         if(cardinality == 0){
         	report += "Restriction: " + property.getNamedProperty() + " some " + second + "\nIssue: There is no relation of this type\n";
         }
     }
     
-
+    //======================================================================== Restrictions which are not an Open World problem, except for characteristics
     
+    @Override public void visit(@Nonnull OWLObjectMaxCardinality owlObjectMaxCardinality) {
+    	OWLObjectPropertyExpression property = owlObjectMaxCardinality.getProperty(); //object property
+    	String propertyIRI = property.getNamedProperty().getIRI().toString(); //object property IRI
+    	OWLClassExpression second = owlObjectMaxCardinality.getFiller(); //second individual    
+    	long MaxCardinality = owlObjectMaxCardinality.getCardinality();
+    	long cardinality;
+    	
+    	//-------------------------------------------------------------------------- Process "characteristic" related tasks
+    	if(IgnoreOPs.contains(propertyIRI) || (!propertyIRI.equals(OWL_OP_demands))) return; //ignore these ObjProperties
+    	cardinality = reasoner.getInstances(second, false).entities().count(); //get no. of instances of the restricted component
+    	
+        if(cardinality > MaxCardinality){
+        	report += "Restriction: " + property.getNamedProperty() + " max " + MaxCardinality + " " + second
+        			+ "\nIssue: " + cardinality + " > " + MaxCardinality + "\n";
+        }
+    }
     
     //======================================================================== Restrictions which are not an Open World problem
     
     @Override public void visit(@Nonnull OWLDataAllValuesFrom owlDataAllValuesFrom) {}
     @Override public void visit(@Nonnull OWLDataMaxCardinality owlDataMaxCardinality) {}
-    @Override public void visit(@Nonnull OWLObjectMaxCardinality owlObjectMaxCardinality) {}
+    
     
     @Override public void visit(@Nonnull OWLObjectAllValuesFrom owlObjectAllValuesFrom) {}
 //    	OWLObjectPropertyExpression property = owlObjectAllValuesFrom.getProperty(); //object property
@@ -139,6 +197,7 @@ public class RestrictionOverseer implements OWLClassExpressionVisitor {
 //    	}
 //    }
     
+
     
   //======================================================================== Not yet analyzed 
 

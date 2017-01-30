@@ -31,11 +31,11 @@ class SeMLLabelProvider extends DefaultEObjectLabelProvider {
 //		'Greeting.gif'
 //	}
 
-	def importlabel(Import i){
-		val File ontfile = new File(i.getName());
-		if(ontfile.exists && ontfile.isFile) return "The imported file was last modified on " + ontfile.lastModified.toString
-
-	}
+//	def importlabel(Import i){
+//		val File ontfile = new File(i.getName());
+//		if(ontfile.exists && ontfile.isFile) return "The imported file was last modified on " + ontfile.lastModified.toString
+//
+//	}
 
 
 }

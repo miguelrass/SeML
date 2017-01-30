@@ -30,15 +30,15 @@ Sentence:
 ;
 
 Individual:
-	'new' cls+=[Component|IRI]+ name=IRI '\n' //However, an individual cannot have #
+	'new' cls+=[Component|IRI] (',' cls+=[Component|IRI])* name=IRI //However, an individual cannot have #
 ;
 
 UseCharacteristic:
-	'use' name=[Characteristic|IRI] '\n'
+	'use' name=[Characteristic|IRI]
 ;
 
 Relation:
-	instance1=[AnyIndividual|IRI] obj=[ObjectProperty|IRI] instance2=[AnyIndividual|IRI] '\n'
+	instance1=[AnyIndividual|IRI] obj=[ObjectProperty|IRI] instance2=[AnyIndividual|IRI]
 ;
 
 Component:
@@ -86,8 +86,8 @@ terminal SL_COMMENT:
 	'//' !('\n' | '\r')* ('\r'? '\n')?;
 	
 terminal IRI:
-	('#' | '&'..';' | '?'..'Z' | 'a'..'z' | '_')+;
-	//#  &'()*+,-./0-9:; ?@A-Z  a-z  _
+	('#' | '&'..'+' | '-'..'.'  | '0'..';' | '?'..'Z' | 'a'..'z' | '_')+;
+	//#  &'()*+  -.  0-9:; ?@A-Z  a-z  _
 
 terminal WS:
 	(' ' | '\t' | '\r' | '\n')+;

@@ -1,3 +1,4 @@
+','=15
 'Characteristic'=22
 'CompEntity'=20
 'CompEvent'=18
@@ -5,7 +6,6 @@
 'CompProperty'=19
 'MetaIndividual'=23
 'ObjectProperty'=21
-'\n'=15
 'import'=13
 'new'=14
 'use'=16

@@ -21,7 +21,7 @@ import java.util.ArrayList;
 @SuppressWarnings("all")
 public class InternalSeMLParser extends AbstractInternalAntlrParser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_STRING", "RULE_IRI", "RULE_INT", "RULE_FLOAT", "RULE_BOOL", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'import'", "'new'", "'\\n'", "'use'", "'CompProcess'", "'CompEvent'", "'CompProperty'", "'CompEntity'", "'ObjectProperty'", "'Characteristic'", "'MetaIndividual'"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_STRING", "RULE_IRI", "RULE_INT", "RULE_FLOAT", "RULE_BOOL", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'import'", "'new'", "','", "'use'", "'CompProcess'", "'CompEvent'", "'CompProperty'", "'CompEntity'", "'ObjectProperty'", "'Characteristic'", "'MetaIndividual'"
     };
     public static final int RULE_IRI=5;
     public static final int RULE_STRING=4;
@@ -976,63 +976,88 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleIndividual"
-    // InternalSeML.g:345:1: ruleIndividual returns [EObject current=null] : (otherlv_0= 'new' ( (otherlv_1= RULE_IRI ) )+ ( (lv_name_2_0= RULE_IRI ) ) otherlv_3= '\\n' ) ;
+    // InternalSeML.g:345:1: ruleIndividual returns [EObject current=null] : (otherlv_0= 'new' ( (otherlv_1= RULE_IRI ) ) (otherlv_2= ',' ( (otherlv_3= RULE_IRI ) ) )* ( (lv_name_4_0= RULE_IRI ) ) ) ;
     public final EObject ruleIndividual() throws RecognitionException {
         EObject current = null;
 
         Token otherlv_0=null;
         Token otherlv_1=null;
-        Token lv_name_2_0=null;
+        Token otherlv_2=null;
         Token otherlv_3=null;
+        Token lv_name_4_0=null;
 
 
         	enterRule();
 
         try {
-            // InternalSeML.g:351:2: ( (otherlv_0= 'new' ( (otherlv_1= RULE_IRI ) )+ ( (lv_name_2_0= RULE_IRI ) ) otherlv_3= '\\n' ) )
-            // InternalSeML.g:352:2: (otherlv_0= 'new' ( (otherlv_1= RULE_IRI ) )+ ( (lv_name_2_0= RULE_IRI ) ) otherlv_3= '\\n' )
+            // InternalSeML.g:351:2: ( (otherlv_0= 'new' ( (otherlv_1= RULE_IRI ) ) (otherlv_2= ',' ( (otherlv_3= RULE_IRI ) ) )* ( (lv_name_4_0= RULE_IRI ) ) ) )
+            // InternalSeML.g:352:2: (otherlv_0= 'new' ( (otherlv_1= RULE_IRI ) ) (otherlv_2= ',' ( (otherlv_3= RULE_IRI ) ) )* ( (lv_name_4_0= RULE_IRI ) ) )
             {
-            // InternalSeML.g:352:2: (otherlv_0= 'new' ( (otherlv_1= RULE_IRI ) )+ ( (lv_name_2_0= RULE_IRI ) ) otherlv_3= '\\n' )
-            // InternalSeML.g:353:3: otherlv_0= 'new' ( (otherlv_1= RULE_IRI ) )+ ( (lv_name_2_0= RULE_IRI ) ) otherlv_3= '\\n'
+            // InternalSeML.g:352:2: (otherlv_0= 'new' ( (otherlv_1= RULE_IRI ) ) (otherlv_2= ',' ( (otherlv_3= RULE_IRI ) ) )* ( (lv_name_4_0= RULE_IRI ) ) )
+            // InternalSeML.g:353:3: otherlv_0= 'new' ( (otherlv_1= RULE_IRI ) ) (otherlv_2= ',' ( (otherlv_3= RULE_IRI ) ) )* ( (lv_name_4_0= RULE_IRI ) )
             {
             otherlv_0=(Token)match(input,14,FOLLOW_10); 
 
             			newLeafNode(otherlv_0, grammarAccess.getIndividualAccess().getNewKeyword_0());
             		
-            // InternalSeML.g:357:3: ( (otherlv_1= RULE_IRI ) )+
-            int cnt9=0;
+            // InternalSeML.g:357:3: ( (otherlv_1= RULE_IRI ) )
+            // InternalSeML.g:358:4: (otherlv_1= RULE_IRI )
+            {
+            // InternalSeML.g:358:4: (otherlv_1= RULE_IRI )
+            // InternalSeML.g:359:5: otherlv_1= RULE_IRI
+            {
+
+            					if (current==null) {
+            						current = createModelElement(grammarAccess.getIndividualRule());
+            					}
+            				
+            otherlv_1=(Token)match(input,RULE_IRI,FOLLOW_11); 
+
+            					newLeafNode(otherlv_1, grammarAccess.getIndividualAccess().getClsComponentCrossReference_1_0());
+            				
+
+            }
+
+
+            }
+
+            // InternalSeML.g:370:3: (otherlv_2= ',' ( (otherlv_3= RULE_IRI ) ) )*
             loop9:
             do {
                 int alt9=2;
                 int LA9_0 = input.LA(1);
 
-                if ( (LA9_0==RULE_IRI) ) {
-                    int LA9_1 = input.LA(2);
-
-                    if ( (LA9_1==RULE_IRI) ) {
-                        alt9=1;
-                    }
-
-
+                if ( (LA9_0==15) ) {
+                    alt9=1;
                 }
 
 
                 switch (alt9) {
             	case 1 :
-            	    // InternalSeML.g:358:4: (otherlv_1= RULE_IRI )
+            	    // InternalSeML.g:371:4: otherlv_2= ',' ( (otherlv_3= RULE_IRI ) )
             	    {
-            	    // InternalSeML.g:358:4: (otherlv_1= RULE_IRI )
-            	    // InternalSeML.g:359:5: otherlv_1= RULE_IRI
+            	    otherlv_2=(Token)match(input,15,FOLLOW_10); 
+
+            	    				newLeafNode(otherlv_2, grammarAccess.getIndividualAccess().getCommaKeyword_2_0());
+            	    			
+            	    // InternalSeML.g:375:4: ( (otherlv_3= RULE_IRI ) )
+            	    // InternalSeML.g:376:5: (otherlv_3= RULE_IRI )
+            	    {
+            	    // InternalSeML.g:376:5: (otherlv_3= RULE_IRI )
+            	    // InternalSeML.g:377:6: otherlv_3= RULE_IRI
             	    {
 
-            	    					if (current==null) {
-            	    						current = createModelElement(grammarAccess.getIndividualRule());
-            	    					}
-            	    				
-            	    otherlv_1=(Token)match(input,RULE_IRI,FOLLOW_10); 
+            	    						if (current==null) {
+            	    							current = createModelElement(grammarAccess.getIndividualRule());
+            	    						}
+            	    					
+            	    otherlv_3=(Token)match(input,RULE_IRI,FOLLOW_11); 
 
-            	    					newLeafNode(otherlv_1, grammarAccess.getIndividualAccess().getClsComponentCrossReference_1_0());
-            	    				
+            	    						newLeafNode(otherlv_3, grammarAccess.getIndividualAccess().getClsComponentCrossReference_2_1_0());
+            	    					
+
+            	    }
+
 
             	    }
 
@@ -1041,23 +1066,19 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
             	    break;
 
             	default :
-            	    if ( cnt9 >= 1 ) break loop9;
-                        EarlyExitException eee =
-                            new EarlyExitException(9, input);
-                        throw eee;
+            	    break loop9;
                 }
-                cnt9++;
             } while (true);
 
-            // InternalSeML.g:370:3: ( (lv_name_2_0= RULE_IRI ) )
-            // InternalSeML.g:371:4: (lv_name_2_0= RULE_IRI )
+            // InternalSeML.g:389:3: ( (lv_name_4_0= RULE_IRI ) )
+            // InternalSeML.g:390:4: (lv_name_4_0= RULE_IRI )
             {
-            // InternalSeML.g:371:4: (lv_name_2_0= RULE_IRI )
-            // InternalSeML.g:372:5: lv_name_2_0= RULE_IRI
+            // InternalSeML.g:390:4: (lv_name_4_0= RULE_IRI )
+            // InternalSeML.g:391:5: lv_name_4_0= RULE_IRI
             {
-            lv_name_2_0=(Token)match(input,RULE_IRI,FOLLOW_11); 
+            lv_name_4_0=(Token)match(input,RULE_IRI,FOLLOW_2); 
 
-            					newLeafNode(lv_name_2_0, grammarAccess.getIndividualAccess().getNameIRITerminalRuleCall_2_0());
+            					newLeafNode(lv_name_4_0, grammarAccess.getIndividualAccess().getNameIRITerminalRuleCall_3_0());
             				
 
             					if (current==null) {
@@ -1066,7 +1087,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
             					setWithLastConsumed(
             						current,
             						"name",
-            						lv_name_2_0,
+            						lv_name_4_0,
             						"org.xtext.seml.SeML.IRI");
             				
 
@@ -1075,10 +1096,6 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_3=(Token)match(input,15,FOLLOW_2); 
-
-            			newLeafNode(otherlv_3, grammarAccess.getIndividualAccess().getControl000aKeyword_3());
-            		
 
             }
 
@@ -1102,7 +1119,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleUseCharacteristic"
-    // InternalSeML.g:396:1: entryRuleUseCharacteristic returns [EObject current=null] : iv_ruleUseCharacteristic= ruleUseCharacteristic EOF ;
+    // InternalSeML.g:411:1: entryRuleUseCharacteristic returns [EObject current=null] : iv_ruleUseCharacteristic= ruleUseCharacteristic EOF ;
     public final EObject entryRuleUseCharacteristic() throws RecognitionException {
         EObject current = null;
 
@@ -1110,8 +1127,8 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalSeML.g:396:58: (iv_ruleUseCharacteristic= ruleUseCharacteristic EOF )
-            // InternalSeML.g:397:2: iv_ruleUseCharacteristic= ruleUseCharacteristic EOF
+            // InternalSeML.g:411:58: (iv_ruleUseCharacteristic= ruleUseCharacteristic EOF )
+            // InternalSeML.g:412:2: iv_ruleUseCharacteristic= ruleUseCharacteristic EOF
             {
              newCompositeNode(grammarAccess.getUseCharacteristicRule()); 
             pushFollow(FOLLOW_1);
@@ -1138,40 +1155,39 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleUseCharacteristic"
-    // InternalSeML.g:403:1: ruleUseCharacteristic returns [EObject current=null] : (otherlv_0= 'use' ( (otherlv_1= RULE_IRI ) ) otherlv_2= '\\n' ) ;
+    // InternalSeML.g:418:1: ruleUseCharacteristic returns [EObject current=null] : (otherlv_0= 'use' ( (otherlv_1= RULE_IRI ) ) ) ;
     public final EObject ruleUseCharacteristic() throws RecognitionException {
         EObject current = null;
 
         Token otherlv_0=null;
         Token otherlv_1=null;
-        Token otherlv_2=null;
 
 
         	enterRule();
 
         try {
-            // InternalSeML.g:409:2: ( (otherlv_0= 'use' ( (otherlv_1= RULE_IRI ) ) otherlv_2= '\\n' ) )
-            // InternalSeML.g:410:2: (otherlv_0= 'use' ( (otherlv_1= RULE_IRI ) ) otherlv_2= '\\n' )
+            // InternalSeML.g:424:2: ( (otherlv_0= 'use' ( (otherlv_1= RULE_IRI ) ) ) )
+            // InternalSeML.g:425:2: (otherlv_0= 'use' ( (otherlv_1= RULE_IRI ) ) )
             {
-            // InternalSeML.g:410:2: (otherlv_0= 'use' ( (otherlv_1= RULE_IRI ) ) otherlv_2= '\\n' )
-            // InternalSeML.g:411:3: otherlv_0= 'use' ( (otherlv_1= RULE_IRI ) ) otherlv_2= '\\n'
+            // InternalSeML.g:425:2: (otherlv_0= 'use' ( (otherlv_1= RULE_IRI ) ) )
+            // InternalSeML.g:426:3: otherlv_0= 'use' ( (otherlv_1= RULE_IRI ) )
             {
             otherlv_0=(Token)match(input,16,FOLLOW_10); 
 
             			newLeafNode(otherlv_0, grammarAccess.getUseCharacteristicAccess().getUseKeyword_0());
             		
-            // InternalSeML.g:415:3: ( (otherlv_1= RULE_IRI ) )
-            // InternalSeML.g:416:4: (otherlv_1= RULE_IRI )
+            // InternalSeML.g:430:3: ( (otherlv_1= RULE_IRI ) )
+            // InternalSeML.g:431:4: (otherlv_1= RULE_IRI )
             {
-            // InternalSeML.g:416:4: (otherlv_1= RULE_IRI )
-            // InternalSeML.g:417:5: otherlv_1= RULE_IRI
+            // InternalSeML.g:431:4: (otherlv_1= RULE_IRI )
+            // InternalSeML.g:432:5: otherlv_1= RULE_IRI
             {
 
             					if (current==null) {
             						current = createModelElement(grammarAccess.getUseCharacteristicRule());
             					}
             				
-            otherlv_1=(Token)match(input,RULE_IRI,FOLLOW_11); 
+            otherlv_1=(Token)match(input,RULE_IRI,FOLLOW_2); 
 
             					newLeafNode(otherlv_1, grammarAccess.getUseCharacteristicAccess().getNameCharacteristicCrossReference_1_0());
             				
@@ -1181,10 +1197,6 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_2=(Token)match(input,15,FOLLOW_2); 
-
-            			newLeafNode(otherlv_2, grammarAccess.getUseCharacteristicAccess().getControl000aKeyword_2());
-            		
 
             }
 
@@ -1208,7 +1220,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleRelation"
-    // InternalSeML.g:436:1: entryRuleRelation returns [EObject current=null] : iv_ruleRelation= ruleRelation EOF ;
+    // InternalSeML.g:447:1: entryRuleRelation returns [EObject current=null] : iv_ruleRelation= ruleRelation EOF ;
     public final EObject entryRuleRelation() throws RecognitionException {
         EObject current = null;
 
@@ -1216,8 +1228,8 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalSeML.g:436:49: (iv_ruleRelation= ruleRelation EOF )
-            // InternalSeML.g:437:2: iv_ruleRelation= ruleRelation EOF
+            // InternalSeML.g:447:49: (iv_ruleRelation= ruleRelation EOF )
+            // InternalSeML.g:448:2: iv_ruleRelation= ruleRelation EOF
             {
              newCompositeNode(grammarAccess.getRelationRule()); 
             pushFollow(FOLLOW_1);
@@ -1244,30 +1256,29 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleRelation"
-    // InternalSeML.g:443:1: ruleRelation returns [EObject current=null] : ( ( (otherlv_0= RULE_IRI ) ) ( (otherlv_1= RULE_IRI ) ) ( (otherlv_2= RULE_IRI ) ) otherlv_3= '\\n' ) ;
+    // InternalSeML.g:454:1: ruleRelation returns [EObject current=null] : ( ( (otherlv_0= RULE_IRI ) ) ( (otherlv_1= RULE_IRI ) ) ( (otherlv_2= RULE_IRI ) ) ) ;
     public final EObject ruleRelation() throws RecognitionException {
         EObject current = null;
 
         Token otherlv_0=null;
         Token otherlv_1=null;
         Token otherlv_2=null;
-        Token otherlv_3=null;
 
 
         	enterRule();
 
         try {
-            // InternalSeML.g:449:2: ( ( ( (otherlv_0= RULE_IRI ) ) ( (otherlv_1= RULE_IRI ) ) ( (otherlv_2= RULE_IRI ) ) otherlv_3= '\\n' ) )
-            // InternalSeML.g:450:2: ( ( (otherlv_0= RULE_IRI ) ) ( (otherlv_1= RULE_IRI ) ) ( (otherlv_2= RULE_IRI ) ) otherlv_3= '\\n' )
+            // InternalSeML.g:460:2: ( ( ( (otherlv_0= RULE_IRI ) ) ( (otherlv_1= RULE_IRI ) ) ( (otherlv_2= RULE_IRI ) ) ) )
+            // InternalSeML.g:461:2: ( ( (otherlv_0= RULE_IRI ) ) ( (otherlv_1= RULE_IRI ) ) ( (otherlv_2= RULE_IRI ) ) )
             {
-            // InternalSeML.g:450:2: ( ( (otherlv_0= RULE_IRI ) ) ( (otherlv_1= RULE_IRI ) ) ( (otherlv_2= RULE_IRI ) ) otherlv_3= '\\n' )
-            // InternalSeML.g:451:3: ( (otherlv_0= RULE_IRI ) ) ( (otherlv_1= RULE_IRI ) ) ( (otherlv_2= RULE_IRI ) ) otherlv_3= '\\n'
+            // InternalSeML.g:461:2: ( ( (otherlv_0= RULE_IRI ) ) ( (otherlv_1= RULE_IRI ) ) ( (otherlv_2= RULE_IRI ) ) )
+            // InternalSeML.g:462:3: ( (otherlv_0= RULE_IRI ) ) ( (otherlv_1= RULE_IRI ) ) ( (otherlv_2= RULE_IRI ) )
             {
-            // InternalSeML.g:451:3: ( (otherlv_0= RULE_IRI ) )
-            // InternalSeML.g:452:4: (otherlv_0= RULE_IRI )
+            // InternalSeML.g:462:3: ( (otherlv_0= RULE_IRI ) )
+            // InternalSeML.g:463:4: (otherlv_0= RULE_IRI )
             {
-            // InternalSeML.g:452:4: (otherlv_0= RULE_IRI )
-            // InternalSeML.g:453:5: otherlv_0= RULE_IRI
+            // InternalSeML.g:463:4: (otherlv_0= RULE_IRI )
+            // InternalSeML.g:464:5: otherlv_0= RULE_IRI
             {
 
             					if (current==null) {
@@ -1284,11 +1295,11 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalSeML.g:464:3: ( (otherlv_1= RULE_IRI ) )
-            // InternalSeML.g:465:4: (otherlv_1= RULE_IRI )
+            // InternalSeML.g:475:3: ( (otherlv_1= RULE_IRI ) )
+            // InternalSeML.g:476:4: (otherlv_1= RULE_IRI )
             {
-            // InternalSeML.g:465:4: (otherlv_1= RULE_IRI )
-            // InternalSeML.g:466:5: otherlv_1= RULE_IRI
+            // InternalSeML.g:476:4: (otherlv_1= RULE_IRI )
+            // InternalSeML.g:477:5: otherlv_1= RULE_IRI
             {
 
             					if (current==null) {
@@ -1305,18 +1316,18 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalSeML.g:477:3: ( (otherlv_2= RULE_IRI ) )
-            // InternalSeML.g:478:4: (otherlv_2= RULE_IRI )
+            // InternalSeML.g:488:3: ( (otherlv_2= RULE_IRI ) )
+            // InternalSeML.g:489:4: (otherlv_2= RULE_IRI )
             {
-            // InternalSeML.g:478:4: (otherlv_2= RULE_IRI )
-            // InternalSeML.g:479:5: otherlv_2= RULE_IRI
+            // InternalSeML.g:489:4: (otherlv_2= RULE_IRI )
+            // InternalSeML.g:490:5: otherlv_2= RULE_IRI
             {
 
             					if (current==null) {
             						current = createModelElement(grammarAccess.getRelationRule());
             					}
             				
-            otherlv_2=(Token)match(input,RULE_IRI,FOLLOW_11); 
+            otherlv_2=(Token)match(input,RULE_IRI,FOLLOW_2); 
 
             					newLeafNode(otherlv_2, grammarAccess.getRelationAccess().getInstance2AnyIndividualCrossReference_2_0());
             				
@@ -1326,10 +1337,6 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_3=(Token)match(input,15,FOLLOW_2); 
-
-            			newLeafNode(otherlv_3, grammarAccess.getRelationAccess().getControl000aKeyword_3());
-            		
 
             }
 
@@ -1353,7 +1360,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleComponent"
-    // InternalSeML.g:498:1: entryRuleComponent returns [EObject current=null] : iv_ruleComponent= ruleComponent EOF ;
+    // InternalSeML.g:505:1: entryRuleComponent returns [EObject current=null] : iv_ruleComponent= ruleComponent EOF ;
     public final EObject entryRuleComponent() throws RecognitionException {
         EObject current = null;
 
@@ -1361,8 +1368,8 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalSeML.g:498:50: (iv_ruleComponent= ruleComponent EOF )
-            // InternalSeML.g:499:2: iv_ruleComponent= ruleComponent EOF
+            // InternalSeML.g:505:50: (iv_ruleComponent= ruleComponent EOF )
+            // InternalSeML.g:506:2: iv_ruleComponent= ruleComponent EOF
             {
              newCompositeNode(grammarAccess.getComponentRule()); 
             pushFollow(FOLLOW_1);
@@ -1389,7 +1396,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleComponent"
-    // InternalSeML.g:505:1: ruleComponent returns [EObject current=null] : (this_Component_Process_0= ruleComponent_Process | this_Component_Event_1= ruleComponent_Event | this_Component_Property_2= ruleComponent_Property | this_Component_Entity_3= ruleComponent_Entity ) ;
+    // InternalSeML.g:512:1: ruleComponent returns [EObject current=null] : (this_Component_Process_0= ruleComponent_Process | this_Component_Event_1= ruleComponent_Event | this_Component_Property_2= ruleComponent_Property | this_Component_Entity_3= ruleComponent_Entity ) ;
     public final EObject ruleComponent() throws RecognitionException {
         EObject current = null;
 
@@ -1406,10 +1413,10 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalSeML.g:511:2: ( (this_Component_Process_0= ruleComponent_Process | this_Component_Event_1= ruleComponent_Event | this_Component_Property_2= ruleComponent_Property | this_Component_Entity_3= ruleComponent_Entity ) )
-            // InternalSeML.g:512:2: (this_Component_Process_0= ruleComponent_Process | this_Component_Event_1= ruleComponent_Event | this_Component_Property_2= ruleComponent_Property | this_Component_Entity_3= ruleComponent_Entity )
+            // InternalSeML.g:518:2: ( (this_Component_Process_0= ruleComponent_Process | this_Component_Event_1= ruleComponent_Event | this_Component_Property_2= ruleComponent_Property | this_Component_Entity_3= ruleComponent_Entity ) )
+            // InternalSeML.g:519:2: (this_Component_Process_0= ruleComponent_Process | this_Component_Event_1= ruleComponent_Event | this_Component_Property_2= ruleComponent_Property | this_Component_Entity_3= ruleComponent_Entity )
             {
-            // InternalSeML.g:512:2: (this_Component_Process_0= ruleComponent_Process | this_Component_Event_1= ruleComponent_Event | this_Component_Property_2= ruleComponent_Property | this_Component_Entity_3= ruleComponent_Entity )
+            // InternalSeML.g:519:2: (this_Component_Process_0= ruleComponent_Process | this_Component_Event_1= ruleComponent_Event | this_Component_Property_2= ruleComponent_Property | this_Component_Entity_3= ruleComponent_Entity )
             int alt10=4;
             switch ( input.LA(1) ) {
             case 17:
@@ -1441,7 +1448,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
             switch (alt10) {
                 case 1 :
-                    // InternalSeML.g:513:3: this_Component_Process_0= ruleComponent_Process
+                    // InternalSeML.g:520:3: this_Component_Process_0= ruleComponent_Process
                     {
 
                     			newCompositeNode(grammarAccess.getComponentAccess().getComponent_ProcessParserRuleCall_0());
@@ -1459,7 +1466,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalSeML.g:522:3: this_Component_Event_1= ruleComponent_Event
+                    // InternalSeML.g:529:3: this_Component_Event_1= ruleComponent_Event
                     {
 
                     			newCompositeNode(grammarAccess.getComponentAccess().getComponent_EventParserRuleCall_1());
@@ -1477,7 +1484,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalSeML.g:531:3: this_Component_Property_2= ruleComponent_Property
+                    // InternalSeML.g:538:3: this_Component_Property_2= ruleComponent_Property
                     {
 
                     			newCompositeNode(grammarAccess.getComponentAccess().getComponent_PropertyParserRuleCall_2());
@@ -1495,7 +1502,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 4 :
-                    // InternalSeML.g:540:3: this_Component_Entity_3= ruleComponent_Entity
+                    // InternalSeML.g:547:3: this_Component_Entity_3= ruleComponent_Entity
                     {
 
                     			newCompositeNode(grammarAccess.getComponentAccess().getComponent_EntityParserRuleCall_3());
@@ -1535,7 +1542,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleComponent_Process"
-    // InternalSeML.g:552:1: entryRuleComponent_Process returns [EObject current=null] : iv_ruleComponent_Process= ruleComponent_Process EOF ;
+    // InternalSeML.g:559:1: entryRuleComponent_Process returns [EObject current=null] : iv_ruleComponent_Process= ruleComponent_Process EOF ;
     public final EObject entryRuleComponent_Process() throws RecognitionException {
         EObject current = null;
 
@@ -1543,8 +1550,8 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalSeML.g:552:58: (iv_ruleComponent_Process= ruleComponent_Process EOF )
-            // InternalSeML.g:553:2: iv_ruleComponent_Process= ruleComponent_Process EOF
+            // InternalSeML.g:559:58: (iv_ruleComponent_Process= ruleComponent_Process EOF )
+            // InternalSeML.g:560:2: iv_ruleComponent_Process= ruleComponent_Process EOF
             {
              newCompositeNode(grammarAccess.getComponent_ProcessRule()); 
             pushFollow(FOLLOW_1);
@@ -1571,7 +1578,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleComponent_Process"
-    // InternalSeML.g:559:1: ruleComponent_Process returns [EObject current=null] : (otherlv_0= 'CompProcess' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) ;
+    // InternalSeML.g:566:1: ruleComponent_Process returns [EObject current=null] : (otherlv_0= 'CompProcess' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) ;
     public final EObject ruleComponent_Process() throws RecognitionException {
         EObject current = null;
 
@@ -1583,21 +1590,21 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalSeML.g:565:2: ( (otherlv_0= 'CompProcess' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) )
-            // InternalSeML.g:566:2: (otherlv_0= 'CompProcess' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
+            // InternalSeML.g:572:2: ( (otherlv_0= 'CompProcess' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) )
+            // InternalSeML.g:573:2: (otherlv_0= 'CompProcess' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
             {
-            // InternalSeML.g:566:2: (otherlv_0= 'CompProcess' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
-            // InternalSeML.g:567:3: otherlv_0= 'CompProcess' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) )
+            // InternalSeML.g:573:2: (otherlv_0= 'CompProcess' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
+            // InternalSeML.g:574:3: otherlv_0= 'CompProcess' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) )
             {
             otherlv_0=(Token)match(input,17,FOLLOW_10); 
 
             			newLeafNode(otherlv_0, grammarAccess.getComponent_ProcessAccess().getCompProcessKeyword_0());
             		
-            // InternalSeML.g:571:3: ( (lv_name_1_0= RULE_IRI ) )
-            // InternalSeML.g:572:4: (lv_name_1_0= RULE_IRI )
+            // InternalSeML.g:578:3: ( (lv_name_1_0= RULE_IRI ) )
+            // InternalSeML.g:579:4: (lv_name_1_0= RULE_IRI )
             {
-            // InternalSeML.g:572:4: (lv_name_1_0= RULE_IRI )
-            // InternalSeML.g:573:5: lv_name_1_0= RULE_IRI
+            // InternalSeML.g:579:4: (lv_name_1_0= RULE_IRI )
+            // InternalSeML.g:580:5: lv_name_1_0= RULE_IRI
             {
             lv_name_1_0=(Token)match(input,RULE_IRI,FOLLOW_9); 
 
@@ -1619,11 +1626,11 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalSeML.g:589:3: ( (lv_iri_2_0= RULE_STRING ) )
-            // InternalSeML.g:590:4: (lv_iri_2_0= RULE_STRING )
+            // InternalSeML.g:596:3: ( (lv_iri_2_0= RULE_STRING ) )
+            // InternalSeML.g:597:4: (lv_iri_2_0= RULE_STRING )
             {
-            // InternalSeML.g:590:4: (lv_iri_2_0= RULE_STRING )
-            // InternalSeML.g:591:5: lv_iri_2_0= RULE_STRING
+            // InternalSeML.g:597:4: (lv_iri_2_0= RULE_STRING )
+            // InternalSeML.g:598:5: lv_iri_2_0= RULE_STRING
             {
             lv_iri_2_0=(Token)match(input,RULE_STRING,FOLLOW_2); 
 
@@ -1668,7 +1675,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleComponent_Event"
-    // InternalSeML.g:611:1: entryRuleComponent_Event returns [EObject current=null] : iv_ruleComponent_Event= ruleComponent_Event EOF ;
+    // InternalSeML.g:618:1: entryRuleComponent_Event returns [EObject current=null] : iv_ruleComponent_Event= ruleComponent_Event EOF ;
     public final EObject entryRuleComponent_Event() throws RecognitionException {
         EObject current = null;
 
@@ -1676,8 +1683,8 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalSeML.g:611:56: (iv_ruleComponent_Event= ruleComponent_Event EOF )
-            // InternalSeML.g:612:2: iv_ruleComponent_Event= ruleComponent_Event EOF
+            // InternalSeML.g:618:56: (iv_ruleComponent_Event= ruleComponent_Event EOF )
+            // InternalSeML.g:619:2: iv_ruleComponent_Event= ruleComponent_Event EOF
             {
              newCompositeNode(grammarAccess.getComponent_EventRule()); 
             pushFollow(FOLLOW_1);
@@ -1704,7 +1711,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleComponent_Event"
-    // InternalSeML.g:618:1: ruleComponent_Event returns [EObject current=null] : (otherlv_0= 'CompEvent' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) ;
+    // InternalSeML.g:625:1: ruleComponent_Event returns [EObject current=null] : (otherlv_0= 'CompEvent' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) ;
     public final EObject ruleComponent_Event() throws RecognitionException {
         EObject current = null;
 
@@ -1716,21 +1723,21 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalSeML.g:624:2: ( (otherlv_0= 'CompEvent' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) )
-            // InternalSeML.g:625:2: (otherlv_0= 'CompEvent' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
+            // InternalSeML.g:631:2: ( (otherlv_0= 'CompEvent' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) )
+            // InternalSeML.g:632:2: (otherlv_0= 'CompEvent' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
             {
-            // InternalSeML.g:625:2: (otherlv_0= 'CompEvent' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
-            // InternalSeML.g:626:3: otherlv_0= 'CompEvent' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) )
+            // InternalSeML.g:632:2: (otherlv_0= 'CompEvent' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
+            // InternalSeML.g:633:3: otherlv_0= 'CompEvent' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) )
             {
             otherlv_0=(Token)match(input,18,FOLLOW_10); 
 
             			newLeafNode(otherlv_0, grammarAccess.getComponent_EventAccess().getCompEventKeyword_0());
             		
-            // InternalSeML.g:630:3: ( (lv_name_1_0= RULE_IRI ) )
-            // InternalSeML.g:631:4: (lv_name_1_0= RULE_IRI )
+            // InternalSeML.g:637:3: ( (lv_name_1_0= RULE_IRI ) )
+            // InternalSeML.g:638:4: (lv_name_1_0= RULE_IRI )
             {
-            // InternalSeML.g:631:4: (lv_name_1_0= RULE_IRI )
-            // InternalSeML.g:632:5: lv_name_1_0= RULE_IRI
+            // InternalSeML.g:638:4: (lv_name_1_0= RULE_IRI )
+            // InternalSeML.g:639:5: lv_name_1_0= RULE_IRI
             {
             lv_name_1_0=(Token)match(input,RULE_IRI,FOLLOW_9); 
 
@@ -1752,11 +1759,11 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalSeML.g:648:3: ( (lv_iri_2_0= RULE_STRING ) )
-            // InternalSeML.g:649:4: (lv_iri_2_0= RULE_STRING )
+            // InternalSeML.g:655:3: ( (lv_iri_2_0= RULE_STRING ) )
+            // InternalSeML.g:656:4: (lv_iri_2_0= RULE_STRING )
             {
-            // InternalSeML.g:649:4: (lv_iri_2_0= RULE_STRING )
-            // InternalSeML.g:650:5: lv_iri_2_0= RULE_STRING
+            // InternalSeML.g:656:4: (lv_iri_2_0= RULE_STRING )
+            // InternalSeML.g:657:5: lv_iri_2_0= RULE_STRING
             {
             lv_iri_2_0=(Token)match(input,RULE_STRING,FOLLOW_2); 
 
@@ -1801,7 +1808,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleComponent_Property"
-    // InternalSeML.g:670:1: entryRuleComponent_Property returns [EObject current=null] : iv_ruleComponent_Property= ruleComponent_Property EOF ;
+    // InternalSeML.g:677:1: entryRuleComponent_Property returns [EObject current=null] : iv_ruleComponent_Property= ruleComponent_Property EOF ;
     public final EObject entryRuleComponent_Property() throws RecognitionException {
         EObject current = null;
 
@@ -1809,8 +1816,8 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalSeML.g:670:59: (iv_ruleComponent_Property= ruleComponent_Property EOF )
-            // InternalSeML.g:671:2: iv_ruleComponent_Property= ruleComponent_Property EOF
+            // InternalSeML.g:677:59: (iv_ruleComponent_Property= ruleComponent_Property EOF )
+            // InternalSeML.g:678:2: iv_ruleComponent_Property= ruleComponent_Property EOF
             {
              newCompositeNode(grammarAccess.getComponent_PropertyRule()); 
             pushFollow(FOLLOW_1);
@@ -1837,7 +1844,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleComponent_Property"
-    // InternalSeML.g:677:1: ruleComponent_Property returns [EObject current=null] : (otherlv_0= 'CompProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) ;
+    // InternalSeML.g:684:1: ruleComponent_Property returns [EObject current=null] : (otherlv_0= 'CompProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) ;
     public final EObject ruleComponent_Property() throws RecognitionException {
         EObject current = null;
 
@@ -1849,21 +1856,21 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalSeML.g:683:2: ( (otherlv_0= 'CompProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) )
-            // InternalSeML.g:684:2: (otherlv_0= 'CompProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
+            // InternalSeML.g:690:2: ( (otherlv_0= 'CompProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) )
+            // InternalSeML.g:691:2: (otherlv_0= 'CompProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
             {
-            // InternalSeML.g:684:2: (otherlv_0= 'CompProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
-            // InternalSeML.g:685:3: otherlv_0= 'CompProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) )
+            // InternalSeML.g:691:2: (otherlv_0= 'CompProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
+            // InternalSeML.g:692:3: otherlv_0= 'CompProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) )
             {
             otherlv_0=(Token)match(input,19,FOLLOW_10); 
 
             			newLeafNode(otherlv_0, grammarAccess.getComponent_PropertyAccess().getCompPropertyKeyword_0());
             		
-            // InternalSeML.g:689:3: ( (lv_name_1_0= RULE_IRI ) )
-            // InternalSeML.g:690:4: (lv_name_1_0= RULE_IRI )
+            // InternalSeML.g:696:3: ( (lv_name_1_0= RULE_IRI ) )
+            // InternalSeML.g:697:4: (lv_name_1_0= RULE_IRI )
             {
-            // InternalSeML.g:690:4: (lv_name_1_0= RULE_IRI )
-            // InternalSeML.g:691:5: lv_name_1_0= RULE_IRI
+            // InternalSeML.g:697:4: (lv_name_1_0= RULE_IRI )
+            // InternalSeML.g:698:5: lv_name_1_0= RULE_IRI
             {
             lv_name_1_0=(Token)match(input,RULE_IRI,FOLLOW_9); 
 
@@ -1885,11 +1892,11 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalSeML.g:707:3: ( (lv_iri_2_0= RULE_STRING ) )
-            // InternalSeML.g:708:4: (lv_iri_2_0= RULE_STRING )
+            // InternalSeML.g:714:3: ( (lv_iri_2_0= RULE_STRING ) )
+            // InternalSeML.g:715:4: (lv_iri_2_0= RULE_STRING )
             {
-            // InternalSeML.g:708:4: (lv_iri_2_0= RULE_STRING )
-            // InternalSeML.g:709:5: lv_iri_2_0= RULE_STRING
+            // InternalSeML.g:715:4: (lv_iri_2_0= RULE_STRING )
+            // InternalSeML.g:716:5: lv_iri_2_0= RULE_STRING
             {
             lv_iri_2_0=(Token)match(input,RULE_STRING,FOLLOW_2); 
 
@@ -1934,7 +1941,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleComponent_Entity"
-    // InternalSeML.g:729:1: entryRuleComponent_Entity returns [EObject current=null] : iv_ruleComponent_Entity= ruleComponent_Entity EOF ;
+    // InternalSeML.g:736:1: entryRuleComponent_Entity returns [EObject current=null] : iv_ruleComponent_Entity= ruleComponent_Entity EOF ;
     public final EObject entryRuleComponent_Entity() throws RecognitionException {
         EObject current = null;
 
@@ -1942,8 +1949,8 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalSeML.g:729:57: (iv_ruleComponent_Entity= ruleComponent_Entity EOF )
-            // InternalSeML.g:730:2: iv_ruleComponent_Entity= ruleComponent_Entity EOF
+            // InternalSeML.g:736:57: (iv_ruleComponent_Entity= ruleComponent_Entity EOF )
+            // InternalSeML.g:737:2: iv_ruleComponent_Entity= ruleComponent_Entity EOF
             {
              newCompositeNode(grammarAccess.getComponent_EntityRule()); 
             pushFollow(FOLLOW_1);
@@ -1970,7 +1977,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleComponent_Entity"
-    // InternalSeML.g:736:1: ruleComponent_Entity returns [EObject current=null] : (otherlv_0= 'CompEntity' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) ;
+    // InternalSeML.g:743:1: ruleComponent_Entity returns [EObject current=null] : (otherlv_0= 'CompEntity' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) ;
     public final EObject ruleComponent_Entity() throws RecognitionException {
         EObject current = null;
 
@@ -1982,21 +1989,21 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalSeML.g:742:2: ( (otherlv_0= 'CompEntity' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) )
-            // InternalSeML.g:743:2: (otherlv_0= 'CompEntity' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
+            // InternalSeML.g:749:2: ( (otherlv_0= 'CompEntity' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) )
+            // InternalSeML.g:750:2: (otherlv_0= 'CompEntity' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
             {
-            // InternalSeML.g:743:2: (otherlv_0= 'CompEntity' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
-            // InternalSeML.g:744:3: otherlv_0= 'CompEntity' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) )
+            // InternalSeML.g:750:2: (otherlv_0= 'CompEntity' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
+            // InternalSeML.g:751:3: otherlv_0= 'CompEntity' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) )
             {
             otherlv_0=(Token)match(input,20,FOLLOW_10); 
 
             			newLeafNode(otherlv_0, grammarAccess.getComponent_EntityAccess().getCompEntityKeyword_0());
             		
-            // InternalSeML.g:748:3: ( (lv_name_1_0= RULE_IRI ) )
-            // InternalSeML.g:749:4: (lv_name_1_0= RULE_IRI )
+            // InternalSeML.g:755:3: ( (lv_name_1_0= RULE_IRI ) )
+            // InternalSeML.g:756:4: (lv_name_1_0= RULE_IRI )
             {
-            // InternalSeML.g:749:4: (lv_name_1_0= RULE_IRI )
-            // InternalSeML.g:750:5: lv_name_1_0= RULE_IRI
+            // InternalSeML.g:756:4: (lv_name_1_0= RULE_IRI )
+            // InternalSeML.g:757:5: lv_name_1_0= RULE_IRI
             {
             lv_name_1_0=(Token)match(input,RULE_IRI,FOLLOW_9); 
 
@@ -2018,11 +2025,11 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalSeML.g:766:3: ( (lv_iri_2_0= RULE_STRING ) )
-            // InternalSeML.g:767:4: (lv_iri_2_0= RULE_STRING )
+            // InternalSeML.g:773:3: ( (lv_iri_2_0= RULE_STRING ) )
+            // InternalSeML.g:774:4: (lv_iri_2_0= RULE_STRING )
             {
-            // InternalSeML.g:767:4: (lv_iri_2_0= RULE_STRING )
-            // InternalSeML.g:768:5: lv_iri_2_0= RULE_STRING
+            // InternalSeML.g:774:4: (lv_iri_2_0= RULE_STRING )
+            // InternalSeML.g:775:5: lv_iri_2_0= RULE_STRING
             {
             lv_iri_2_0=(Token)match(input,RULE_STRING,FOLLOW_2); 
 
@@ -2067,7 +2074,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleObjectProperty"
-    // InternalSeML.g:788:1: entryRuleObjectProperty returns [EObject current=null] : iv_ruleObjectProperty= ruleObjectProperty EOF ;
+    // InternalSeML.g:795:1: entryRuleObjectProperty returns [EObject current=null] : iv_ruleObjectProperty= ruleObjectProperty EOF ;
     public final EObject entryRuleObjectProperty() throws RecognitionException {
         EObject current = null;
 
@@ -2075,8 +2082,8 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalSeML.g:788:55: (iv_ruleObjectProperty= ruleObjectProperty EOF )
-            // InternalSeML.g:789:2: iv_ruleObjectProperty= ruleObjectProperty EOF
+            // InternalSeML.g:795:55: (iv_ruleObjectProperty= ruleObjectProperty EOF )
+            // InternalSeML.g:796:2: iv_ruleObjectProperty= ruleObjectProperty EOF
             {
              newCompositeNode(grammarAccess.getObjectPropertyRule()); 
             pushFollow(FOLLOW_1);
@@ -2103,7 +2110,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleObjectProperty"
-    // InternalSeML.g:795:1: ruleObjectProperty returns [EObject current=null] : (otherlv_0= 'ObjectProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) ;
+    // InternalSeML.g:802:1: ruleObjectProperty returns [EObject current=null] : (otherlv_0= 'ObjectProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) ;
     public final EObject ruleObjectProperty() throws RecognitionException {
         EObject current = null;
 
@@ -2115,21 +2122,21 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalSeML.g:801:2: ( (otherlv_0= 'ObjectProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) )
-            // InternalSeML.g:802:2: (otherlv_0= 'ObjectProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
+            // InternalSeML.g:808:2: ( (otherlv_0= 'ObjectProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) )
+            // InternalSeML.g:809:2: (otherlv_0= 'ObjectProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
             {
-            // InternalSeML.g:802:2: (otherlv_0= 'ObjectProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
-            // InternalSeML.g:803:3: otherlv_0= 'ObjectProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) )
+            // InternalSeML.g:809:2: (otherlv_0= 'ObjectProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
+            // InternalSeML.g:810:3: otherlv_0= 'ObjectProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) )
             {
             otherlv_0=(Token)match(input,21,FOLLOW_10); 
 
             			newLeafNode(otherlv_0, grammarAccess.getObjectPropertyAccess().getObjectPropertyKeyword_0());
             		
-            // InternalSeML.g:807:3: ( (lv_name_1_0= RULE_IRI ) )
-            // InternalSeML.g:808:4: (lv_name_1_0= RULE_IRI )
+            // InternalSeML.g:814:3: ( (lv_name_1_0= RULE_IRI ) )
+            // InternalSeML.g:815:4: (lv_name_1_0= RULE_IRI )
             {
-            // InternalSeML.g:808:4: (lv_name_1_0= RULE_IRI )
-            // InternalSeML.g:809:5: lv_name_1_0= RULE_IRI
+            // InternalSeML.g:815:4: (lv_name_1_0= RULE_IRI )
+            // InternalSeML.g:816:5: lv_name_1_0= RULE_IRI
             {
             lv_name_1_0=(Token)match(input,RULE_IRI,FOLLOW_9); 
 
@@ -2151,11 +2158,11 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalSeML.g:825:3: ( (lv_iri_2_0= RULE_STRING ) )
-            // InternalSeML.g:826:4: (lv_iri_2_0= RULE_STRING )
+            // InternalSeML.g:832:3: ( (lv_iri_2_0= RULE_STRING ) )
+            // InternalSeML.g:833:4: (lv_iri_2_0= RULE_STRING )
             {
-            // InternalSeML.g:826:4: (lv_iri_2_0= RULE_STRING )
-            // InternalSeML.g:827:5: lv_iri_2_0= RULE_STRING
+            // InternalSeML.g:833:4: (lv_iri_2_0= RULE_STRING )
+            // InternalSeML.g:834:5: lv_iri_2_0= RULE_STRING
             {
             lv_iri_2_0=(Token)match(input,RULE_STRING,FOLLOW_2); 
 
@@ -2200,7 +2207,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleCharacteristic"
-    // InternalSeML.g:847:1: entryRuleCharacteristic returns [EObject current=null] : iv_ruleCharacteristic= ruleCharacteristic EOF ;
+    // InternalSeML.g:854:1: entryRuleCharacteristic returns [EObject current=null] : iv_ruleCharacteristic= ruleCharacteristic EOF ;
     public final EObject entryRuleCharacteristic() throws RecognitionException {
         EObject current = null;
 
@@ -2208,8 +2215,8 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalSeML.g:847:55: (iv_ruleCharacteristic= ruleCharacteristic EOF )
-            // InternalSeML.g:848:2: iv_ruleCharacteristic= ruleCharacteristic EOF
+            // InternalSeML.g:854:55: (iv_ruleCharacteristic= ruleCharacteristic EOF )
+            // InternalSeML.g:855:2: iv_ruleCharacteristic= ruleCharacteristic EOF
             {
              newCompositeNode(grammarAccess.getCharacteristicRule()); 
             pushFollow(FOLLOW_1);
@@ -2236,7 +2243,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleCharacteristic"
-    // InternalSeML.g:854:1: ruleCharacteristic returns [EObject current=null] : (otherlv_0= 'Characteristic' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) ;
+    // InternalSeML.g:861:1: ruleCharacteristic returns [EObject current=null] : (otherlv_0= 'Characteristic' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) ;
     public final EObject ruleCharacteristic() throws RecognitionException {
         EObject current = null;
 
@@ -2248,21 +2255,21 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalSeML.g:860:2: ( (otherlv_0= 'Characteristic' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) )
-            // InternalSeML.g:861:2: (otherlv_0= 'Characteristic' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
+            // InternalSeML.g:867:2: ( (otherlv_0= 'Characteristic' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) )
+            // InternalSeML.g:868:2: (otherlv_0= 'Characteristic' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
             {
-            // InternalSeML.g:861:2: (otherlv_0= 'Characteristic' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
-            // InternalSeML.g:862:3: otherlv_0= 'Characteristic' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) )
+            // InternalSeML.g:868:2: (otherlv_0= 'Characteristic' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
+            // InternalSeML.g:869:3: otherlv_0= 'Characteristic' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) )
             {
             otherlv_0=(Token)match(input,22,FOLLOW_10); 
 
             			newLeafNode(otherlv_0, grammarAccess.getCharacteristicAccess().getCharacteristicKeyword_0());
             		
-            // InternalSeML.g:866:3: ( (lv_name_1_0= RULE_IRI ) )
-            // InternalSeML.g:867:4: (lv_name_1_0= RULE_IRI )
+            // InternalSeML.g:873:3: ( (lv_name_1_0= RULE_IRI ) )
+            // InternalSeML.g:874:4: (lv_name_1_0= RULE_IRI )
             {
-            // InternalSeML.g:867:4: (lv_name_1_0= RULE_IRI )
-            // InternalSeML.g:868:5: lv_name_1_0= RULE_IRI
+            // InternalSeML.g:874:4: (lv_name_1_0= RULE_IRI )
+            // InternalSeML.g:875:5: lv_name_1_0= RULE_IRI
             {
             lv_name_1_0=(Token)match(input,RULE_IRI,FOLLOW_9); 
 
@@ -2284,11 +2291,11 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalSeML.g:884:3: ( (lv_iri_2_0= RULE_STRING ) )
-            // InternalSeML.g:885:4: (lv_iri_2_0= RULE_STRING )
+            // InternalSeML.g:891:3: ( (lv_iri_2_0= RULE_STRING ) )
+            // InternalSeML.g:892:4: (lv_iri_2_0= RULE_STRING )
             {
-            // InternalSeML.g:885:4: (lv_iri_2_0= RULE_STRING )
-            // InternalSeML.g:886:5: lv_iri_2_0= RULE_STRING
+            // InternalSeML.g:892:4: (lv_iri_2_0= RULE_STRING )
+            // InternalSeML.g:893:5: lv_iri_2_0= RULE_STRING
             {
             lv_iri_2_0=(Token)match(input,RULE_STRING,FOLLOW_2); 
 
@@ -2333,7 +2340,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleMetaIndividual"
-    // InternalSeML.g:906:1: entryRuleMetaIndividual returns [EObject current=null] : iv_ruleMetaIndividual= ruleMetaIndividual EOF ;
+    // InternalSeML.g:913:1: entryRuleMetaIndividual returns [EObject current=null] : iv_ruleMetaIndividual= ruleMetaIndividual EOF ;
     public final EObject entryRuleMetaIndividual() throws RecognitionException {
         EObject current = null;
 
@@ -2341,8 +2348,8 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalSeML.g:906:55: (iv_ruleMetaIndividual= ruleMetaIndividual EOF )
-            // InternalSeML.g:907:2: iv_ruleMetaIndividual= ruleMetaIndividual EOF
+            // InternalSeML.g:913:55: (iv_ruleMetaIndividual= ruleMetaIndividual EOF )
+            // InternalSeML.g:914:2: iv_ruleMetaIndividual= ruleMetaIndividual EOF
             {
              newCompositeNode(grammarAccess.getMetaIndividualRule()); 
             pushFollow(FOLLOW_1);
@@ -2369,7 +2376,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleMetaIndividual"
-    // InternalSeML.g:913:1: ruleMetaIndividual returns [EObject current=null] : (otherlv_0= 'MetaIndividual' ( (lv_cls_1_0= RULE_STRING ) )+ ( (lv_name_2_0= RULE_IRI ) ) ( (lv_iri_3_0= RULE_STRING ) ) ) ;
+    // InternalSeML.g:920:1: ruleMetaIndividual returns [EObject current=null] : (otherlv_0= 'MetaIndividual' ( (lv_cls_1_0= RULE_STRING ) )+ ( (lv_name_2_0= RULE_IRI ) ) ( (lv_iri_3_0= RULE_STRING ) ) ) ;
     public final EObject ruleMetaIndividual() throws RecognitionException {
         EObject current = null;
 
@@ -2382,17 +2389,17 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalSeML.g:919:2: ( (otherlv_0= 'MetaIndividual' ( (lv_cls_1_0= RULE_STRING ) )+ ( (lv_name_2_0= RULE_IRI ) ) ( (lv_iri_3_0= RULE_STRING ) ) ) )
-            // InternalSeML.g:920:2: (otherlv_0= 'MetaIndividual' ( (lv_cls_1_0= RULE_STRING ) )+ ( (lv_name_2_0= RULE_IRI ) ) ( (lv_iri_3_0= RULE_STRING ) ) )
+            // InternalSeML.g:926:2: ( (otherlv_0= 'MetaIndividual' ( (lv_cls_1_0= RULE_STRING ) )+ ( (lv_name_2_0= RULE_IRI ) ) ( (lv_iri_3_0= RULE_STRING ) ) ) )
+            // InternalSeML.g:927:2: (otherlv_0= 'MetaIndividual' ( (lv_cls_1_0= RULE_STRING ) )+ ( (lv_name_2_0= RULE_IRI ) ) ( (lv_iri_3_0= RULE_STRING ) ) )
             {
-            // InternalSeML.g:920:2: (otherlv_0= 'MetaIndividual' ( (lv_cls_1_0= RULE_STRING ) )+ ( (lv_name_2_0= RULE_IRI ) ) ( (lv_iri_3_0= RULE_STRING ) ) )
-            // InternalSeML.g:921:3: otherlv_0= 'MetaIndividual' ( (lv_cls_1_0= RULE_STRING ) )+ ( (lv_name_2_0= RULE_IRI ) ) ( (lv_iri_3_0= RULE_STRING ) )
+            // InternalSeML.g:927:2: (otherlv_0= 'MetaIndividual' ( (lv_cls_1_0= RULE_STRING ) )+ ( (lv_name_2_0= RULE_IRI ) ) ( (lv_iri_3_0= RULE_STRING ) ) )
+            // InternalSeML.g:928:3: otherlv_0= 'MetaIndividual' ( (lv_cls_1_0= RULE_STRING ) )+ ( (lv_name_2_0= RULE_IRI ) ) ( (lv_iri_3_0= RULE_STRING ) )
             {
             otherlv_0=(Token)match(input,23,FOLLOW_9); 
 
             			newLeafNode(otherlv_0, grammarAccess.getMetaIndividualAccess().getMetaIndividualKeyword_0());
             		
-            // InternalSeML.g:925:3: ( (lv_cls_1_0= RULE_STRING ) )+
+            // InternalSeML.g:932:3: ( (lv_cls_1_0= RULE_STRING ) )+
             int cnt11=0;
             loop11:
             do {
@@ -2406,10 +2413,10 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
                 switch (alt11) {
             	case 1 :
-            	    // InternalSeML.g:926:4: (lv_cls_1_0= RULE_STRING )
+            	    // InternalSeML.g:933:4: (lv_cls_1_0= RULE_STRING )
             	    {
-            	    // InternalSeML.g:926:4: (lv_cls_1_0= RULE_STRING )
-            	    // InternalSeML.g:927:5: lv_cls_1_0= RULE_STRING
+            	    // InternalSeML.g:933:4: (lv_cls_1_0= RULE_STRING )
+            	    // InternalSeML.g:934:5: lv_cls_1_0= RULE_STRING
             	    {
             	    lv_cls_1_0=(Token)match(input,RULE_STRING,FOLLOW_12); 
 
@@ -2441,11 +2448,11 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
                 cnt11++;
             } while (true);
 
-            // InternalSeML.g:943:3: ( (lv_name_2_0= RULE_IRI ) )
-            // InternalSeML.g:944:4: (lv_name_2_0= RULE_IRI )
+            // InternalSeML.g:950:3: ( (lv_name_2_0= RULE_IRI ) )
+            // InternalSeML.g:951:4: (lv_name_2_0= RULE_IRI )
             {
-            // InternalSeML.g:944:4: (lv_name_2_0= RULE_IRI )
-            // InternalSeML.g:945:5: lv_name_2_0= RULE_IRI
+            // InternalSeML.g:951:4: (lv_name_2_0= RULE_IRI )
+            // InternalSeML.g:952:5: lv_name_2_0= RULE_IRI
             {
             lv_name_2_0=(Token)match(input,RULE_IRI,FOLLOW_9); 
 
@@ -2467,11 +2474,11 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalSeML.g:961:3: ( (lv_iri_3_0= RULE_STRING ) )
-            // InternalSeML.g:962:4: (lv_iri_3_0= RULE_STRING )
+            // InternalSeML.g:968:3: ( (lv_iri_3_0= RULE_STRING ) )
+            // InternalSeML.g:969:4: (lv_iri_3_0= RULE_STRING )
             {
-            // InternalSeML.g:962:4: (lv_iri_3_0= RULE_STRING )
-            // InternalSeML.g:963:5: lv_iri_3_0= RULE_STRING
+            // InternalSeML.g:969:4: (lv_iri_3_0= RULE_STRING )
+            // InternalSeML.g:970:5: lv_iri_3_0= RULE_STRING
             {
             lv_iri_3_0=(Token)match(input,RULE_STRING,FOLLOW_2); 
 
@@ -2529,7 +2536,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
     public static final BitSet FOLLOW_8 = new BitSet(new long[]{0x0000000000800002L});
     public static final BitSet FOLLOW_9 = new BitSet(new long[]{0x0000000000000010L});
     public static final BitSet FOLLOW_10 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_11 = new BitSet(new long[]{0x0000000000008000L});
+    public static final BitSet FOLLOW_11 = new BitSet(new long[]{0x0000000000008020L});
     public static final BitSet FOLLOW_12 = new BitSet(new long[]{0x0000000000000030L});
 
 }

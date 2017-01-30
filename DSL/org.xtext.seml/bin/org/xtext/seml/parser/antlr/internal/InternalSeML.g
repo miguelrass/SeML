@@ -366,12 +366,31 @@ ruleIndividual returns [EObject current=null]
 					newLeafNode(otherlv_1, grammarAccess.getIndividualAccess().getClsComponentCrossReference_1_0());
 				}
 			)
-		)+
+		)
+		(
+			otherlv_2=','
+			{
+				newLeafNode(otherlv_2, grammarAccess.getIndividualAccess().getCommaKeyword_2_0());
+			}
+			(
+				(
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getIndividualRule());
+						}
+					}
+					otherlv_3=RULE_IRI
+					{
+						newLeafNode(otherlv_3, grammarAccess.getIndividualAccess().getClsComponentCrossReference_2_1_0());
+					}
+				)
+			)
+		)*
 		(
 			(
-				lv_name_2_0=RULE_IRI
+				lv_name_4_0=RULE_IRI
 				{
-					newLeafNode(lv_name_2_0, grammarAccess.getIndividualAccess().getNameIRITerminalRuleCall_2_0());
+					newLeafNode(lv_name_4_0, grammarAccess.getIndividualAccess().getNameIRITerminalRuleCall_3_0());
 				}
 				{
 					if ($current==null) {
@@ -380,15 +399,11 @@ ruleIndividual returns [EObject current=null]
 					setWithLastConsumed(
 						$current,
 						"name",
-						lv_name_2_0,
+						lv_name_4_0,
 						"org.xtext.seml.SeML.IRI");
 				}
 			)
 		)
-		otherlv_3='\n'
-		{
-			newLeafNode(otherlv_3, grammarAccess.getIndividualAccess().getControl000aKeyword_3());
-		}
 	)
 ;
 
@@ -425,10 +440,6 @@ ruleUseCharacteristic returns [EObject current=null]
 				}
 			)
 		)
-		otherlv_2='\n'
-		{
-			newLeafNode(otherlv_2, grammarAccess.getUseCharacteristicAccess().getControl000aKeyword_2());
-		}
 	)
 ;
 
@@ -487,10 +498,6 @@ ruleRelation returns [EObject current=null]
 				}
 			)
 		)
-		otherlv_3='\n'
-		{
-			newLeafNode(otherlv_3, grammarAccess.getRelationAccess().getControl000aKeyword_3());
-		}
 	)
 ;
 
@@ -991,7 +998,7 @@ RULE_ML_COMMENT : '/*' ( options {greedy=false;} : . )*'*/';
 
 RULE_SL_COMMENT : '//' ~(('\n'|'\r'))* ('\r'? '\n')?;
 
-RULE_IRI : ('#'|'&'..';'|'?'..'Z'|'a'..'z'|'_')+;
+RULE_IRI : ('#'|'&'..'+'|'-'..'.'|'0'..';'|'?'..'Z'|'a'..'z'|'_')+;
 
 RULE_WS : (' '|'\t'|'\r'|'\n')+;
 

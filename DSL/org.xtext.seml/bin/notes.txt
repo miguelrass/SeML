@@ -1,12 +1,17 @@
 
 CENAS A FAZER:
 
-	fazer uma copia da calculadora e ver se ha problema na mesma com o facto de ja ter essa ontologia (conflito pcausa da upper)  DOES WORK!! No problemo
-	simplificar nomes simplifcaveis
+	(ver porque nao funciona a characteristica, se clhar nao tem uma relacao em condicoes no protege)
+	
+	fazer a logica das characteristics (explicitamente o hasValue, percorrendo as characteristics, encontrando os values, etc)
+	
+	implementar logica das variabilidades e pensar como e que o demands entra no meio disso
 	
 	tentar fazer auto complete de parentesis como acontece aqui no eclipse, pode ser util
 
-
+	(eventualmente verificar se as regras swrl nao sao abatidas no processo de importacao e se faria sentido transforma-las em axiomas)
+	
+	auto vangloriaçao
 
 
 

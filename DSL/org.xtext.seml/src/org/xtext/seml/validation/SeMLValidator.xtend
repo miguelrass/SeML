@@ -45,6 +45,8 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.Collections
 import java.util.Arrays
+import org.xtext.seml.seML.ImportModel
+import org.xtext.seml.seML.UseCharacteristic
 
 /**
  * This class contains custom validation rules. 
@@ -72,85 +74,7 @@ class SeMLValidator extends AbstractSeMLValidator {
 	public static val FIX_GENERATED = "FixGeneratedName";
 	
 
-	
 
-//	@Check
-//	def checkOntologyImport(Import imp) {
-//		//if(imp != null){System.out.println("jorge");return;}
-//		val String local_log = local_log + "[checkOntologyImport] ";
-//		
-//		System.out.println(local_log + "Loading import: " + imp.getName());	
-//    	val File ontfile = new File(imp.getName());
-//    	//---------------------------------- Check if ontology file exists
-//    	if(!ontfile.exists()) {
-//    		error("Ontology file was not found", SeMLPackage.Literals.IMPORT__NAME);
-//    		return;
-//    	}
-//    	
-//    	//Generate paths for current SEML file and generated SEML file, for a given ontology
-//		Ontologies.populatePaths(imp, ontfile);
-//		
-//		//Generate file with SEML rules
-//		var File generatedSEML;
-//		try {
-//			generatedSEML = Ontologies.ParseOntology(ontfile, Ontologies.SEMLGENfolder_abspath.toString);
-//		} catch (IOException e) {
-//			error(e.message, SeMLPackage.Literals.IMPORT__NAME); //Error while loading or parsing ontology
-//			return;
-//		}    	 
-//    	 
-//    	//-------------------- Check if include is present (even if the file was just created)
-//		//val rootElement = EcoreUtil2.getRootContainer(imp);
-//		val rootElement = EcoreUtil2.getContainerOfType(imp, MainModel)
-//		val IncludesList = EcoreUtil2.getAllContentsOfType(rootElement, Imported)
-//		
-//		var boolean found = false;
-//		for(i: IncludesList){
-//			if (i.importURI == generatedSEML.absolutePath) found = true;
-//		}
-//		if (!found) warning("Ontology is not being used", SeMLPackage.Literals.IMPORT__NAME,GET_AXIOMS,generatedSEML.parentFile.name + "/" + generatedSEML.name);
-// 
-//    }	
-    
-    // Automatically updates generated SEML file when it detects a newer ontology version is available
-//	@Check
-//	def checkImportOntology(Import imp) {
-//		//if(imp != null){System.out.println("jorge");return;}
-//		val String local_log = local_log + "[checkImportOntology] ";
-//		
-//		val File ontfile = new File(imp.getName());
-//		
-//		//Check if ontology and generated files exist
-//		if(!ontfile.exists || ontfile.isDirectory) {error("Ontology file was not found", SeMLPackage.Literals.IMPORT__NAME); return;}
-//		
-//		//Generate paths for current SEML file and generated SEML file, for a given ontology
-//		Ontologies.populatePaths(imp, ontfile);
-// 
-//		//Check if generated file has correct name and path
-//		if(!Ontologies.SEMLGENfile_relpath.equals(imp.getImportURI())) {
-//			error("Generated filename should be: " + Ontologies.SEMLGENfile_relpath, 
-//				SeMLPackage.Literals.IMPORT__IMPORT_URI,FIX_GENERATED, Ontologies.SEMLGENfile_relpath.toString);
-//			return;
-//		}		
-//		
-//		
-//		//Check if generated file is obsolete or nonexistent
-//		if((!Ontologies.SEMLGENfile_abspath.exists) || (ontfile.lastModified.compareTo(Ontologies.SEMLGENfile_abspath.lastModified) > 0)) {
-//			if(Ontologies.SEMLGENfile_abspath.exists){
-//				System.out.println(local_log + "Changes in ontology detected, generated file was updated: " + imp.getImportURI());	
-//			}else{
-//				System.out.println(local_log + "Generated file was not found, creating a new one: " + imp.getImportURI());	
-//			} 
-//				
-//			try {
-//				Ontologies.ParseOntology(ontfile, Ontologies.SEMLGENfile_abspath.parent);
-//			} catch (IOException e) {
-//				System.out.println(local_log + "Error while loading/parsing ontology: " + e.message);
-//				error(e.message, SeMLPackage.Literals.IMPORT__NAME); //Error while loading or parsing ontology
-//				return;
-//			}   	
-//		}
-//	}
 	
 	@Check(CheckType.NORMAL) //only when saving
 	def checkRelation(Relation rel){
@@ -162,13 +86,91 @@ class SeMLValidator extends AbstractSeMLValidator {
 		if(ind.name.contains('#')) error("Individual name cannot contain \"#\"", SeMLPackage.Literals.ANY_INDIVIDUAL__NAME);
 	}
 	
+
+
+	
 	@Check(CheckType.FAST) 
-	def checkModelImports(MainModel m){ //detects changes in Imported ontologies
+	def checkModel(MainModel m){
+		val String local_log = local_log + "[checkModel] ";
+		var String inconsistencyReport = null;
+		if(!checkImports(m)) return; //return if imports are invalid
+		
+		System.out.println(local_log + "Validating model...");
+		
+		val IndividualsList = EcoreUtil2.getAllContentsOfType(m, Individual);
+		val RelationsList = EcoreUtil2.getAllContentsOfType(m, Relation);
+		val UseList = EcoreUtil2.getAllContentsOfType(m, UseCharacteristic);
+		
+		try { //Load Master ontology file and initialize OWLAPI objects
+			MasterOntology.loadMasterOntology(new File(Ontologies.GENfolder + Ontologies.masterNAME));
+		} catch (IOException e) {
+			error("Error loading master ontology file: " + e.message, m.imports.head, SeMLPackage.Literals.IMPORT__NAME); return;
+		}			
+		
+		//Add all individuals to master ontology (check for duplicates)
+		for(Individual i: IndividualsList){
+			inconsistencyReport = MasterOntology.addIndividual(i);
+			if(inconsistencyReport != null) {error(inconsistencyReport, i, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME);return;}
+		}
+		
+		//Add all relations to master ontology (check for inconsistency)
+		for(Relation r: RelationsList){
+			inconsistencyReport = MasterOntology.addRelation(r);
+			System.out.println(local_log + inconsistencyReport);
+			if(inconsistencyReport != null) {error(inconsistencyReport, r, SeMLPackage.Literals.RELATION__OBJ);return;}
+		}
+		
+		//Check if individuals meet theirs class's restrictions
+		//Note: these errors are not detected before due to the Open World Assumption 
+		for(Individual i: IndividualsList){
+			for(Component c: i.cls){ //Check individual for multiple classes
+				inconsistencyReport = MasterOntology.checkRelationRestrictions(c.iri, MasterOntology.OWL_Master + "#" + i.getName());
+				if(inconsistencyReport != null) {error(inconsistencyReport, i, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME);return;}
+			}
+		}
+		
+		//Perform the same Check for individuals that were created in Protégé
+		val Model importRoot = getImportModel(m.eResource, Ontologies.GENfile_relpath); //Get model of generated file
+		if(importRoot == null) {error("Error loading keywords file.", m.imports.head, SeMLPackage.Literals.IMPORT__NAME);return;}
+		val MetaIndividualsList = (importRoot as ImportModel).metaIndividuals //Get all meta individuals
+		
+		for(MetaIndividual i: MetaIndividualsList){ 
+			for(String s: i.cls){ //Iterate each class of an individual and check the restrictions of each class
+				inconsistencyReport = MasterOntology.checkRelationRestrictions(s, i.iri);
+				if(inconsistencyReport != null) {error("Instance: " +  i.iri + "\n" + inconsistencyReport, m.imports.head, SeMLPackage.Literals.IMPORT__NAME);return;}
+			}
+		}
+		
+		//Perform the equivalent check for characteristics in use
+		for(UseCharacteristic u: UseList){
+			inconsistencyReport = MasterOntology.checkRelationRestrictions(u.name.iri, ""); //dummy individual
+			if(inconsistencyReport != null) {error("Characteristic: " +  u.name.iri + "\n" + inconsistencyReport, u, SeMLPackage.Literals.USE_CHARACTERISTIC__NAME);return;}
+		}
+		
+		System.out.println(local_log + "Done.");	
+	}
+	
+	def Model getImportModel(Resource contextResource, String importURIAsString) {
+		val URI importURI = URI?.createURI(importURIAsString)
+		val URI contextURI = contextResource?.getURI
+		val URI resolvedURI = importURI?.resolve(contextURI)
+		val ResourceSet contextResourceSet = contextResource?.resourceSet
+		val Resource resource = contextResourceSet?.getResource(resolvedURI, false)
+		return resource?.allContents?.head as Model
+	}
+	
+	/**
+	 * Auxiliary function of checkModel, to check imports and create the master ontology
+	 * 
+	 * @param m		MainModel
+	 * @return		True if imports are valid 
+	 */
+	def boolean checkImports(MainModel m){ //detects changes in Imported ontologies
 		val String local_log = local_log + "[checkModelImports] ";
 		var long mostRecentFile = 0;
 	
 		//Check if there are any imports
-		if(m.imports.empty) return;
+		if(m.imports.empty) return false;
 		
 		//Create imports paths list
 		val String[] pathslist = newArrayOfSize(m.imports.length); var int cnt = 0;
@@ -176,7 +178,7 @@ class SeMLValidator extends AbstractSeMLValidator {
 		//Check if every file exists before proceeding
 		for(i: m.imports){
 			val File ontfile = new File(i.getName());
-			if(!ontfile.exists || ontfile.isDirectory) {error("Ontology file was not found", i, SeMLPackage.Literals.IMPORT__NAME); return;}
+			if(!ontfile.exists || ontfile.isDirectory) {error("Ontology file was not found", i, SeMLPackage.Literals.IMPORT__NAME); return false;}
 			if(mostRecentFile < ontfile.lastModified) mostRecentFile = ontfile.lastModified;
 			pathslist.set(cnt++,i.getName());
 		}
@@ -204,7 +206,7 @@ class SeMLValidator extends AbstractSeMLValidator {
 						while ((line = br.readLine()) != "*/") { //Read every line until the end of the commentary
 							if(!pathslist.get(cnt++).equals(line)) different = true;
 						}
-						if(!different) {br.close(); return;}
+						if(!different) {br.close(); return true;}
 						else System.out.println(local_log + "Ontology sources have changed. Updating DSL keywords...");	
 						
 					} else System.out.println(local_log + "Number of ontology sources has changed. Updating DSL keywords...");	
@@ -219,81 +221,13 @@ class SeMLValidator extends AbstractSeMLValidator {
 		} else System.out.println(local_log + "Importing DSL keywords for the first time...");
 		
 		try {
-			Ontologies.ParseOntologies(pathslist);
+			Ontologies.ParseOntologies(pathslist); //If there are no errors, the file was generated
 		} catch (IOException e) {
 			System.out.println(local_log + e.message);
 			error(e.message, m.imports.head, SeMLPackage.Literals.IMPORT__NAME); //Error while loading or parsing ontology
-			return;
+			return false;
 		}   	
+		return true;
 	}
-	
-	@Check(CheckType.NORMAL) //only when saving
-	def checkModel(MainModel m){
-		val String local_log = local_log + "[checkModel] ";
-		var String inconsistencyReport = null;
-		System.out.println(local_log + "Validating model...");
-		
-		val ImportsList = EcoreUtil2.getAllContentsOfType(m, Import);
-		if (ImportsList.empty){
-			System.out.println(local_log + "Warning: Model has no imported ontologies"); return;
-		}
-		
-		val IndividualsList = EcoreUtil2.getAllContentsOfType(m, Individual);
-		val RelationsList = EcoreUtil2.getAllContentsOfType(m, Relation);
-		
-		//Create Master Ontology and check if it is consistent before proceeding
-		if(!MasterOntology.createMasterOntology(ImportsList)) {error("The merged master ontology is inconsistent", ImportsList.head, SeMLPackage.Literals.IMPORT__NAME);return;};
-		//Add all individuals to master ontology (check for duplicates)
-		for(Individual i: IndividualsList){
-			inconsistencyReport = MasterOntology.addIndividual(i);
-			if(inconsistencyReport != null) {error(inconsistencyReport, i, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME);return;}
-		}
-		//Add all relations to master ontology (check for inconsistency)
-		for(Relation r: RelationsList){
-			inconsistencyReport = MasterOntology.addRelation(r);
-			if(inconsistencyReport != null) {error(inconsistencyReport, r, SeMLPackage.Literals.RELATION__OBJ);return;}
-		}
-		//Check if individuals meet theirs class's restrictions
-		//Note: these errors are not detected before due to the Open World Assumption 
-		for(Individual i: IndividualsList){
-			for(Component c: i.cls){ //Check individual for multiple classes
-				inconsistencyReport = MasterOntology.checkRelationRestrictions(c.name, MasterOntology.OWL_Master + "#" + i.getName());
-				if(inconsistencyReport != null) {error(inconsistencyReport, i, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME);return;}
-			}
-		}
-		//Perform the same Check for individuals that were created in Protégé
-		
-		//TODO adapt the following code
-		
-		/*for(Import im : m.imports){ //Iterate through every import
-			val Model importRoot = getImportModel(im.eResource, im.importURI)
-			val MetaIndividualsList = EcoreUtil2.getAllContentsOfType(importRoot, MetaIndividual);
-			
-			for(MetaIndividual i: MetaIndividualsList){ // need name for class of ind
-				for(String s: i.cls){ //Check individual for multiple classes
-					inconsistencyReport = MasterOntology.checkRelationRestrictions(s, i.name);
-					if(inconsistencyReport != null) {error("Instance: " +  i.name + "\n" + inconsistencyReport, im, SeMLPackage.Literals.IMPORT__NAME);return;}
-				}
-			}
-		}*/
-		 
-		System.out.println(local_log + "Done.");
-		
-		//para no futuro aceder a ficheiros externos de uma vez so (eliminavel se nao for util)
-		//http://stackoverflow.com/questions/39368784/xtext-cross-reference-to-other-files-works-but-i-cant-access-the-eobject
-		
-		//error("Ontology file was not found", SeMLPackage.Literals.IMPORT__NAME);	
-		
-	}
-	
-	def Model getImportModel(Resource contextResource, String importURIAsString) {
-		val URI importURI = URI?.createURI(importURIAsString)
-		val URI contextURI = contextResource?.getURI
-		val URI resolvedURI = importURI?.resolve(contextURI)
-		val ResourceSet contextResourceSet = contextResource?.resourceSet
-		val Resource resource = contextResourceSet?.getResource(resolvedURI, false)
-		return resource?.allContents?.head as Model
-	}
-	
 	
 }

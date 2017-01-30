@@ -235,7 +235,7 @@ public class SeMLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     AnyIndividual returns Individual
 	 *
 	 * Constraint:
-	 *     (cls+=[Component|IRI]+ name=IRI)
+	 *     (cls+=[Component|IRI] cls+=[Component|IRI]* name=IRI)
 	 */
 	protected void sequence_Individual(ISerializationContext context, Individual semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

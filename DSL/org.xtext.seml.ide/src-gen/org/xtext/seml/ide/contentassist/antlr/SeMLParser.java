@@ -43,6 +43,7 @@ public class SeMLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getImportModelAccess().getGroup(), "rule__ImportModel__Group__0");
 					put(grammarAccess.getImportAccess().getGroup(), "rule__Import__Group__0");
 					put(grammarAccess.getIndividualAccess().getGroup(), "rule__Individual__Group__0");
+					put(grammarAccess.getIndividualAccess().getGroup_2(), "rule__Individual__Group_2__0");
 					put(grammarAccess.getUseCharacteristicAccess().getGroup(), "rule__UseCharacteristic__Group__0");
 					put(grammarAccess.getRelationAccess().getGroup(), "rule__Relation__Group__0");
 					put(grammarAccess.getComponent_ProcessAccess().getGroup(), "rule__Component_Process__Group__0");
@@ -60,7 +61,8 @@ public class SeMLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getImportModelAccess().getMetaIndividualsAssignment_3(), "rule__ImportModel__MetaIndividualsAssignment_3");
 					put(grammarAccess.getImportAccess().getNameAssignment_1(), "rule__Import__NameAssignment_1");
 					put(grammarAccess.getIndividualAccess().getClsAssignment_1(), "rule__Individual__ClsAssignment_1");
-					put(grammarAccess.getIndividualAccess().getNameAssignment_2(), "rule__Individual__NameAssignment_2");
+					put(grammarAccess.getIndividualAccess().getClsAssignment_2_1(), "rule__Individual__ClsAssignment_2_1");
+					put(grammarAccess.getIndividualAccess().getNameAssignment_3(), "rule__Individual__NameAssignment_3");
 					put(grammarAccess.getUseCharacteristicAccess().getNameAssignment_1(), "rule__UseCharacteristic__NameAssignment_1");
 					put(grammarAccess.getRelationAccess().getInstance1Assignment_0(), "rule__Relation__Instance1Assignment_0");
 					put(grammarAccess.getRelationAccess().getObjAssignment_1(), "rule__Relation__ObjAssignment_1");

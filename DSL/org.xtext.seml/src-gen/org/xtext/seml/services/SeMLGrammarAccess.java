@@ -169,22 +169,26 @@ public class SeMLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cClsAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final CrossReference cClsComponentCrossReference_1_0 = (CrossReference)cClsAssignment_1.eContents().get(0);
 		private final RuleCall cClsComponentIRITerminalRuleCall_1_0_1 = (RuleCall)cClsComponentCrossReference_1_0.eContents().get(1);
-		private final Assignment cNameAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cNameIRITerminalRuleCall_2_0 = (RuleCall)cNameAssignment_2.eContents().get(0);
-		private final Keyword cControl000aKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
+		private final Keyword cCommaKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
+		private final Assignment cClsAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
+		private final CrossReference cClsComponentCrossReference_2_1_0 = (CrossReference)cClsAssignment_2_1.eContents().get(0);
+		private final RuleCall cClsComponentIRITerminalRuleCall_2_1_0_1 = (RuleCall)cClsComponentCrossReference_2_1_0.eContents().get(1);
+		private final Assignment cNameAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cNameIRITerminalRuleCall_3_0 = (RuleCall)cNameAssignment_3.eContents().get(0);
 		
 		//Individual:
-		//	'new' cls+=[Component|IRI]+ name=IRI '\n' //However, an individual cannot have #
+		//	'new' cls+=[Component|IRI] (',' cls+=[Component|IRI])* name=IRI //However, an individual cannot have #
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'new' cls+=[Component|IRI]+ name=IRI '\n'
+		//'new' cls+=[Component|IRI] (',' cls+=[Component|IRI])* name=IRI
 		public Group getGroup() { return cGroup; }
 		
 		//'new'
 		public Keyword getNewKeyword_0() { return cNewKeyword_0; }
 		
-		//cls+=[Component|IRI]+
+		//cls+=[Component|IRI]
 		public Assignment getClsAssignment_1() { return cClsAssignment_1; }
 		
 		//[Component|IRI]
@@ -193,14 +197,26 @@ public class SeMLGrammarAccess extends AbstractGrammarElementFinder {
 		//IRI
 		public RuleCall getClsComponentIRITerminalRuleCall_1_0_1() { return cClsComponentIRITerminalRuleCall_1_0_1; }
 		
-		//name=IRI
-		public Assignment getNameAssignment_2() { return cNameAssignment_2; }
+		//(',' cls+=[Component|IRI])*
+		public Group getGroup_2() { return cGroup_2; }
+		
+		//','
+		public Keyword getCommaKeyword_2_0() { return cCommaKeyword_2_0; }
+		
+		//cls+=[Component|IRI]
+		public Assignment getClsAssignment_2_1() { return cClsAssignment_2_1; }
+		
+		//[Component|IRI]
+		public CrossReference getClsComponentCrossReference_2_1_0() { return cClsComponentCrossReference_2_1_0; }
 		
 		//IRI
-		public RuleCall getNameIRITerminalRuleCall_2_0() { return cNameIRITerminalRuleCall_2_0; }
+		public RuleCall getClsComponentIRITerminalRuleCall_2_1_0_1() { return cClsComponentIRITerminalRuleCall_2_1_0_1; }
 		
-		//'\n'
-		public Keyword getControl000aKeyword_3() { return cControl000aKeyword_3; }
+		//name=IRI
+		public Assignment getNameAssignment_3() { return cNameAssignment_3; }
+		
+		//IRI
+		public RuleCall getNameIRITerminalRuleCall_3_0() { return cNameIRITerminalRuleCall_3_0; }
 	}
 	public class UseCharacteristicElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.xtext.seml.SeML.UseCharacteristic");
@@ -209,13 +225,12 @@ public class SeMLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final CrossReference cNameCharacteristicCrossReference_1_0 = (CrossReference)cNameAssignment_1.eContents().get(0);
 		private final RuleCall cNameCharacteristicIRITerminalRuleCall_1_0_1 = (RuleCall)cNameCharacteristicCrossReference_1_0.eContents().get(1);
-		private final Keyword cControl000aKeyword_2 = (Keyword)cGroup.eContents().get(2);
 		
 		//UseCharacteristic:
-		//	'use' name=[Characteristic|IRI] '\n';
+		//	'use' name=[Characteristic|IRI];
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'use' name=[Characteristic|IRI] '\n'
+		//'use' name=[Characteristic|IRI]
 		public Group getGroup() { return cGroup; }
 		
 		//'use'
@@ -229,9 +244,6 @@ public class SeMLGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//IRI
 		public RuleCall getNameCharacteristicIRITerminalRuleCall_1_0_1() { return cNameCharacteristicIRITerminalRuleCall_1_0_1; }
-		
-		//'\n'
-		public Keyword getControl000aKeyword_2() { return cControl000aKeyword_2; }
 	}
 	public class RelationElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.xtext.seml.SeML.Relation");
@@ -245,13 +257,12 @@ public class SeMLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cInstance2Assignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final CrossReference cInstance2AnyIndividualCrossReference_2_0 = (CrossReference)cInstance2Assignment_2.eContents().get(0);
 		private final RuleCall cInstance2AnyIndividualIRITerminalRuleCall_2_0_1 = (RuleCall)cInstance2AnyIndividualCrossReference_2_0.eContents().get(1);
-		private final Keyword cControl000aKeyword_3 = (Keyword)cGroup.eContents().get(3);
 		
 		//Relation:
-		//	instance1=[AnyIndividual|IRI] obj=[ObjectProperty|IRI] instance2=[AnyIndividual|IRI] '\n';
+		//	instance1=[AnyIndividual|IRI] obj=[ObjectProperty|IRI] instance2=[AnyIndividual|IRI];
 		@Override public ParserRule getRule() { return rule; }
 		
-		//instance1=[AnyIndividual|IRI] obj=[ObjectProperty|IRI] instance2=[AnyIndividual|IRI] '\n'
+		//instance1=[AnyIndividual|IRI] obj=[ObjectProperty|IRI] instance2=[AnyIndividual|IRI]
 		public Group getGroup() { return cGroup; }
 		
 		//instance1=[AnyIndividual|IRI]
@@ -280,9 +291,6 @@ public class SeMLGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//IRI
 		public RuleCall getInstance2AnyIndividualIRITerminalRuleCall_2_0_1() { return cInstance2AnyIndividualIRITerminalRuleCall_2_0_1; }
-		
-		//'\n'
-		public Keyword getControl000aKeyword_3() { return cControl000aKeyword_3; }
 	}
 	public class ComponentElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.xtext.seml.SeML.Component");
@@ -695,7 +703,7 @@ public class SeMLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Individual:
-	//	'new' cls+=[Component|IRI]+ name=IRI '\n' //However, an individual cannot have #
+	//	'new' cls+=[Component|IRI] (',' cls+=[Component|IRI])* name=IRI //However, an individual cannot have #
 	//;
 	public IndividualElements getIndividualAccess() {
 		return pIndividual;
@@ -706,7 +714,7 @@ public class SeMLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//UseCharacteristic:
-	//	'use' name=[Characteristic|IRI] '\n';
+	//	'use' name=[Characteristic|IRI];
 	public UseCharacteristicElements getUseCharacteristicAccess() {
 		return pUseCharacteristic;
 	}
@@ -716,7 +724,7 @@ public class SeMLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Relation:
-	//	instance1=[AnyIndividual|IRI] obj=[ObjectProperty|IRI] instance2=[AnyIndividual|IRI] '\n';
+	//	instance1=[AnyIndividual|IRI] obj=[ObjectProperty|IRI] instance2=[AnyIndividual|IRI];
 	public RelationElements getRelationAccess() {
 		return pRelation;
 	}
@@ -852,7 +860,7 @@ public class SeMLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//terminal IRI:
-	//	'#' | '&'..';' | '?'..'Z' | 'a'..'z' | '_'+;
+	//	'#' | '&'..'+' | '-'..'.' | '0'..';' | '?'..'Z' | 'a'..'z' | '_'+;
 	public TerminalRule getIRIRule() {
 		return tIRI;
 	}

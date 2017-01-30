@@ -4,10 +4,8 @@
 package org.xtext.seml.ui.labeling;
 
 import com.google.inject.Inject;
-import java.io.File;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
-import org.xtext.seml.seML.Import;
 
 /**
  * Provides labels for EObjects.
@@ -19,16 +17,5 @@ public class SeMLLabelProvider extends DefaultEObjectLabelProvider {
   @Inject
   public SeMLLabelProvider(final AdapterFactoryLabelProvider delegate) {
     super(delegate);
-  }
-  
-  public String importlabel(final Import i) {
-    String _name = i.getName();
-    final File ontfile = new File(_name);
-    if ((ontfile.exists() && ontfile.isFile())) {
-      long _lastModified = ontfile.lastModified();
-      String _string = Long.valueOf(_lastModified).toString();
-      return ("The imported file was last modified on " + _string);
-    }
-    return null;
   }
 }

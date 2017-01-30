@@ -20,6 +20,8 @@ import org.semanticweb.owlapi.model.OWLIndividual;
 
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.semanticweb.owlapi.reasoner.NodeSet;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
@@ -47,6 +49,7 @@ import org.eclipse.xtext.EcoreUtil2;
 import org.xtext.seml.seML.Import;
 import org.xtext.seml.seML.Individual;
 import org.xtext.seml.seML.MainModel;
+import org.xtext.seml.seML.MetaIndividual;
 import org.xtext.seml.seML.Relation;
 
 import java.util.ArrayList;
@@ -73,71 +76,35 @@ public class MasterOntology {
 	
 	public static final String OWL_Master = "rs:Master.owl"; //the name is not relevant outside the application
 	private static final String local_log = "Master Ontology Log: ";
-	private static OWLOntologyManager masterManager = null;
-	private static OWLOntology masterOntology = null; //Ontology used to validate the whole model
+	private static OWLOntologyManager manager = null;
+	private static OWLOntology master = null; //Ontology used to validate the whole model
 	private static OWLDataFactory factory = null;
 	private static PelletReasoner reasoner = null;
 	private static HashMap<String, List<OWLClassExpression>> RestrictionsList = null;
+	private static List<OWLClass> CharacteristicSubCls = null; //not being used, might be erased in the future
 	 	
 	/**
-	 * Creates a Unique ontology with all imported ontologies, initializes ontology related object
-	 * and checks if ontology is consistent returning the result
+	 * Load Master ontology file and initialize OWLAPI objects
+	 * Loaded ontology is consistent. This is tested upon creation.
 	 * @param importsList
 	 * @return
+	 * @throws OWLOntologyCreationException 
 	 * @throws IOException
 	 */
-	public static boolean createMasterOntology(List<Import> importsList) throws IOException{
-		final String local_log = MasterOntology.local_log + "[createMasterOntology] ";
-		System.out.println(local_log + "Trying to merge imported ontologies...");
+	public static void loadMasterOntology(File masterfile) throws OWLOntologyCreationException{
 		
-		IRI mergedOntologyIRI = IRI.create(OWL_Master); //IRI of the new merged ontology
-		masterManager = OWLManager.createOWLOntologyManager();
-		factory = masterManager.getOWLDataFactory();
 		RestrictionsList = new HashMap<String, List<OWLClassExpression>>();
-
-		//Add all ontologies (including their imports) to the masterManager
-		for(Import i: importsList){
-			File ontfile = new File(i.getName());
-			
-			AutoIRIMapper automapper = new AutoIRIMapper(ontfile.getParentFile(), true);		
-			masterManager.getIRIMappers().add(automapper); //Info: replacement of .addIRIMapper()
-			
-			try {
-				masterManager.loadOntologyFromOntologyDocument(ontfile);// Add imported ontologies
-			} catch (OWLOntologyCreationException e) {
-				System.out.println(local_log + "Error: " + e.getMessage());
-	    		throw new IOException("Error Loading Ontology: " + i.getName()); //Error occurred while loading ontology	
-			} 
-			
-		}    
+		manager = OWLManager.createOWLOntologyManager();
+		master =  manager.loadOntologyFromOntologyDocument(masterfile);
+		factory = manager.getOWLDataFactory();
+        reasoner = PelletReasonerFactory.getInstance().createNonBufferingReasoner(master);
+        //CharacteristicSubCls = reasoner.getSubClasses(factory.getOWLClass(IRI.create(Ontologies.OWL_Characteristic)), false).entities().collect(Collectors.toList());
         
-//		Merge all ontologies that are loaded in the masterManager (this method generated exceptions in complex cases)
-//      OWLOntologyMerger merger = new OWLOntologyMerger(masterManager);      
-//      try {
-//			masterOntology = merger.createMergedOntology(masterManager, mergedOntologyIRI);
-//		} catch (OWLOntologyCreationException e) {
-//			System.out.println(local_log + "Error: " + e.getMessage());
-//    		throw new IOException("Error Merging Imported Ontologies"); //Error occurred while merging ontologies		    		
-//		}
-        
-  
-		final long startTime = System.currentTimeMillis(); //log execution time	
-    	try {
-			masterOntology = masterManager.createOntology(mergedOntologyIRI);
-		} catch (OWLOntologyCreationException e) {throw new IOException("Error Creating Master Ontology");} //Error occurred while creating ontology		  
-  
-        //Merge all ontologies that are loaded in the masterManager
-        masterManager.ontologies().forEach(o -> masterOntology.addAxioms(o.getAxioms()));
-        System.out.println(local_log + "(" + (System.currentTimeMillis() - startTime) + "ms) Merged Ontology has: " + masterOntology.getAxiomCount() + " axioms");
-        
-        reasoner = PelletReasonerFactory.getInstance().createNonBufferingReasoner(masterOntology);
-        return reasoner.isConsistent();
+        return;
 	}
 	
 	public static String addIndividual(Individual ind){
-		final String local_log = MasterOntology.local_log + "[addIndividual] ";
-		//No need to check if it already exists. A new individual gets inserted with the master prefix
-		//and after the owl is generated, the next time it will be for implementation, not modelling		
+		final String local_log = MasterOntology.local_log + "[addIndividual] ";	
 		
 		OWLIndividual owlInd = factory.getOWLNamedIndividual(IRI.create(OWL_Master + "#" + ind.getName())); //create OWL individual
 		
@@ -146,7 +113,7 @@ public class MasterOntology {
 			OWLClass cls = factory.getOWLClass(IRI.create(c.getName())); //get class of new individual
 			OWLAxiom axiom = factory.getOWLClassAssertionAxiom(cls, owlInd); //create axiom with the OWL individual
 			System.out.println(local_log + "Adding individual to Master Ontology: " + ind.getName() + " of Class " + cls);
-			masterManager.addAxiom(masterOntology, axiom); //add axiom to master ontology	
+			manager.addAxiom(master, axiom); //add axiom to master ontology	
 		}
 
         return null; 
@@ -163,8 +130,8 @@ public class MasterOntology {
 		List<OWLClassExpression> ClsRestrList = RestrictionsList.get(cls.getIRI().toString());
 		
 		if(ClsRestrList == null){// Use the approach based on Ignazio's to get the restrictions for the given class		
-		    RestrictionVisitor restrVisitor = new RestrictionVisitor(masterOntology); //create visitor object	    
-		    masterOntology.subClassAxiomsForSubClass(cls).forEach(ax -> restrVisitor.visit(ax.getSuperClass()));// visit all restrictions    		    
+		    RestrictionVisitor restrVisitor = new RestrictionVisitor(master); //create visitor object	    
+		    master.subClassAxiomsForSubClass(cls).forEach(ax -> restrVisitor.visit(ax.getSuperClass()));// visit all restrictions    		    
 		    ClsRestrList = restrVisitor.getRestrictions(); //get all restriction for the given class
 		    RestrictionsList.put(cls.getIRI().toString(), ClsRestrList); //cache class restrictions     
 		}
@@ -186,73 +153,32 @@ public class MasterOntology {
 		final String local_log = MasterOntology.local_log + "[addRelation] ";
 		String relationString = null;
 		
-		String ai1 = rel.getInstance1().getName();
-		String ai2 = rel.getInstance2().getName();	
+		String ai1, ai2;	
 		
 		//If the individual is new, add master prefix to their IRI
-		if(rel.getInstance1() instanceof Individual) ai1 = OWL_Master + "#" + ai1;
-		if(rel.getInstance2() instanceof Individual) ai2 = OWL_Master + "#" + ai2;
+		if(rel.getInstance1() instanceof Individual) ai1 = OWL_Master + "#" + rel.getInstance1().getName(); 
+			else ai1 = ((MetaIndividual)rel.getInstance1()).getIri();
+		if(rel.getInstance2() instanceof Individual) ai2 = OWL_Master + "#" + rel.getInstance2().getName(); 
+			else ai2 = ((MetaIndividual)rel.getInstance2()).getIri();
 			
-		relationString = ai1 + " " + rel.getObj().getName() + " " + ai2;
+		relationString = ai1 + " " + rel.getObj().getIri() + " " + ai2;
 		System.out.println(local_log + "Adding relation to Master Ontology: " + relationString);
 		
 		// ind1 --> hasObj --> ind2
         OWLIndividual ind1 = factory.getOWLNamedIndividual(IRI.create(ai1));
         OWLIndividual ind2 = factory.getOWLNamedIndividual(IRI.create(ai2));
-        OWLObjectProperty obj = factory.getOWLObjectProperty(IRI.create(rel.getObj().getName()));
+        OWLObjectProperty obj = factory.getOWLObjectProperty(IRI.create(rel.getObj().getIri()));
         OWLObjectPropertyAssertionAxiom axiom = factory.getOWLObjectPropertyAssertionAxiom(obj, ind1, ind2);
-		masterManager.addAxiom(masterOntology, axiom);
+		manager.addAxiom(master, axiom);
 		
-		if(!reasoner.isConsistent()) return "Inconsistency detected after adding relation:\n" + relationString + "\n" + ExplainInconsistencies();		
+		if(!reasoner.isConsistent()) return "Inconsistency detected after adding relation:\n" + relationString + "\n" + Ontologies.ExplainInconsistencies(master);		
 
 		//System.out.println(local_log + "Success! Ontology has now " + masterOntology.getAxiomCount() + " axioms"); 
 		return null;
 	}
 	
-	/**
-	 * 
-	 */
-	private static String ExplainInconsistencies(){
-		final String local_log = MasterOntology.local_log + "[ExplainInconsistencies] ";
-		
-		// The renderer is used to format the explanation
-		ManchesterSyntaxExplanationRenderer renderer = new ManchesterSyntaxExplanationRenderer();
-		
-		// The writer used for the explanation rendered
-		StringWriter outputWriter = new StringWriter();
-		renderer.startRendering(outputWriter );
-		
-		// Create an explanation generator
-		PelletExplanation expGen = new PelletExplanation(masterOntology);
-		
-		//Try to get all explanations (up to 3)
-		Set<Set<OWLAxiom>> explanationAxioms = null;
-		try {
-			explanationAxioms = expGen.getInconsistencyExplanations(3);
-			while(!explanationAxioms.isEmpty()) {
-				renderer.render( explanationAxioms);
-				explanationAxioms.remove(explanationAxioms.iterator().next());
-			}
-			renderer.endRendering();
-			
-		//In case of failure try to get only the first explanation
-		} catch (Exception e) {
-			System.out.println(local_log + "Error: " + e.getMessage());
-			try {
-				explanationAxioms = expGen.getInconsistencyExplanations(1);
-				renderer.render( explanationAxioms);
-				renderer.endRendering();
-			} catch (Exception e1) {
-				
-		//In case of failure report error in console
-				System.out.println(local_log + "Error: " + e1.getMessage());
-				outputWriter.write("The inconsistencies explanation could not be rendered");;
-			}
-		}
-	
-		return outputWriter.toString();
-		
-	}
+
+
 	
 	
 //	    @Test
@@ -294,9 +220,7 @@ public class MasterOntology {
 //		}
 	
 	
-	public static void addToMasterOntology(File ontfile, String newAxiomsSEMLPath){
-		//if (masterOntology == null)
-	}
+
     
 	
 }
