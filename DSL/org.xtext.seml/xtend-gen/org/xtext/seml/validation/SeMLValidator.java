@@ -113,28 +113,10 @@ public class SeMLValidator extends AbstractSeMLValidator {
         {
           String _addRelation = MasterOntology.addRelation(r);
           inconsistencyReport = _addRelation;
-          System.out.println((local_log + inconsistencyReport));
           boolean _notEquals = (!Objects.equal(inconsistencyReport, null));
           if (_notEquals) {
             this.error(inconsistencyReport, r, SeMLPackage.Literals.RELATION__OBJ);
             return;
-          }
-        }
-      }
-      for (final Individual i_1 : IndividualsList) {
-        EList<Component> _cls = i_1.getCls();
-        for (final Component c : _cls) {
-          {
-            String _iri = c.getIri();
-            String _name = i_1.getName();
-            String _plus_1 = ((MasterOntology.OWL_Master + "#") + _name);
-            String _checkRelationRestrictions = MasterOntology.checkRelationRestrictions(_iri, _plus_1);
-            inconsistencyReport = _checkRelationRestrictions;
-            boolean _notEquals = (!Objects.equal(inconsistencyReport, null));
-            if (_notEquals) {
-              this.error(inconsistencyReport, i_1, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME);
-              return;
-            }
           }
         }
       }
@@ -148,22 +130,41 @@ public class SeMLValidator extends AbstractSeMLValidator {
         return;
       }
       final EList<MetaIndividual> MetaIndividualsList = ((ImportModel) importRoot).getMetaIndividuals();
-      for (final MetaIndividual i_2 : MetaIndividualsList) {
-        EList<String> _cls_1 = i_2.getCls();
-        for (final String s : _cls_1) {
+      EList<Component> _components = ((ImportModel) importRoot).getComponents();
+      MasterOntology.cacheComponentIRIs(_components);
+      for (final MetaIndividual i_1 : MetaIndividualsList) {
+        EList<String> _cls = i_1.getCls();
+        for (final String s : _cls) {
           {
-            String _iri = i_2.getIri();
+            String _iri = i_1.getIri();
             String _checkRelationRestrictions = MasterOntology.checkRelationRestrictions(s, _iri);
             inconsistencyReport = _checkRelationRestrictions;
             boolean _notEquals = (!Objects.equal(inconsistencyReport, null));
             if (_notEquals) {
-              String _iri_1 = i_2.getIri();
+              String _iri_1 = i_1.getIri();
               String _plus_1 = ("Instance: " + _iri_1);
               String _plus_2 = (_plus_1 + "\n");
               String _plus_3 = (_plus_2 + inconsistencyReport);
               EList<Import> _imports_2 = m.getImports();
               Import _head_2 = IterableExtensions.<Import>head(_imports_2);
               this.error(_plus_3, _head_2, SeMLPackage.Literals.IMPORT__NAME);
+              return;
+            }
+          }
+        }
+      }
+      for (final Individual i_2 : IndividualsList) {
+        EList<Component> _cls_1 = i_2.getCls();
+        for (final Component c : _cls_1) {
+          {
+            String _iri = c.getIri();
+            String _name = i_2.getName();
+            String _plus_1 = ((MasterOntology.OWL_Master + "#") + _name);
+            String _checkRelationRestrictions = MasterOntology.checkRelationRestrictions(_iri, _plus_1);
+            inconsistencyReport = _checkRelationRestrictions;
+            boolean _notEquals = (!Objects.equal(inconsistencyReport, null));
+            if (_notEquals) {
+              this.error(inconsistencyReport, i_2, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME);
               return;
             }
           }

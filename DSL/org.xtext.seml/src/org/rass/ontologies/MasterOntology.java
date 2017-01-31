@@ -38,6 +38,7 @@ import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -81,7 +82,8 @@ public class MasterOntology {
 	private static OWLDataFactory factory = null;
 	private static PelletReasoner reasoner = null;
 	private static HashMap<String, List<OWLClassExpression>> RestrictionsList = null;
-	private static List<OWLClass> CharacteristicSubCls = null; //not being used, might be erased in the future
+	//private static List<OWLClass> CharacteristicSubCls = null; //not being used, might be erased in the future
+	private static HashMap<String, String> cachedComponentIRIs = null;
 	 	
 	/**
 	 * Load Master ontology file and initialize OWLAPI objects
@@ -96,11 +98,17 @@ public class MasterOntology {
 		RestrictionsList = new HashMap<String, List<OWLClassExpression>>();
 		manager = OWLManager.createOWLOntologyManager();
 		master =  manager.loadOntologyFromOntologyDocument(masterfile);
-		factory = manager.getOWLDataFactory();
+		factory = OWLManager.getOWLDataFactory();
         reasoner = PelletReasonerFactory.getInstance().createNonBufferingReasoner(master);
+        cachedComponentIRIs = new HashMap<String, String>();
         //CharacteristicSubCls = reasoner.getSubClasses(factory.getOWLClass(IRI.create(Ontologies.OWL_Characteristic)), false).entities().collect(Collectors.toList());
         
         return;
+	}
+	
+	public static void cacheComponentIRIs(EList<Component> lst){
+		cachedComponentIRIs = new HashMap<String, String>();
+		lst.forEach(c -> cachedComponentIRIs.put(c.getIri(), c.getName()));
 	}
 	
 	public static String addIndividual(Individual ind){
@@ -110,15 +118,16 @@ public class MasterOntology {
 		
 		//Iterate through all classes of the new individual
 		for(Component c : ind.getCls()){
-			OWLClass cls = factory.getOWLClass(IRI.create(c.getName())); //get class of new individual
+			OWLClass cls = factory.getOWLClass(IRI.create(c.getIri().toString())); //get class of new individual
 			OWLAxiom axiom = factory.getOWLClassAssertionAxiom(cls, owlInd); //create axiom with the OWL individual
-			System.out.println(local_log + "Adding individual to Master Ontology: " + ind.getName() + " of Class " + cls);
+			System.out.format(local_log + "Adding individual to Master Ontology: %-10s of Class %s\n", ind.getName(), c.getIri().toString());
 			manager.addAxiom(master, axiom); //add axiom to master ontology	
 		}
 
         return null; 
 	}
 	
+
 	
 	public static String checkRelationRestrictions(String clsName, String indIRI){
 		
@@ -139,7 +148,7 @@ public class MasterOntology {
 		//---------------------------------------------- Check if individual complies with its class restrictions
 		
 		//Get all relations and create a RestrictionOverseer object
-		RestrictionOverseer RO = new RestrictionOverseer(factory.getOWLNamedIndividual(IRI.create(indIRI)), reasoner);
+		RestrictionOverseer RO = new RestrictionOverseer(factory.getOWLNamedIndividual(IRI.create(indIRI)), reasoner, cachedComponentIRIs);
 		
 		//Evaluate each restriction with the visitor pattern
 		ClsRestrList.forEach(r -> r.accept(RO));
@@ -157,9 +166,11 @@ public class MasterOntology {
 		
 		//If the individual is new, add master prefix to their IRI
 		if(rel.getInstance1() instanceof Individual) ai1 = OWL_Master + "#" + rel.getInstance1().getName(); 
-			else ai1 = ((MetaIndividual)rel.getInstance1()).getIri();
+		else if(rel.getInstance1() instanceof MetaIndividual) ai1 = ((MetaIndividual)rel.getInstance1()).getIri();
+		else return null; // Gramatical Error
 		if(rel.getInstance2() instanceof Individual) ai2 = OWL_Master + "#" + rel.getInstance2().getName(); 
-			else ai2 = ((MetaIndividual)rel.getInstance2()).getIri();
+		else if(rel.getInstance2() instanceof MetaIndividual) ai2 = ((MetaIndividual)rel.getInstance2()).getIri();
+		else return null; // Gramatical Error
 			
 		relationString = ai1 + " " + rel.getObj().getIri() + " " + ai2;
 		System.out.println(local_log + "Adding relation to Master Ontology: " + relationString);

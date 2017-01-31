@@ -116,28 +116,28 @@ class SeMLValidator extends AbstractSeMLValidator {
 		//Add all relations to master ontology (check for inconsistency)
 		for(Relation r: RelationsList){
 			inconsistencyReport = MasterOntology.addRelation(r);
-			System.out.println(local_log + inconsistencyReport);
 			if(inconsistencyReport != null) {error(inconsistencyReport, r, SeMLPackage.Literals.RELATION__OBJ);return;}
 		}
 		
-		//Check if individuals meet theirs class's restrictions
+		//Check if individuals that were created in Protégé meet theirs class's restrictions
 		//Note: these errors are not detected before due to the Open World Assumption 
-		for(Individual i: IndividualsList){
-			for(Component c: i.cls){ //Check individual for multiple classes
-				inconsistencyReport = MasterOntology.checkRelationRestrictions(c.iri, MasterOntology.OWL_Master + "#" + i.getName());
-				if(inconsistencyReport != null) {error(inconsistencyReport, i, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME);return;}
-			}
-		}
-		
-		//Perform the same Check for individuals that were created in Protégé
 		val Model importRoot = getImportModel(m.eResource, Ontologies.GENfile_relpath); //Get model of generated file
 		if(importRoot == null) {error("Error loading keywords file.", m.imports.head, SeMLPackage.Literals.IMPORT__NAME);return;}
 		val MetaIndividualsList = (importRoot as ImportModel).metaIndividuals //Get all meta individuals
+		MasterOntology.cacheComponentIRIs((importRoot as ImportModel).components); //must be done before calling checkRelationRestrictions
 		
 		for(MetaIndividual i: MetaIndividualsList){ 
 			for(String s: i.cls){ //Iterate each class of an individual and check the restrictions of each class
 				inconsistencyReport = MasterOntology.checkRelationRestrictions(s, i.iri);
 				if(inconsistencyReport != null) {error("Instance: " +  i.iri + "\n" + inconsistencyReport, m.imports.head, SeMLPackage.Literals.IMPORT__NAME);return;}
+			}
+		}
+		
+		//Perform the same Check for individuals created in the DSL
+		for(Individual i: IndividualsList){
+			for(Component c: i.cls){ //Check individual for multiple classes
+				inconsistencyReport = MasterOntology.checkRelationRestrictions(c.iri, MasterOntology.OWL_Master + "#" + i.getName());
+				if(inconsistencyReport != null) {error(inconsistencyReport, i, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME);return;}
 			}
 		}
 		

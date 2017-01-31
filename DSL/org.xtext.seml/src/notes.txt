@@ -1,19 +1,24 @@
 
 CENAS A FAZER:
 
-	(ver porque nao funciona a characteristica, se clhar nao tem uma relacao em condicoes no protege)
+	fazer a nova relacao (terminar a solution no overseer) 
+	tentar aplicar esta cena a um quickfix ou ver se e melhor ter uma solucao mais geral que veja os erros todos e corrija tudo (would be fun)
 	
-	fazer a logica das characteristics (explicitamente o hasValue, percorrendo as characteristics, encontrando os values, etc)
+	(pensar em eventualmente fazer a automatizacao do que é pedido em cima)
 	
-	implementar logica das variabilidades e pensar como e que o demands entra no meio disso
-	
-	tentar fazer auto complete de parentesis como acontece aqui no eclipse, pode ser util
+	fazer a logica das characteristics (explicitamente o hasValue, percorrendo as characteristics, encontrando os values, etc) pdoe ficar pa depois
 
 	(eventualmente verificar se as regras swrl nao sao abatidas no processo de importacao e se faria sentido transforma-las em axiomas)
 	
+	fazer logica dos errors e info etc
+	
+	considerar usar reasoner.getAnnotationPropertyValues(arg0, arg1) para obter as anotacoes (nota, retorna um literal)
+	
 	auto vangloriaçao 
 
-
+EXTRAS:
+tentar fazer auto complete de parentesis como acontece aqui no eclipse, pode ser util
+	
 
 
 

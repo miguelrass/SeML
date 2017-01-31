@@ -16,9 +16,6 @@
         <DataProperty IRI="#hasLiteral"/>
     </Declaration>
     <Declaration>
-        <Class IRI="#Optional"/>
-    </Declaration>
-    <Declaration>
         <AnnotationProperty IRI="#NonInstantiable"/>
     </Declaration>
     <Declaration>
@@ -58,9 +55,6 @@
         <ObjectProperty IRI="#hasValue"/>
     </Declaration>
     <Declaration>
-        <Class IRI="#XOR"/>
-    </Declaration>
-    <Declaration>
         <ObjectProperty IRI="#opposedTo"/>
     </Declaration>
     <Declaration>
@@ -76,9 +70,6 @@
         <ObjectProperty IRI="#accesses"/>
     </Declaration>
     <Declaration>
-        <Class IRI="#RejectedComponent"/>
-    </Declaration>
-    <Declaration>
         <Class IRI="#Report"/>
     </Declaration>
     <Declaration>
@@ -86,6 +77,9 @@
     </Declaration>
     <Declaration>
         <Class IRI="#Problem"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Default"/>
     </Declaration>
     <Declaration>
         <ObjectProperty IRI="#writesTo"/>
@@ -106,9 +100,6 @@
         <ObjectProperty IRI="#hasInput"/>
     </Declaration>
     <Declaration>
-        <Class IRI="#OR"/>
-    </Declaration>
-    <Declaration>
         <ObjectProperty IRI="#uses"/>
     </Declaration>
     <Declaration>
@@ -119,9 +110,6 @@
     </Declaration>
     <Declaration>
         <ObjectProperty IRI="#hasOutput"/>
-    </Declaration>
-    <Declaration>
-        <Class IRI="#Variability"/>
     </Declaration>
     <Declaration>
         <Class IRI="#Feature"/>
@@ -135,6 +123,10 @@
     <Declaration>
         <Class IRI="#Information"/>
     </Declaration>
+    <SubClassOf>
+        <Class IRI="#Default"/>
+        <Class IRI="#Characteristic"/>
+    </SubClassOf>
     <SubClassOf>
         <Class IRI="#Entity"/>
         <Class IRI="#Component"/>
@@ -160,14 +152,6 @@
         <Class IRI="#Report"/>
     </SubClassOf>
     <SubClassOf>
-        <Class IRI="#OR"/>
-        <Class IRI="#Variability"/>
-    </SubClassOf>
-    <SubClassOf>
-        <Class IRI="#Optional"/>
-        <Class IRI="#Variability"/>
-    </SubClassOf>
-    <SubClassOf>
         <Class IRI="#Process"/>
         <Class IRI="#Component"/>
     </SubClassOf>
@@ -176,24 +160,12 @@
         <Class IRI="#Component"/>
     </SubClassOf>
     <SubClassOf>
-        <Class IRI="#RejectedComponent"/>
-        <Class IRI="#Error"/>
-    </SubClassOf>
-    <SubClassOf>
         <Class IRI="#Set"/>
-        <Class IRI="#Component"/>
-    </SubClassOf>
-    <SubClassOf>
-        <Class IRI="#Variability"/>
         <Class IRI="#Component"/>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="#Warning"/>
         <Class IRI="#Report"/>
-    </SubClassOf>
-    <SubClassOf>
-        <Class IRI="#XOR"/>
-        <Class IRI="#Variability"/>
     </SubClassOf>
     <DisjointClasses>
         <Class IRI="#Characteristic"/>
@@ -208,17 +180,11 @@
         <Class IRI="#Process"/>
         <Class IRI="#Property"/>
         <Class IRI="#Set"/>
-        <Class IRI="#Variability"/>
     </DisjointClasses>
     <DisjointClasses>
         <Class IRI="#Error"/>
         <Class IRI="#Information"/>
         <Class IRI="#Warning"/>
-    </DisjointClasses>
-    <DisjointClasses>
-        <Class IRI="#OR"/>
-        <Class IRI="#Optional"/>
-        <Class IRI="#XOR"/>
     </DisjointClasses>
     <SubObjectPropertyOf>
         <ObjectProperty IRI="#hasInput"/>
@@ -336,7 +302,6 @@
         <ObjectUnionOf>
             <Class IRI="#Entity"/>
             <Class IRI="#Process"/>
-            <Class IRI="#Variability"/>
         </ObjectUnionOf>
     </ObjectPropertyRange>
     <ObjectPropertyRange>
@@ -380,11 +345,6 @@
     <AnnotationAssertion>
         <AnnotationProperty IRI="#NonInstantiable"/>
         <IRI>#Report</IRI>
-        <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"></Literal>
-    </AnnotationAssertion>
-    <AnnotationAssertion>
-        <AnnotationProperty IRI="#NonInstantiable"/>
-        <IRI>#Variability</IRI>
         <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"></Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>

@@ -152,7 +152,7 @@ public class Ontologies {
     	}
     	sb.append("*/\n");
     	
-    	final OWLDataFactory fac = OWLManager.createOWLOntologyManager().getOWLDataFactory();
+    	final OWLDataFactory fac = OWLManager.getOWLDataFactory();
     	
     	
     	//------------------------------------------------- Parse master ontology with reasoner
