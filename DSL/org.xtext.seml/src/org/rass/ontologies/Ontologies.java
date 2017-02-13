@@ -38,7 +38,9 @@ import org.xtext.seml.seML.Import;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.io.IOException;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
@@ -64,6 +66,7 @@ public class Ontologies {
 	public static final String OWL_Goal = OWL_Upper + "Goal";
 	public static final String OWL_Feature = OWL_Upper + "Feature";
 	public static final String OWL_Annotation_NONInstantiable = OWL_Upper + "NonInstantiable";
+	public static final String OWL_DefaultC = OWL_Upper + "Default";
 	 
 	public static String GENfile_NAME = "imports.seml";
 	public static File GENfile = null; //generated file object (absolute path)
@@ -174,8 +177,8 @@ public class Ontologies {
 	        	tripleIDlist.add("ObjectProperty "); tripleIDlist.add(o.getNamedProperty().getIRI().getShortForm()); tripleIDlist.add( o.getNamedProperty().getIRI().toString() );} });
 	        reasoner.getInstances(fac.getOWLClass(IRI.create(OWL_Thing)), false).entities().forEach(i -> {
 	        	StringBuilder sb_aux = new StringBuilder(1000); //set initial capacity to 1000 chars
-	        	Stream<OWLClassExpression> classes = EntitySearcher.getTypes(i, master);
-	        	if(classes.count() > 0) { //An individual might be a lost fragment, with no owner
+	        	List<OWLClassExpression> classes = EntitySearcher.getTypes(i, master).collect(Collectors.toList());
+	        	if(!classes.isEmpty()) { //An individual might be a lost fragment, with no owner
 		        	sb_aux.append("MetaIndividual "); 
 		        	classes.forEach(o -> { if(o.isOWLClass()) sb_aux.append("\"" + o.asOWLClass().getIRI().toString() + "\" "); });
 		        	tripleIDlist.add(sb_aux.toString()); tripleIDlist.add(i.getIRI().getShortForm()); tripleIDlist.add( i.getIRI().toString() ); }
@@ -244,7 +247,7 @@ public class Ontologies {
 				
 		//In case of failure report error in console
 				System.out.println(local_log + "Error: " + e1.getMessage());
-				outputWriter.write("The inconsistencies explanation could not be rendered");;
+				outputWriter.write("The inconsistencies explanation could not be rendered");
 			}
 		}
 		

@@ -47,6 +47,7 @@ import java.util.Collections
 import java.util.Arrays
 import org.xtext.seml.seML.ImportModel
 import org.xtext.seml.seML.UseCharacteristic
+import org.xtext.seml.seML.SeMLFactory
 
 /**
  * This class contains custom validation rules. 
@@ -73,6 +74,8 @@ class SeMLValidator extends AbstractSeMLValidator {
 	public static val GET_AXIOMS = "GetAxioms";
 	public static val FIX_GENERATED = "FixGeneratedName";
 	
+	public static val GENERATE_SOLUTION = "GenerateSolution";
+	
 
 
 	
@@ -92,7 +95,7 @@ class SeMLValidator extends AbstractSeMLValidator {
 	@Check(CheckType.FAST) 
 	def checkModel(MainModel m){
 		val String local_log = local_log + "[checkModel] ";
-		var String inconsistencyReport = null;
+		var String[] inconsistencyReport = null;
 		if(!checkImports(m)) return; //return if imports are invalid
 		
 		System.out.println(local_log + "Validating model...");
@@ -104,32 +107,38 @@ class SeMLValidator extends AbstractSeMLValidator {
 		try { //Load Master ontology file and initialize OWLAPI objects
 			MasterOntology.loadMasterOntology(new File(Ontologies.GENfolder + Ontologies.masterNAME));
 		} catch (IOException e) {
-			error("Error loading master ontology file: " + e.message, m.imports.head, SeMLPackage.Literals.IMPORT__NAME); return;
+			error("Error loading master ontology file: " + e.message, m.imports.last, SeMLPackage.Literals.IMPORT__NAME); return;
 		}			
 		
 		//Add all individuals to master ontology (check for duplicates)
 		for(Individual i: IndividualsList){
-			inconsistencyReport = MasterOntology.addIndividual(i);
-			if(inconsistencyReport != null) {error(inconsistencyReport, i, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME);return;}
+			if(!MasterOntology.addIndividual(i)) {System.out.println(local_log + "Aborted. Model contains errors.");return;}
+
+			/*inconsistencyReport =*/ 
+			//if(inconsistencyReport.get(0) != null) {error(inconsistencyReport.get(0), i, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME);return;}
 		}
 		
 		//Add all relations to master ontology (check for inconsistency)
 		for(Relation r: RelationsList){
 			inconsistencyReport = MasterOntology.addRelation(r);
-			if(inconsistencyReport != null) {error(inconsistencyReport, r, SeMLPackage.Literals.RELATION__OBJ);return;}
+			if(inconsistencyReport != null) {error(inconsistencyReport.get(0), r, SeMLPackage.Literals.RELATION__OBJ);return;}
 		}
-		
+
 		//Check if individuals that were created in Protégé meet theirs class's restrictions
 		//Note: these errors are not detected before due to the Open World Assumption 
 		val Model importRoot = getImportModel(m.eResource, Ontologies.GENfile_relpath); //Get model of generated file
-		if(importRoot == null) {error("Error loading keywords file.", m.imports.head, SeMLPackage.Literals.IMPORT__NAME);return;}
+		if(importRoot == null) {error("Error loading keywords file: " + Ontologies.GENfile_relpath, m.imports.last, SeMLPackage.Literals.IMPORT__NAME);return;}
 		val MetaIndividualsList = (importRoot as ImportModel).metaIndividuals //Get all meta individuals
-		MasterOntology.cacheComponentIRIs((importRoot as ImportModel).components); //must be done before calling checkRelationRestrictions
-		
+		MasterOntology.cacheIRIs(importRoot as ImportModel, IndividualsList); //must be done before calling checkRelationRestrictions
+				
 		for(MetaIndividual i: MetaIndividualsList){ 
 			for(String s: i.cls){ //Iterate each class of an individual and check the restrictions of each class
 				inconsistencyReport = MasterOntology.checkRelationRestrictions(s, i.iri);
-				if(inconsistencyReport != null) {error("Instance: " +  i.iri + "\n" + inconsistencyReport, m.imports.head, SeMLPackage.Literals.IMPORT__NAME);return;}
+				if(inconsistencyReport != null) {
+					if(inconsistencyReport.get(1).empty){error("Instance: " +  i.iri + "\n" + inconsistencyReport, m.imports.last, SeMLPackage.Literals.IMPORT__NAME);}
+					else error("Instance: " +  i.iri + "\n" + inconsistencyReport, m.imports.last, SeMLPackage.Literals.IMPORT__NAME, GENERATE_SOLUTION, inconsistencyReport.get(1));
+					return;
+				}
 			}
 		}
 		
@@ -137,15 +146,32 @@ class SeMLValidator extends AbstractSeMLValidator {
 		for(Individual i: IndividualsList){
 			for(Component c: i.cls){ //Check individual for multiple classes
 				inconsistencyReport = MasterOntology.checkRelationRestrictions(c.iri, MasterOntology.OWL_Master + "#" + i.getName());
-				if(inconsistencyReport != null) {error(inconsistencyReport, i, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME);return;}
+				if(inconsistencyReport != null) {
+					if(inconsistencyReport.get(1).empty){ error(inconsistencyReport.get(0), i, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME);}
+					else error(inconsistencyReport.get(0), i, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME, GENERATE_SOLUTION, inconsistencyReport.get(1)); //Create solution
+					return;
+				}
 			}
 		}
 		
 		//Perform the equivalent check for characteristics in use
 		for(UseCharacteristic u: UseList){
-			inconsistencyReport = MasterOntology.checkRelationRestrictions(u.name.iri, ""); //dummy individual
-			if(inconsistencyReport != null) {error("Characteristic: " +  u.name.iri + "\n" + inconsistencyReport, u, SeMLPackage.Literals.USE_CHARACTERISTIC__NAME);return;}
+			inconsistencyReport = MasterOntology.checkRelationRestrictions(u.name.iri, ""); //dummy individual ""
+			if(inconsistencyReport != null) {
+				if(inconsistencyReport.get(1).empty){ error("Characteristic: " +  u.name.iri + "\n" + inconsistencyReport.get(0), u, SeMLPackage.Literals.USE_CHARACTERISTIC__NAME);}
+				else error("Characteristic: " +  u.name.iri + "\n" + inconsistencyReport.get(0), u, SeMLPackage.Literals.USE_CHARACTERISTIC__NAME, GENERATE_SOLUTION, inconsistencyReport.get(1));
+				return;
+			}
 		}
+		
+		//Perform the same Check for the default characteristic
+		inconsistencyReport = MasterOntology.checkRelationRestrictions(Ontologies.OWL_DefaultC, ""); //dummy individual ""
+		if(inconsistencyReport != null) {
+			if(inconsistencyReport.get(1).empty){ error("Default Characteristic\n" + inconsistencyReport.get(0), m.imports.last, SeMLPackage.Literals.IMPORT__NAME);}
+			else error("Default Characteristic\n" + inconsistencyReport.get(0), m.imports.last, SeMLPackage.Literals.IMPORT__NAME, GENERATE_SOLUTION, inconsistencyReport.get(1));
+			return;
+		}
+		
 		
 		System.out.println(local_log + "Done.");	
 	}
@@ -206,7 +232,11 @@ class SeMLValidator extends AbstractSeMLValidator {
 						while ((line = br.readLine()) != "*/") { //Read every line until the end of the commentary
 							if(!pathslist.get(cnt++).equals(line)) different = true;
 						}
-						if(!different) {br.close(); return true;}
+						if(!different) {
+							val File masterfile = new File(Ontologies.GENfolder + Ontologies.masterNAME);
+							if(masterfile.exists && masterfile.file) {br.close(); return true;}
+							else System.out.println(local_log + "Master Ontology file was deleted. Creating a new one...");	
+						}
 						else System.out.println(local_log + "Ontology sources have changed. Updating DSL keywords...");	
 						
 					} else System.out.println(local_log + "Number of ontology sources has changed. Updating DSL keywords...");	
@@ -224,7 +254,7 @@ class SeMLValidator extends AbstractSeMLValidator {
 			Ontologies.ParseOntologies(pathslist); //If there are no errors, the file was generated
 		} catch (IOException e) {
 			System.out.println(local_log + e.message);
-			error(e.message, m.imports.head, SeMLPackage.Literals.IMPORT__NAME); //Error while loading or parsing ontology
+			error(e.message, m.imports.last, SeMLPackage.Literals.IMPORT__NAME); //Error while loading or parsing ontology
 			return false;
 		}   	
 		return true;

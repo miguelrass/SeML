@@ -48,9 +48,11 @@ import org.semanticweb.owlapi.util.OWLObjectVisitor;
 import org.semanticweb.owlapi.util.OWLOntologyMerger;
 import org.eclipse.xtext.EcoreUtil2;
 import org.xtext.seml.seML.Import;
+import org.xtext.seml.seML.ImportModel;
 import org.xtext.seml.seML.Individual;
 import org.xtext.seml.seML.MainModel;
 import org.xtext.seml.seML.MetaIndividual;
+import org.xtext.seml.seML.ObjectProperty;
 import org.xtext.seml.seML.Relation;
 
 import java.util.ArrayList;
@@ -59,6 +61,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.MissingResourceException;
 import java.io.NotActiveException;
 import java.io.IOException;
@@ -83,7 +87,8 @@ public class MasterOntology {
 	private static PelletReasoner reasoner = null;
 	private static HashMap<String, List<OWLClassExpression>> RestrictionsList = null;
 	//private static List<OWLClass> CharacteristicSubCls = null; //not being used, might be erased in the future
-	private static HashMap<String, String> cachedComponentIRIs = null;
+	private static HashMap<String, String> cachedIRIs = null; //Key: Full IRI
+	private static HashMap<String, String> cachedIRIsInverse = null; //Key: Short IRI
 	 	
 	/**
 	 * Load Master ontology file and initialize OWLAPI objects
@@ -100,36 +105,46 @@ public class MasterOntology {
 		master =  manager.loadOntologyFromOntologyDocument(masterfile);
 		factory = OWLManager.getOWLDataFactory();
         reasoner = PelletReasonerFactory.getInstance().createNonBufferingReasoner(master);
-        cachedComponentIRIs = new HashMap<String, String>();
         //CharacteristicSubCls = reasoner.getSubClasses(factory.getOWLClass(IRI.create(Ontologies.OWL_Characteristic)), false).entities().collect(Collectors.toList());
         
         return;
 	}
 	
-	public static void cacheComponentIRIs(EList<Component> lst){
-		cachedComponentIRIs = new HashMap<String, String>();
-		lst.forEach(c -> cachedComponentIRIs.put(c.getIri(), c.getName()));
+	public static void cacheIRIs(ImportModel importM, List<Individual> dslIndividuals){
+		cachedIRIs = new HashMap<String, String>();
+		cachedIRIsInverse = new HashMap<String, String>();
+		importM.getComponents().forEach(c -> cachedIRIs.put(c.getIri(), c.getName()));
+		importM.getObjectProperties().forEach(op -> cachedIRIs.put(op.getIri(), op.getName()));
+		importM.getMetaIndividuals().forEach(i -> cachedIRIs.put(i.getIri(), i.getName()));
+		dslIndividuals.forEach(i -> cachedIRIs.put(OWL_Master + "#" + i.getName(), i.getName()));
+		
+        Iterator<Entry<String, String>> it = cachedIRIs.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, String> pair = it.next();
+            cachedIRIsInverse.put(pair.getValue(), pair.getKey());
+        }
 	}
 	
-	public static String addIndividual(Individual ind){
+	public static boolean addIndividual(Individual ind){
 		final String local_log = MasterOntology.local_log + "[addIndividual] ";	
 		
 		OWLIndividual owlInd = factory.getOWLNamedIndividual(IRI.create(OWL_Master + "#" + ind.getName())); //create OWL individual
 		
 		//Iterate through all classes of the new individual
 		for(Component c : ind.getCls()){
+			if(c.getIri() == null) return false;
 			OWLClass cls = factory.getOWLClass(IRI.create(c.getIri().toString())); //get class of new individual
 			OWLAxiom axiom = factory.getOWLClassAssertionAxiom(cls, owlInd); //create axiom with the OWL individual
 			System.out.format(local_log + "Adding individual to Master Ontology: %-10s of Class %s\n", ind.getName(), c.getIri().toString());
 			manager.addAxiom(master, axiom); //add axiom to master ontology	
 		}
 
-        return null; 
+        return true; 
 	}
 	
 
 	
-	public static String checkRelationRestrictions(String clsName, String indIRI){
+	public static String[] checkRelationRestrictions(String clsName, String indIRI){
 		
 		OWLClass cls = factory.getOWLClass(IRI.create(clsName)); //get class of new individual
 		
@@ -148,17 +163,17 @@ public class MasterOntology {
 		//---------------------------------------------- Check if individual complies with its class restrictions
 		
 		//Get all relations and create a RestrictionOverseer object
-		RestrictionOverseer RO = new RestrictionOverseer(factory.getOWLNamedIndividual(IRI.create(indIRI)), reasoner, cachedComponentIRIs);
+		RestrictionOverseer RO = new RestrictionOverseer(factory.getOWLNamedIndividual(IRI.create(indIRI)), reasoner, cachedIRIs, cachedIRIsInverse);
 		
 		//Evaluate each restriction with the visitor pattern
 		ClsRestrList.forEach(r -> r.accept(RO));
 		
 		//Return the errors report (or null if no error found)
-		return RO.getReport();
+		return RO.getFinalReport();
 	}
 	
 	
-	public static String addRelation(Relation rel){
+	public static String[] addRelation(Relation rel){
 		final String local_log = MasterOntology.local_log + "[addRelation] ";
 		String relationString = null;
 		
@@ -167,10 +182,10 @@ public class MasterOntology {
 		//If the individual is new, add master prefix to their IRI
 		if(rel.getInstance1() instanceof Individual) ai1 = OWL_Master + "#" + rel.getInstance1().getName(); 
 		else if(rel.getInstance1() instanceof MetaIndividual) ai1 = ((MetaIndividual)rel.getInstance1()).getIri();
-		else return null; // Gramatical Error
+		else return null; // Internal Error (user has grammar errors in file)
 		if(rel.getInstance2() instanceof Individual) ai2 = OWL_Master + "#" + rel.getInstance2().getName(); 
 		else if(rel.getInstance2() instanceof MetaIndividual) ai2 = ((MetaIndividual)rel.getInstance2()).getIri();
-		else return null; // Gramatical Error
+		else return null; // Internal Error (user has grammar errors in file)
 			
 		relationString = ai1 + " " + rel.getObj().getIri() + " " + ai2;
 		System.out.println(local_log + "Adding relation to Master Ontology: " + relationString);
@@ -182,7 +197,17 @@ public class MasterOntology {
         OWLObjectPropertyAssertionAxiom axiom = factory.getOWLObjectPropertyAssertionAxiom(obj, ind1, ind2);
 		manager.addAxiom(master, axiom);
 		
-		if(!reasoner.isConsistent()) return "Inconsistency detected after adding relation:\n" + relationString + "\n" + Ontologies.ExplainInconsistencies(master);		
+		try {
+			if(!reasoner.isConsistent()){
+				String[] FinalReport = {"Inconsistency detected after adding relation:\n" + relationString + "\n" + Ontologies.ExplainInconsistencies(master), ""};
+				return FinalReport;		
+			}
+		} catch (Exception e) {
+			//String[] FinalReport = {"Reasoner failed after adding relation:\n" + relationString + "\n" + Ontologies.ExplainInconsistencies(master), ""};
+			//return FinalReport;	
+			System.out.println(local_log + "Reasoner failed after adding relation:\n" + relationString + "\n" + Ontologies.ExplainInconsistencies(master));
+		}
+		
 
 		//System.out.println(local_log + "Success! Ontology has now " + masterOntology.getAxiomCount() + " axioms"); 
 		return null;

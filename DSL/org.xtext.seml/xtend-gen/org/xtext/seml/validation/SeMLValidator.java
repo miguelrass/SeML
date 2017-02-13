@@ -54,6 +54,8 @@ public class SeMLValidator extends AbstractSeMLValidator {
   
   public final static String FIX_GENERATED = "FixGeneratedName";
   
+  public final static String GENERATE_SOLUTION = "GenerateSolution";
+  
   @Check(CheckType.NORMAL)
   public Object checkRelation(final Relation rel) {
     return null;
@@ -72,7 +74,7 @@ public class SeMLValidator extends AbstractSeMLValidator {
   public void checkModel(final MainModel m) {
     try {
       final String local_log = (SeMLValidator.local_log + "[checkModel] ");
-      String inconsistencyReport = null;
+      String[] inconsistencyReport = null;
       boolean _checkImports = this.checkImports(m);
       boolean _not = (!_checkImports);
       if (_not) {
@@ -91,31 +93,29 @@ public class SeMLValidator extends AbstractSeMLValidator {
           String _message = e.getMessage();
           String _plus = ("Error loading master ontology file: " + _message);
           EList<Import> _imports = m.getImports();
-          Import _head = IterableExtensions.<Import>head(_imports);
-          this.error(_plus, _head, SeMLPackage.Literals.IMPORT__NAME);
+          Import _last = IterableExtensions.<Import>last(_imports);
+          this.error(_plus, _last, SeMLPackage.Literals.IMPORT__NAME);
           return;
         } else {
           throw Exceptions.sneakyThrow(_t);
         }
       }
       for (final Individual i : IndividualsList) {
-        {
-          String _addIndividual = MasterOntology.addIndividual(i);
-          inconsistencyReport = _addIndividual;
-          boolean _notEquals = (!Objects.equal(inconsistencyReport, null));
-          if (_notEquals) {
-            this.error(inconsistencyReport, i, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME);
-            return;
-          }
+        boolean _addIndividual = MasterOntology.addIndividual(i);
+        boolean _not_1 = (!_addIndividual);
+        if (_not_1) {
+          System.out.println((local_log + "Aborted. Model contains errors."));
+          return;
         }
       }
       for (final Relation r : RelationsList) {
         {
-          String _addRelation = MasterOntology.addRelation(r);
+          String[] _addRelation = MasterOntology.addRelation(r);
           inconsistencyReport = _addRelation;
           boolean _notEquals = (!Objects.equal(inconsistencyReport, null));
           if (_notEquals) {
-            this.error(inconsistencyReport, r, SeMLPackage.Literals.RELATION__OBJ);
+            String _get = inconsistencyReport[0];
+            this.error(_get, r, SeMLPackage.Literals.RELATION__OBJ);
             return;
           }
         }
@@ -125,29 +125,41 @@ public class SeMLValidator extends AbstractSeMLValidator {
       boolean _equals = Objects.equal(importRoot, null);
       if (_equals) {
         EList<Import> _imports_1 = m.getImports();
-        Import _head_1 = IterableExtensions.<Import>head(_imports_1);
-        this.error("Error loading keywords file.", _head_1, SeMLPackage.Literals.IMPORT__NAME);
+        Import _last_1 = IterableExtensions.<Import>last(_imports_1);
+        this.error(("Error loading keywords file: " + Ontologies.GENfile_relpath), _last_1, SeMLPackage.Literals.IMPORT__NAME);
         return;
       }
       final EList<MetaIndividual> MetaIndividualsList = ((ImportModel) importRoot).getMetaIndividuals();
-      EList<Component> _components = ((ImportModel) importRoot).getComponents();
-      MasterOntology.cacheComponentIRIs(_components);
+      MasterOntology.cacheIRIs(((ImportModel) importRoot), IndividualsList);
       for (final MetaIndividual i_1 : MetaIndividualsList) {
         EList<String> _cls = i_1.getCls();
         for (final String s : _cls) {
           {
             String _iri = i_1.getIri();
-            String _checkRelationRestrictions = MasterOntology.checkRelationRestrictions(s, _iri);
+            String[] _checkRelationRestrictions = MasterOntology.checkRelationRestrictions(s, _iri);
             inconsistencyReport = _checkRelationRestrictions;
             boolean _notEquals = (!Objects.equal(inconsistencyReport, null));
             if (_notEquals) {
-              String _iri_1 = i_1.getIri();
-              String _plus_1 = ("Instance: " + _iri_1);
-              String _plus_2 = (_plus_1 + "\n");
-              String _plus_3 = (_plus_2 + inconsistencyReport);
-              EList<Import> _imports_2 = m.getImports();
-              Import _head_2 = IterableExtensions.<Import>head(_imports_2);
-              this.error(_plus_3, _head_2, SeMLPackage.Literals.IMPORT__NAME);
+              String _get = inconsistencyReport[1];
+              boolean _isEmpty = _get.isEmpty();
+              if (_isEmpty) {
+                String _iri_1 = i_1.getIri();
+                String _plus_1 = ("Instance: " + _iri_1);
+                String _plus_2 = (_plus_1 + "\n");
+                String _plus_3 = (_plus_2 + inconsistencyReport);
+                EList<Import> _imports_2 = m.getImports();
+                Import _last_2 = IterableExtensions.<Import>last(_imports_2);
+                this.error(_plus_3, _last_2, SeMLPackage.Literals.IMPORT__NAME);
+              } else {
+                String _iri_2 = i_1.getIri();
+                String _plus_4 = ("Instance: " + _iri_2);
+                String _plus_5 = (_plus_4 + "\n");
+                String _plus_6 = (_plus_5 + inconsistencyReport);
+                EList<Import> _imports_3 = m.getImports();
+                Import _last_3 = IterableExtensions.<Import>last(_imports_3);
+                String _get_1 = inconsistencyReport[1];
+                this.error(_plus_6, _last_3, SeMLPackage.Literals.IMPORT__NAME, SeMLValidator.GENERATE_SOLUTION, _get_1);
+              }
               return;
             }
           }
@@ -160,11 +172,20 @@ public class SeMLValidator extends AbstractSeMLValidator {
             String _iri = c.getIri();
             String _name = i_2.getName();
             String _plus_1 = ((MasterOntology.OWL_Master + "#") + _name);
-            String _checkRelationRestrictions = MasterOntology.checkRelationRestrictions(_iri, _plus_1);
+            String[] _checkRelationRestrictions = MasterOntology.checkRelationRestrictions(_iri, _plus_1);
             inconsistencyReport = _checkRelationRestrictions;
             boolean _notEquals = (!Objects.equal(inconsistencyReport, null));
             if (_notEquals) {
-              this.error(inconsistencyReport, i_2, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME);
+              String _get = inconsistencyReport[1];
+              boolean _isEmpty = _get.isEmpty();
+              if (_isEmpty) {
+                String _get_1 = inconsistencyReport[0];
+                this.error(_get_1, i_2, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME);
+              } else {
+                String _get_2 = inconsistencyReport[0];
+                String _get_3 = inconsistencyReport[1];
+                this.error(_get_2, i_2, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME, SeMLValidator.GENERATE_SOLUTION, _get_3);
+              }
               return;
             }
           }
@@ -174,19 +195,55 @@ public class SeMLValidator extends AbstractSeMLValidator {
         {
           Characteristic _name = u.getName();
           String _iri = _name.getIri();
-          String _checkRelationRestrictions = MasterOntology.checkRelationRestrictions(_iri, "");
+          String[] _checkRelationRestrictions = MasterOntology.checkRelationRestrictions(_iri, "");
           inconsistencyReport = _checkRelationRestrictions;
           boolean _notEquals = (!Objects.equal(inconsistencyReport, null));
           if (_notEquals) {
-            Characteristic _name_1 = u.getName();
-            String _iri_1 = _name_1.getIri();
-            String _plus_1 = ("Characteristic: " + _iri_1);
-            String _plus_2 = (_plus_1 + "\n");
-            String _plus_3 = (_plus_2 + inconsistencyReport);
-            this.error(_plus_3, u, SeMLPackage.Literals.USE_CHARACTERISTIC__NAME);
+            String _get = inconsistencyReport[1];
+            boolean _isEmpty = _get.isEmpty();
+            if (_isEmpty) {
+              Characteristic _name_1 = u.getName();
+              String _iri_1 = _name_1.getIri();
+              String _plus_1 = ("Characteristic: " + _iri_1);
+              String _plus_2 = (_plus_1 + "\n");
+              String _get_1 = inconsistencyReport[0];
+              String _plus_3 = (_plus_2 + _get_1);
+              this.error(_plus_3, u, SeMLPackage.Literals.USE_CHARACTERISTIC__NAME);
+            } else {
+              Characteristic _name_2 = u.getName();
+              String _iri_2 = _name_2.getIri();
+              String _plus_4 = ("Characteristic: " + _iri_2);
+              String _plus_5 = (_plus_4 + "\n");
+              String _get_2 = inconsistencyReport[0];
+              String _plus_6 = (_plus_5 + _get_2);
+              String _get_3 = inconsistencyReport[1];
+              this.error(_plus_6, u, SeMLPackage.Literals.USE_CHARACTERISTIC__NAME, SeMLValidator.GENERATE_SOLUTION, _get_3);
+            }
             return;
           }
         }
+      }
+      String[] _checkRelationRestrictions = MasterOntology.checkRelationRestrictions(Ontologies.OWL_DefaultC, "");
+      inconsistencyReport = _checkRelationRestrictions;
+      boolean _notEquals = (!Objects.equal(inconsistencyReport, null));
+      if (_notEquals) {
+        String _get = inconsistencyReport[1];
+        boolean _isEmpty = _get.isEmpty();
+        if (_isEmpty) {
+          String _get_1 = inconsistencyReport[0];
+          String _plus_1 = ("Default Characteristic\n" + _get_1);
+          EList<Import> _imports_2 = m.getImports();
+          Import _last_2 = IterableExtensions.<Import>last(_imports_2);
+          this.error(_plus_1, _last_2, SeMLPackage.Literals.IMPORT__NAME);
+        } else {
+          String _get_2 = inconsistencyReport[0];
+          String _plus_2 = ("Default Characteristic\n" + _get_2);
+          EList<Import> _imports_3 = m.getImports();
+          Import _last_3 = IterableExtensions.<Import>last(_imports_3);
+          String _get_3 = inconsistencyReport[1];
+          this.error(_plus_2, _last_3, SeMLPackage.Literals.IMPORT__NAME, SeMLValidator.GENERATE_SOLUTION, _get_3);
+        }
+        return;
       }
       System.out.println((local_log + "Done."));
     } catch (Throwable _e) {
@@ -299,8 +356,13 @@ public class SeMLValidator extends AbstractSeMLValidator {
               }
             }
             if ((!different)) {
-              br.close();
-              return true;
+              final File masterfile = new File((Ontologies.GENfolder + Ontologies.masterNAME));
+              if ((masterfile.exists() && masterfile.isFile())) {
+                br.close();
+                return true;
+              } else {
+                System.out.println((local_log + "Master Ontology file was deleted. Creating a new one..."));
+              }
             } else {
               System.out.println((local_log + "Ontology sources have changed. Updating DSL keywords..."));
             }
@@ -335,8 +397,8 @@ public class SeMLValidator extends AbstractSeMLValidator {
         System.out.println(_plus_1);
         String _message_2 = e_1.getMessage();
         EList<Import> _imports_3 = m.getImports();
-        Import _head = IterableExtensions.<Import>head(_imports_3);
-        this.error(_message_2, _head, SeMLPackage.Literals.IMPORT__NAME);
+        Import _last = IterableExtensions.<Import>last(_imports_3);
+        this.error(_message_2, _last, SeMLPackage.Literals.IMPORT__NAME);
         return false;
       } else {
         throw Exceptions.sneakyThrow(_t_1);

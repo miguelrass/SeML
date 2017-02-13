@@ -18,6 +18,9 @@ import org.eclipse.emf.common.util.EList
 import java.util.Iterator
 import org.eclipse.xtext.EcoreUtil2
 import org.xtext.seml.seML.MainModel
+import org.xtext.seml.seML.Relation
+import org.xtext.seml.seML.Individual
+import org.xtext.seml.seML.ObjectProperty
 
 /**
  * Custom quickfixes.
@@ -68,6 +71,17 @@ class SeMLQuickfixProvider extends DefaultQuickfixProvider {
 	        }
     	});
 	}*/
+	
+	@Fix(SeMLValidator.GENERATE_SOLUTION)
+	def fix_GeneratedFileName(Issue issue, IssueResolutionAcceptor acceptor) {
+		acceptor.accept(issue, 'Try to generate solution', 'no description', null, new ISemanticModification() {
+	        override apply(EObject element, IModificationContext context) {        	
+	        	val xtextDocument = context.xtextDocument
+	        	val String s = issue.data.get(0);
+	        	xtextDocument.replace(issue.offset + issue.length, 0, "\n" + s.substring(0,s.length()-1));
+	        }
+    	});
+	}
 	
 
 }
