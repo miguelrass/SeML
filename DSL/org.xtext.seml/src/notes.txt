@@ -5,7 +5,7 @@ CENAS A FAZER:
 	
 	swrl esta a gerar erros, é melhor separar as regras do resto e correr as mesmas manualmente
 	
-	mudar Ind1,2,3 para os nomes das classes
+	colocar variabilidades nas characteristics
 	
 	tentar aplicar esta cena a um quickfix ou ver se e melhor ter uma solucao mais geral que veja os erros todos e corrija tudo
 	
@@ -15,7 +15,9 @@ CENAS A FAZER:
 	
 	fazer logica dos errors e info etc
 	
-	considerar usar reasoner.getAnnotationPropertyValues(arg0, arg1) para obter as anotacoes (nota, retorna um literal)
+	considerar usar reasoner.getAnnotationPropertyValues(arg0, arg1) para obter as anotacoes de individuos (nota, retorna um literal)
+	
+	verificar se os meta individuos tem a sua cor
 	
 	auto vangloriaçao 
 

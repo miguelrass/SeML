@@ -143,7 +143,7 @@ public class RestrictionOverseer implements OWLClassExpressionVisitor {
     	
         if(cardinality < MinCardinality){
         	report += "Restriction: " + property.getNamedProperty() + " min " + MinCardinality + " " + target
-        			+ "    Issue: " + cardinality + " < " + MinCardinality + "\n";
+        			+ "    ISSUE: " + cardinality + " < " + MinCardinality + "\n";
         	
         	computeSolution(property, target, cardinality, MinCardinality);
         }
@@ -169,7 +169,7 @@ public class RestrictionOverseer implements OWLClassExpressionVisitor {
     	
         if(cardinality != ExactCardinality){ //if cardinality > restriction the ontology is inconsistent anyway
         	report += "Restriction: " + property.getNamedProperty() + " exactly " + ExactCardinality + " " + target
-        			+ "    Issue: " + cardinality + " =/= " + ExactCardinality + "\n";
+        			+ "    ISSUE: " + cardinality + " =/= " + ExactCardinality + "\n";
         	if(cardinality < ExactCardinality) computeSolution(property, target, cardinality, ExactCardinality);
         }
     }
@@ -194,7 +194,7 @@ public class RestrictionOverseer implements OWLClassExpressionVisitor {
     	//isto obtem relacoes X do individuo Y, mas precisa de obter relacoes X do individuo Y ao individuo Z
     	
         if(cardinality == 0){
-        	report += "Restriction: " + property.getNamedProperty() + " some " + target + "    Issue: There is no relation of this type\n";
+        	report += "Restriction: " + property.getNamedProperty() + " some " + target + "    ISSUE: There is no relation of this type\n";
         }
     }
     
@@ -209,7 +209,7 @@ public class RestrictionOverseer implements OWLClassExpressionVisitor {
     			.anyMatch(i -> i.equals(individual))) return; //Check if there is any self relation
 
     	report += "Restriction: " + property.getNamedProperty() + " hasSelf"
-    			+ "    Issue: relation not found\n";
+    			+ "    ISSUE: relation not found\n";
     	
     	solution += individualShortIRI + " " + cachedIRIs.get(property.getNamedProperty().getIRI().toString()) + " " + individualShortIRI + "\n";
     
@@ -282,7 +282,7 @@ public class RestrictionOverseer implements OWLClassExpressionVisitor {
     	
         if(cardinality > MaxCardinality){
         	report += "Restriction: " + property.getNamedProperty() + " max " + MaxCardinality + " " + second
-        			+ "    Issue: " + cardinality + " > " + MaxCardinality + "\n";
+        			+ "    ISSUE: " + cardinality + " > " + MaxCardinality + "\n";
         }
     }
     
@@ -300,7 +300,7 @@ public class RestrictionOverseer implements OWLClassExpressionVisitor {
 //    	
 //    	currentindividuals.removeAll(allowedindividuals);//currentindividuals now holds forbidden individuals
 //    	if(!currentindividuals.isEmpty()){
-//    		report += "Restriction: " + property.getNamedProperty() + " allvaluesfrom " + second + "    Issue: Some individuals are not instances of the restricted class\n";
+//    		report += "Restriction: " + property.getNamedProperty() + " allvaluesfrom " + second + "    ISSUE: Some individuals are not instances of the restricted class\n";
 //    		currentindividuals.forEach(i -> report += i.getIRI().toString() + "\n");
 //    	}
 //    }

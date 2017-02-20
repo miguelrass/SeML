@@ -177,10 +177,15 @@ public class Ontologies {
 	        	tripleIDlist.add("ObjectProperty "); tripleIDlist.add(o.getNamedProperty().getIRI().getShortForm()); tripleIDlist.add( o.getNamedProperty().getIRI().toString() );} });
 	        reasoner.getInstances(fac.getOWLClass(IRI.create(OWL_Thing)), false).entities().forEach(i -> {
 	        	StringBuilder sb_aux = new StringBuilder(1000); //set initial capacity to 1000 chars
+	        	
+	        	//adicionei para debug esta linha e um printf dentro de um ciclo em baixo
+	        	System.out.println("classes for individual: " +i);
+	        	reasoner.getTypes(i, false).forEach(cc -> System.out.println(cc));
+	        	
 	        	List<OWLClassExpression> classes = EntitySearcher.getTypes(i, master).collect(Collectors.toList());
 	        	if(!classes.isEmpty()) { //An individual might be a lost fragment, with no owner
 		        	sb_aux.append("MetaIndividual "); 
-		        	classes.forEach(o -> { if(o.isOWLClass()) sb_aux.append("\"" + o.asOWLClass().getIRI().toString() + "\" "); });
+		        	classes.forEach(o -> { System.out.println (o.asOWLClass().getIRI()); if(o.isOWLClass()) sb_aux.append("\"" + o.asOWLClass().getIRI().toString() + "\" "); });
 		        	tripleIDlist.add(sb_aux.toString()); tripleIDlist.add(i.getIRI().getShortForm()); tripleIDlist.add( i.getIRI().toString() ); }
 	        	});
     	} catch (Exception e) {throw new IOException("Error parsing Master Ontology: " + e.getMessage());}     		
@@ -210,8 +215,10 @@ public class Ontologies {
 		writer.close();
 		System.out.println(local_log + "Successfully generated: " + GENfile.getAbsolutePath());
 		
+		System.out.println(local_log + "Testing the rule engine.. ");
+
 	}
-	
+
 	
 	public static String ExplainInconsistencies(OWLOntology ontology){
 		final String local_log = Ontologies.local_log + "[ExplainInconsistencies] ";

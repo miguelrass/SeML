@@ -178,11 +178,19 @@ class SeMLValidator extends AbstractSeMLValidator {
 	
 	def Model getImportModel(Resource contextResource, String importURIAsString) {
 		val URI importURI = URI?.createURI(importURIAsString)
+		//System.out.println(importURI);
 		val URI contextURI = contextResource?.getURI
+		//System.out.println(contextURI);
 		val URI resolvedURI = importURI?.resolve(contextURI)
+		//System.out.println(resolvedURI);
 		val ResourceSet contextResourceSet = contextResource?.resourceSet
+		//System.out.println("hey");
+		//contextResourceSet.allContents.forEach[ a | System.out.println(a)]
 		val Resource resource = contextResourceSet?.getResource(resolvedURI, false)
+		//System.out.println(resource.allContents.head);
 		return resource?.allContents?.head as Model
+		
+		
 	}
 	
 	/**
