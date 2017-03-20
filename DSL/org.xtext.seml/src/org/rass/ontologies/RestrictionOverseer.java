@@ -1,26 +1,38 @@
 package org.rass.ontologies;
 
-import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.reasoner.Node;
-import org.semanticweb.owlapi.reasoner.NodeSet;
-import org.xtext.seml.seML.Individual;
-
-import com.clarkparsia.pellet.owlapi.PelletReasoner;
-
-import javax.annotation.Nonnull;
-
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
-import java.util.stream.Collectors;
+import java.util.Set;
 import java.util.stream.Stream;
+
+import javax.annotation.Nonnull;
+
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLClassExpressionVisitor;
+import org.semanticweb.owlapi.model.OWLDataAllValuesFrom;
+import org.semanticweb.owlapi.model.OWLDataExactCardinality;
+import org.semanticweb.owlapi.model.OWLDataHasValue;
+import org.semanticweb.owlapi.model.OWLDataMaxCardinality;
+import org.semanticweb.owlapi.model.OWLDataMinCardinality;
+import org.semanticweb.owlapi.model.OWLDataSomeValuesFrom;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLObjectAllValuesFrom;
+import org.semanticweb.owlapi.model.OWLObjectComplementOf;
+import org.semanticweb.owlapi.model.OWLObjectExactCardinality;
+import org.semanticweb.owlapi.model.OWLObjectHasSelf;
+import org.semanticweb.owlapi.model.OWLObjectHasValue;
+import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
+import org.semanticweb.owlapi.model.OWLObjectMaxCardinality;
+import org.semanticweb.owlapi.model.OWLObjectMinCardinality;
+import org.semanticweb.owlapi.model.OWLObjectOneOf;
+import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
+import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
+import org.semanticweb.owlapi.model.OWLObjectUnionOf;
+
+import com.clarkparsia.pellet.owlapiv3.PelletReasoner;
 
 
 public class RestrictionOverseer implements OWLClassExpressionVisitor {
@@ -83,30 +95,29 @@ public class RestrictionOverseer implements OWLClassExpressionVisitor {
     
     private int getRelationCardinality(OWLNamedIndividual i, OWLObjectPropertyExpression p, OWLClassExpression e){ 	
     	
-    	Stream<OWLNamedIndividual> relatives = reasoner.getObjectPropertyValues(i, p).entities(); //Individuals that are related to "i" via "p"
-    	List<OWLNamedIndividual> targets;
+    	Set<OWLNamedIndividual> relatives = reasoner.getObjectPropertyValues(i, p).getFlattened(); //Individuals that are related to "i" via "p"
+    	Set<OWLNamedIndividual> targets;
     	
     	try {
-			targets = reasoner.getInstances(e, false).entities().collect(Collectors.toList()); //(get indirect) Individuals of the provided Class Expression
+			targets = reasoner.getInstances(e, false).getFlattened(); //(get indirect) Individuals of the provided Class Expression
 		} catch (Exception ex) {
 			return 0; // The getInstances() procedure fails when no individuals are found (only when using complex Class Expressions)
 		}
     	
     	//Check if every relative is a target of the current restriction
     	int cardinality = 0;
-    	Iterator<OWLNamedIndividual> it = relatives.iterator();
-    	while(it.hasNext()){
-    		OWLNamedIndividual rel = it.next();
-    		if(targets.contains(rel)) cardinality++;
-    	}
-    	
+    	for(OWLNamedIndividual r : relatives){ if(targets.contains(r)) cardinality++; }
+
     	return cardinality;	
     }
     
     private boolean areRelated(OWLNamedIndividual i, OWLNamedIndividual i2, OWLObjectPropertyExpression p){ 	
     	
-    	Stream<OWLNamedIndividual> relatives = reasoner.getObjectPropertyValues(i, p).entities(); //Individuals that are related to "i" via "p"
-    	return relatives.anyMatch(r -> r.equals(i2));
+    	Set<OWLNamedIndividual> relatives = reasoner.getObjectPropertyValues(i, p).getFlattened(); //Individuals that are related to "i" via "p"
+    	for(OWLNamedIndividual r : relatives){
+    		if (r.equals(i2)) return true;
+    	}
+    	return false;
     }
     
     
@@ -135,7 +146,7 @@ public class RestrictionOverseer implements OWLClassExpressionVisitor {
     	if(IgnoreOPs.contains(propertyIRI)) return; //ignore these ObjProperties
     	
     	if(propertyIRI.equals(OWL_OP_demands)) //if ObjProp is "demands" cardinality is not calculated based on no. of relations
-    		cardinality = reasoner.getInstances(target, false).entities().count(); //get no. of instances of the restricted component
+    		cardinality = reasoner.getInstances(target, false).getFlattened().size(); //get no. of instances of the restricted component
     	else
     	//-----------------------------------------------------------------------------------------------------------------
     		//cardinality = reasoner.getObjectPropertyValues(individual, property).entities().count(); //no. of relations
@@ -162,7 +173,7 @@ public class RestrictionOverseer implements OWLClassExpressionVisitor {
     	if(IgnoreOPs.contains(propertyIRI)) return; //ignore these ObjProperties
     	
     	if(propertyIRI.equals(OWL_OP_demands)) //if ObjProp is "demands" cardinality is not calculated based on no. of relations
-    		cardinality = reasoner.getInstances(target, false).entities().count(); //get no. of instances of the restricted component
+    		cardinality = reasoner.getInstances(target, false).getFlattened().size(); //get no. of instances of the restricted component
     	else
     	//-----------------------------------------------------------------------------------------------------------------
     		cardinality = getRelationCardinality(individual, property, target);
@@ -185,7 +196,7 @@ public class RestrictionOverseer implements OWLClassExpressionVisitor {
     	if(IgnoreOPs.contains(propertyIRI)) return; //ignore these ObjProperties
     	
     	if(propertyIRI.equals(OWL_OP_demands)) //if ObjProp is "demands" cardinality is not calculated based on no. of relations
-    		cardinality = reasoner.getInstances(target, false).entities().count(); //get no. of instances of the restricted component
+    		cardinality = reasoner.getInstances(target, false).getFlattened().size(); //get no. of instances of the restricted component
     	else
     	//-----------------------------------------------------------------------------------------------------------------
     		//cardinality = reasoner.getObjectPropertyValues(individual, property).entities().count(); //no. of relations
@@ -205,8 +216,8 @@ public class RestrictionOverseer implements OWLClassExpressionVisitor {
     	OWLObjectPropertyExpression property = owlObjectHasSelf.getProperty(); //object property
     	String individualShortIRI = cachedIRIs.get(individual.getIRI().toString());
     	
-    	if(reasoner.getObjectPropertyValues(individual, property).entities()//Individuals that are related to "individual" via "property"
-    			.anyMatch(i -> i.equals(individual))) return; //Check if there is any self relation
+    	if(reasoner.getObjectPropertyValues(individual, property).getFlattened()//Individuals that are related to "individual" via "property"
+    			.contains(individual)) return; //Check if there is any self relation
 
     	report += "Restriction: " + property.getNamedProperty() + " hasSelf"
     			+ "    ISSUE: relation not found\n";
@@ -221,24 +232,23 @@ public class RestrictionOverseer implements OWLClassExpressionVisitor {
     @Override
     public void visit(@Nonnull OWLObjectUnionOf owlObjectUnionOf) {
     	
-    	String temp_report = "Composed Restriction. At least one restriction has to be met:\n";
+    	StringBuilder report_sb = new StringBuilder(1000); //set initial capacity to 1000 chars
+    	report_sb.append("Composed Restriction. At least one restriction has to be met:\n");
     	
     	//Get all relations and create a RestrictionOverseer object
     	RestrictionOverseer RO = new RestrictionOverseer(individual, reasoner, cachedIRIs, cachedIRIsInverse);
     			
     	//Evaluate each restriction with the visitor pattern
-    	Iterator<OWLClassExpression> it = owlObjectUnionOf.operands().iterator();
-    	while(it.hasNext()){
-    		OWLClassExpression ce = it.next();
+    	for(OWLClassExpression ce : owlObjectUnionOf.getOperands()){
     		ce.accept(RO);
     		if(RO.getFinalReport() == null) return; //If one restriction is met, there is no problem to report
-    		temp_report += RO.getFinalReport();
+    		report_sb.append(RO.getFinalReport() + "OR\n"); //Connect each restriction with an OR
     		RO.resetReport();
-    		if(it.hasNext()) temp_report += "OR\n"; //Connect each restriction with an OR
     	}
+    	report_sb.setLength(report_sb.length()-3);
     	
     	//Report error if no restriction was met
-    	report += temp_report;
+    	report += report_sb.toString();
     }
     
     @Override
@@ -247,7 +257,7 @@ public class RestrictionOverseer implements OWLClassExpressionVisitor {
     	RestrictionOverseer RO = new RestrictionOverseer(individual, reasoner, cachedIRIs, cachedIRIsInverse);
     			
     	//Evaluate each restriction with the visitor pattern
-    	owlObjectIntersectionOf.operands().forEach(r -> r.accept(RO));
+    	owlObjectIntersectionOf.getOperands().forEach(r -> r.accept(RO));
     	
     	//Report error if no restriction was met
     	if(RO.getFinalReport() != null) {report += RO.getFinalReport()[0]; solution += RO.getFinalReport()[1];}
@@ -278,7 +288,7 @@ public class RestrictionOverseer implements OWLClassExpressionVisitor {
     	
     	//-------------------------------------------------------------------------- Process "characteristic" related tasks
     	if(IgnoreOPs.contains(propertyIRI) || (!propertyIRI.equals(OWL_OP_demands))) return; //ignore these ObjProperties
-    	cardinality = reasoner.getInstances(second, false).entities().count(); //get no. of instances of the restricted component
+    	cardinality = reasoner.getInstances(second, false).getFlattened().size(); //get no. of instances of the restricted component
     	
         if(cardinality > MaxCardinality){
         	report += "Restriction: " + property.getNamedProperty() + " max " + MaxCardinality + " " + second
@@ -328,7 +338,7 @@ public class RestrictionOverseer implements OWLClassExpressionVisitor {
 	    	try {
 	    		
 				//Get all existent individuals which are not yet related with the current individual (by the object property)
-		    	Stream<OWLNamedIndividual> freeIndividuals = reasoner.getInstances(target, false).entities().filter(i -> !areRelated(individual, i, property));
+		    	Stream<OWLNamedIndividual> freeIndividuals = reasoner.getInstances(target, false).getFlattened().stream().filter(i -> !areRelated(individual, i, property));
 		    	
 		    	//Create relations with the previously filtered individuals
 		    	Iterator<OWLNamedIndividual> it = freeIndividuals.iterator();
@@ -399,15 +409,15 @@ public class RestrictionOverseer implements OWLClassExpressionVisitor {
 		    // Instantiate first group of classes
 		    Iterator<OWLObjectIntersectionOf> itt = targetClasses.iterator();
 		    OWLObjectIntersectionOf c = itt.next();
-		    String indname = getNextIndIRI(cachedIRIs.get(c.operands().iterator().next().asOWLClass().getIRI().toString())); //Individual name is incrementally generated
-		    c.operands().forEach(o -> solutionSB.append(cachedIRIs.get(o.asOWLClass().getIRI().toString()) + ", "));
+		    String indname = getNextIndIRI(cachedIRIs.get(c.getOperands().iterator().next().asOWLClass().getIRI().toString())); //Individual name is incrementally generated
+		    c.getOperands().forEach(o -> solutionSB.append(cachedIRIs.get(o.asOWLClass().getIRI().toString()) + ", "));
 		    solutionSB.setLength(solutionSB.length()-2);
 		    
 		    // Comment instantiation of other groups of classes
 		    if(itt.hasNext()){ solutionSB.append(" /* or ");
 		    
     		    while(itt.hasNext()){ c = itt.next();
-    		    	c.operands().forEach(o -> solutionSB.append(cachedIRIs.get(o.asOWLClass().getIRI().toString()) + ", "));
+    		    	c.getOperands().forEach(o -> solutionSB.append(cachedIRIs.get(o.asOWLClass().getIRI().toString()) + ", "));
     		    	solutionSB.setLength(solutionSB.length()-2);
     		    	solutionSB.append(" or ");
     		    }

@@ -11,7 +11,6 @@ import org.xtext.seml.SeMLStandaloneSetupGenerated;
 @SuppressWarnings("all")
 public class SeMLStandaloneSetup extends SeMLStandaloneSetupGenerated {
   public static void doSetup() {
-    SeMLStandaloneSetup _seMLStandaloneSetup = new SeMLStandaloneSetup();
-    _seMLStandaloneSetup.createInjectorAndDoEMFRegistration();
+    new SeMLStandaloneSetup().createInjectorAndDoEMFRegistration();
   }
 }

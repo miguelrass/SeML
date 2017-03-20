@@ -1,55 +1,34 @@
 package org.rass.ontologies;
 
-import org.eclipse.xtext.validation.Check;
 import java.io.File;
-import org.xtext.seml.seML.SeMLPackage;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.emf.ecore.EObject;
+import org.rass.ontologies.Anomaly.ReportLevel;
+import org.rass.swrl.CustomSWRLBuiltin;
+import org.rass.swrl.ExternalSWRLBuiltins;
+import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLAnnotationProperty;
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
-import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.model.OWLOntologyDocumentAlreadyExistsException;
-import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLDataFactory;
-
-import org.semanticweb.owlapi.reasoner.NodeSet;
-import org.semanticweb.owlapi.search.EntitySearcher;
-import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLClassExpression;
-
-import com.clarkparsia.owlapi.explanation.PelletExplanation;
-import com.clarkparsia.owlapi.explanation.io.manchester.ManchesterSyntaxExplanationRenderer;
-import com.clarkparsia.pellet.owlapi.PelletReasoner;
-import com.clarkparsia.pellet.owlapi.PelletReasonerFactory;
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Path;
 import org.semanticweb.owlapi.util.AutoIRIMapper;
-import org.semanticweb.owlapi.util.OWLOntologyMerger;
-import org.eclipse.xtext.EcoreUtil2;
-import org.xtext.seml.seML.Import;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.io.IOException;
-import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
-import org.semanticweb.owlapi.reasoner.Node;
-import org.semanticweb.owlapi.model.OWLLiteral;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
-import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
-import org.semanticweb.owlapi.model.OWLAnnotationProperty;
-import org.semanticweb.owlapi.model.OWLAxiom;
+import com.clarkparsia.pellet.owlapiv3.PelletReasoner;
 
 public class Ontologies {
 	
@@ -58,6 +37,7 @@ public class Ontologies {
 	public static final String OWL_Nothing = "http://www.w3.org/2002/07/owl#Nothing";
 	public static final String OWL_Thing = "http://www.w3.org/2002/07/owl#Thing";
 	public static final String OWL_TopObjProperty = "http://www.w3.org/2002/07/owl#bottomObjectProperty"; //Note: reasoner.getTopObjectPropertyNode().iterator().next();
+	public static final String OWL_Component = OWL_Upper + "Component";
 	public static final String OWL_Event = OWL_Upper + "Event";
 	public static final String OWL_Entity = OWL_Upper + "Entity";
 	public static final String OWL_Process = OWL_Upper + "Process";
@@ -67,11 +47,18 @@ public class Ontologies {
 	public static final String OWL_Feature = OWL_Upper + "Feature";
 	public static final String OWL_Annotation_NONInstantiable = OWL_Upper + "NonInstantiable";
 	public static final String OWL_DefaultC = OWL_Upper + "Default";
+	public static final String OWL_Error = OWL_Upper + "Error";
+	public static final String OWL_Information = OWL_Upper + "Information";
+	public static final String OWL_Warning = OWL_Upper + "Warning";
 	 
 	public static String GENfile_NAME = "imports.seml";
 	public static File GENfile = null; //generated file object (absolute path)
 	public static String GENfile_relpath = null; //relative path from workspace (to get imported model)
 	public static String GENfolder = null; //generated folder (absolute path)
+	public static String SWRLfolder = null; //swrl folder (absolute path)
+	public static String TEMPLfolder = null; //swrl templates folder (absolute path)
+	public static String PROJfolder = null; //project folder (absolute path)
+	public static String SWRLPackage = null; //swrl java package (semlbasename+ ".swrl")
 	public static final String GENfirstline = "/* Automatically generated file. Source files: ";
 	public static final String masterNAME = "master.owl";
 	public static final String masterIRI = "Se:ML";
@@ -99,12 +86,12 @@ public class Ontologies {
 	    		throw new IOException("Error Loading Ontology: " + imports[i] + " -> " + e.getMessage());	
 			} 
 		} 
-		manager.ontologies().forEach(o -> System.out.println(local_log + o.getOntologyID().getOntologyIRI().get().toString()));		
+		manager.getOntologies().forEach(o -> System.out.println(local_log + o.getOntologyID().getOntologyIRI().get().toString()));		
 	
 		
 		//------------------------------------------------- Create master ontology		
 		
-		final long startTime = System.currentTimeMillis(); //log execution time	
+		long startTime = System.currentTimeMillis(); //log execution time	
     	try {
 			master = manager.createOntology(IRI.create(masterIRI));
 		} catch (OWLOntologyCreationException e) {//Error occurred while creating ontology	
@@ -114,7 +101,7 @@ public class Ontologies {
     	
     	//------------------------------------------------- Merge them all
     	
-    	manager.ontologies().forEach(o -> master.addAxioms(o.getAxioms()));
+    	manager.getOntologies().forEach(o -> manager.addAxioms(master, o.getAxioms()) );
         System.out.println(local_log + "(" + (System.currentTimeMillis() - startTime) + "ms) Merged Ontology has: " + master.getAxiomCount() + " axioms");
         
         
@@ -127,7 +114,7 @@ public class Ontologies {
 			throw new IOException("Error saving Master Ontology: " + e.getMessage());
 		}
         
-        //====================================================================================== Generate keywords file
+        //========================================================================================= Prepare Environment
         //=============================================================================================================
 		
         //------------------------------------------------- Prepare destination folder
@@ -142,11 +129,28 @@ public class Ontologies {
 	    }
 	    
 	    
-	    //------------------------------------------------- Create reasoner and StringBuilder
+	    //------------------------------------------------- Create reasoner
 	    
-	    final PelletReasoner reasoner = PelletReasonerFactory.getInstance().createNonBufferingReasoner(master);
-	    if(!reasoner.isConsistent()) throw new IOException("Master ontology is inconsistent:\n" + ExplainInconsistencies(master)); //This check must be performed to use the reasoner (this cannot be fixed inside the DSL, use protégé)
+	    final PelletReasoner reasoner = CustomSWRLBuiltin.getSWRLReasoner(master);
+	    
+	    //listens to all changes for all ontologies and updates the reasoner
+		//manager.addOntologyChangeListener( reasoner );
+	    
+		//test master ontology for inconsistencies and unsatisfiable classes (otherwise, it becomes impossible to reason)
+		if(Anomaly.ReasonAndExplain(reasoner, master, ReportLevel.SATISFIABILITY)){
+			throw new IOException("Master ontology has anomalies:\n" + Anomaly.getAnomalies()); //This check must be performed to use the reasoner (this cannot be fixed inside the DSL, use protégé)
+		}
+	    
 	    reasoner.precomputeInferences();// Ask the reasoner to do all the necessary work now
+	    
+	    //------------------------------------------------- Create Templates for SWRL Built-ins
+	    
+	    ExternalSWRLBuiltins.GenerateTemplates(reasoner);
+	    
+	    //====================================================================================== Generate keywords file
+        //=============================================================================================================
+	    
+	    //------------------------------------------------- Create StringBuilder
 	    
     	StringBuilder sb = new StringBuilder(10000); //set initial capacity to 10000 chars
     	sb.append(GENfirstline + imports.length + "\n"); //set initial line + no of imported files
@@ -161,35 +165,41 @@ public class Ontologies {
     	//------------------------------------------------- Parse master ontology with reasoner
     	
     	ArrayList<String> tripleIDlist = new ArrayList<String>();//Sentence: Prefix + ShortIRI + IRI
+    	Set<OWLClass> ComponentSubClasses = new HashSet<OWLClass>(); //List all Component subclasses to filter meta-individuals
     	
     	try {	
-	        reasoner.getSubClasses(fac.getOWLClass(IRI.create(OWL_Event)), false).entities().forEach(c -> 	{if(isInstantiable(c.getIRI(),master)) {
-	        	tripleIDlist.add("CompEvent ");      tripleIDlist.add(c.getIRI().getShortForm()); tripleIDlist.add( c.getIRI().toString() );} });
-	        reasoner.getSubClasses(fac.getOWLClass(IRI.create(OWL_Entity)), false).entities().forEach(c -> 	{if(isInstantiable(c.getIRI(),master)) {
-	        	tripleIDlist.add("CompEntity ");     tripleIDlist.add(c.getIRI().getShortForm()); tripleIDlist.add( c.getIRI().toString() );} });
-	        reasoner.getSubClasses(fac.getOWLClass(IRI.create(OWL_Process)), false).entities().forEach(c -> {if(isInstantiable(c.getIRI(),master)) {
-	        	tripleIDlist.add("CompProcess ");    tripleIDlist.add(c.getIRI().getShortForm()); tripleIDlist.add( c.getIRI().toString() );} });
-	        reasoner.getSubClasses(fac.getOWLClass(IRI.create(OWL_Property)), false).entities().forEach(c -> {if(isInstantiable(c.getIRI(),master)){ 
-	        	tripleIDlist.add("CompProperty ");   tripleIDlist.add(c.getIRI().getShortForm()); tripleIDlist.add( c.getIRI().toString() );} });
-	        reasoner.getSubClasses(fac.getOWLClass(IRI.create(OWL_Characteristic)), false).entities().forEach(c -> {if(isInstantiable(c.getIRI(),master)){ 
-	        	tripleIDlist.add("Characteristic "); tripleIDlist.add(c.getIRI().getShortForm()); tripleIDlist.add( c.getIRI().toString() );} });
-	        reasoner.getSubObjectProperties(reasoner.getTopObjectPropertyNode().getRepresentativeElement()).entities().forEach(o -> {if(isInstantiable(o.getNamedProperty().getIRI(),master)){ 
-	        	tripleIDlist.add("ObjectProperty "); tripleIDlist.add(o.getNamedProperty().getIRI().getShortForm()); tripleIDlist.add( o.getNamedProperty().getIRI().toString() );} });
-	        reasoner.getInstances(fac.getOWLClass(IRI.create(OWL_Thing)), false).entities().forEach(i -> {
-	        	StringBuilder sb_aux = new StringBuilder(1000); //set initial capacity to 1000 chars
-	        	
-	        	//adicionei para debug esta linha e um printf dentro de um ciclo em baixo
-	        	System.out.println("classes for individual: " +i);
-	        	reasoner.getTypes(i, false).forEach(cc -> System.out.println(cc));
-	        	
-	        	List<OWLClassExpression> classes = EntitySearcher.getTypes(i, master).collect(Collectors.toList());
-	        	if(!classes.isEmpty()) { //An individual might be a lost fragment, with no owner
-		        	sb_aux.append("MetaIndividual "); 
-		        	classes.forEach(o -> { System.out.println (o.asOWLClass().getIRI()); if(o.isOWLClass()) sb_aux.append("\"" + o.asOWLClass().getIRI().toString() + "\" "); });
-		        	tripleIDlist.add(sb_aux.toString()); tripleIDlist.add(i.getIRI().getShortForm()); tripleIDlist.add( i.getIRI().toString() ); }
-	        	});
-    	} catch (Exception e) {throw new IOException("Error parsing Master Ontology: " + e.getMessage());}     		
-    	
+    		reasoner.getSubClasses(fac.getOWLClass(IRI.create(OWL_Event)), false).getFlattened().forEach(c -> 	{if(isInstantiable(c.getIRI(),master)) {
+ 	        	tripleIDlist.add("CompEvent ");      tripleIDlist.add(c.getIRI().getShortForm()); tripleIDlist.add( c.getIRI().toString() );} ComponentSubClasses.add(c);});
+ 	        reasoner.getSubClasses(fac.getOWLClass(IRI.create(OWL_Entity)), false).getFlattened().forEach(c -> 	{if(isInstantiable(c.getIRI(),master)) {
+ 	        	tripleIDlist.add("CompEntity ");     tripleIDlist.add(c.getIRI().getShortForm()); tripleIDlist.add( c.getIRI().toString() );} ComponentSubClasses.add(c);});
+ 	        reasoner.getSubClasses(fac.getOWLClass(IRI.create(OWL_Process)), false).getFlattened().forEach(c -> {if(isInstantiable(c.getIRI(),master)) {
+ 	        	tripleIDlist.add("CompProcess ");    tripleIDlist.add(c.getIRI().getShortForm()); tripleIDlist.add( c.getIRI().toString() );} ComponentSubClasses.add(c);});
+ 	        reasoner.getSubClasses(fac.getOWLClass(IRI.create(OWL_Property)), false).getFlattened().forEach(c -> {if(isInstantiable(c.getIRI(),master)){ 
+ 	        	tripleIDlist.add("CompProperty ");   tripleIDlist.add(c.getIRI().getShortForm()); tripleIDlist.add( c.getIRI().toString() );} ComponentSubClasses.add(c);});
+ 	        
+ 	        //check if imported ontology has any "Component" subclass declaration (if not, it is not valid)
+ 	        if (tripleIDlist.isEmpty()) throw new IOException("Imported Ontologies don't have user-defined Component classes");
+ 	        
+ 	        reasoner.getSubClasses(fac.getOWLClass(IRI.create(OWL_Characteristic)), false).getFlattened().forEach(c -> {if(isInstantiable(c.getIRI(),master)){ 
+ 	        	tripleIDlist.add("Characteristic "); tripleIDlist.add(c.getIRI().getShortForm()); tripleIDlist.add( c.getIRI().toString() );} });
+ 	        reasoner.getSubObjectProperties(reasoner.getTopObjectPropertyNode().getRepresentativeElement(),false).getFlattened().forEach(o -> {if(isInstantiable(o.getNamedProperty().getIRI(),master)){ 
+ 	        	tripleIDlist.add("ObjectProperty "); tripleIDlist.add(o.getNamedProperty().getIRI().getShortForm()); tripleIDlist.add( o.getNamedProperty().getIRI().toString() );} });
+ 	        reasoner.getInstances(fac.getOWLClass(IRI.create(OWL_Component)), false).getFlattened().forEach(i -> {
+ 	        	StringBuilder sb_aux = new StringBuilder(1000); //set initial capacity to 1000 chars
+ 	        	
+ 	        	Set<OWLClass> classes = reasoner.getTypes(i, true).getFlattened();
+ 	        	if(!classes.isEmpty()) { //An individual might be a lost fragment, with no owner
+ 		        	sb_aux.append("MetaIndividual "); 
+ 		        	classes.forEach(o -> { if(o instanceof OWLClass) {
+ 		        		OWLClass cl = o.asOWLClass();
+ 		        		if(ComponentSubClasses.contains(cl)) sb_aux.append("\"" + cl.getIRI().toString() + "\" ");
+ 		        	} });
+ 		        		
+ 		        	tripleIDlist.add(sb_aux.toString()); tripleIDlist.add(i.getIRI().getShortForm()); tripleIDlist.add( i.getIRI().toString() ); }
+ 	        	});
+    	} 
+    	catch (IOException e) {throw new IOException(e.getMessage());}     	
+    	catch (Exception e) {throw new IOException("Error parsing Master Ontology: " + e.getMessage());}     		
     	
     	//------------------------------------------------- Eliminate the short-form for duplicates and build string
     	
@@ -215,50 +225,13 @@ public class Ontologies {
 		writer.close();
 		System.out.println(local_log + "Successfully generated: " + GENfile.getAbsolutePath());
 		
-		System.out.println(local_log + "Testing the rule engine.. ");
-
-	}
-
-	
-	public static String ExplainInconsistencies(OWLOntology ontology){
-		final String local_log = Ontologies.local_log + "[ExplainInconsistencies] ";
+		//------------------------------------------------- Save master ontology cache data
 		
-		// The renderer is used to format the explanation
-		ManchesterSyntaxExplanationRenderer renderer = new ManchesterSyntaxExplanationRenderer();
+		startTime = System.currentTimeMillis(); //log execution time	
+		System.out.print(local_log + "Generating cache data...");
+		MasterCache.cacheReportClasses(GENfolder, reasoner);
+		System.out.println("(" + (System.currentTimeMillis() - startTime) + "ms)");
 		
-		// The writer used for the explanation rendered
-		StringWriter outputWriter = new StringWriter();
-		renderer.startRendering(outputWriter );
-		
-		// Create an explanation generator
-		PelletExplanation expGen = new PelletExplanation(ontology);
-		
-		//Try to get all explanations (up to 3)
-		Set<Set<OWLAxiom>> explanationAxioms = null;
-		try {
-			explanationAxioms = expGen.getInconsistencyExplanations(3);
-			while(!explanationAxioms.isEmpty()) {
-				renderer.render( explanationAxioms);
-				explanationAxioms.remove(explanationAxioms.iterator().next());
-			}
-			renderer.endRendering();
-			
-		//In case of failure try to get only the first explanation
-		} catch (Exception e) {
-			System.out.println(local_log + "Error: " + e.getMessage());
-			try {
-				explanationAxioms = expGen.getInconsistencyExplanations(1);
-				renderer.render( explanationAxioms);
-				renderer.endRendering();
-			} catch (Exception e1) {
-				
-		//In case of failure report error in console
-				System.out.println(local_log + "Error: " + e1.getMessage());
-				outputWriter.write("The inconsistencies explanation could not be rendered");
-			}
-		}
-		
-		return outputWriter.toString();
 	}
 	
 	
@@ -328,7 +301,8 @@ public class Ontologies {
 			// If ontology creation fails (e.g. when loading a different ont with same IRI), the OntLibrary is reset.
 			System.out.println(local_log + "Warning while loading ontology: " + e.getMessage());
 			System.out.println(local_log + "Cleaning Ontologies cache...");
-			OntLibrary.clearOntologies();
+			OntLibrary = OWLManager.createOWLOntologyManager(); //clear everything
+			OntLibrary.getIRIMappers().add(automapper);
 			FileReferences.clear();
 			ontology = OntLibrary.loadOntologyFromOntologyDocument(ontfile); //If it still fails, an exception will be thrown
 		}	
@@ -361,16 +335,26 @@ public class Ontologies {
     	//Find current SEML file
 		String SEMLfile_relpath = E.eResource().getURI().toPlatformString(true);// 		"rPath/____.seml"
 		IFile SEMLfile_object = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(SEMLfile_relpath));
-		//SEMLfile_abspath = SEMLfile_object.getProject().getLocation(); //".../path/file.seml" (currently unused)
+
+		//Get SEML file simple basename and folder
 		String SEMLfile_name = SEMLfile_object.getLocation().toFile().getName(); // "file.seml" 
+		String SEMLfile_basename = SEMLfile_name.substring(0, SEMLfile_name.lastIndexOf('.')); //"file"
+		PROJfolder =SEMLfile_object.getLocation().toFile().getParent(); //".../path/"
+		
+		//Get SEML file AbsPath without ".seml"
+		String SEMLfile_abspath_noExt = PROJfolder + "/" + SEMLfile_basename; //".../path/file"
 		
 		//Get generated folder path (relative + absolute)
-		GENfolder = SEMLfile_object.getLocation().toString() + ".gen/"; // 	".../rPath/____.seml.gen/"
-		//SEMLGENfolder_relpath = SEMLfile_name + ".gen/"; // 							"____.seml.gen/"		
+		GENfolder = SEMLfile_abspath_noExt + "_gen/"; 					// 	".../path/----_gen/"
+		//GENfolder_relpath = SEMLfile_basename + "_gen/"; 				// 	"----_gen/"		
+		
+		SWRLfolder =  SEMLfile_abspath_noExt + "_swrl/";				// 	".../path/----_swrl/"
+		TEMPLfolder = SEMLfile_abspath_noExt + "_template/";			// 	".../path/----_template/"
+		SWRLPackage = SEMLfile_basename + "_swrl";						// 	"----_swrl"
 		
 		//Get generated file path (relative + absolute)
-		GENfile = new File(GENfolder + GENfile_NAME);// ".../rPath/____.seml.gen/imports.seml"
-		GENfile_relpath = SEMLfile_name + ".gen/" + GENfile_NAME;// "____.seml.gen/imports.seml"				
+		GENfile = new File(GENfolder + GENfile_NAME);					// ".../path/----_gen/imports.seml"
+		GENfile_relpath = SEMLfile_basename + "_gen/" + GENfile_NAME;	// "----_gen/imports.seml"				
     }
 	
 }

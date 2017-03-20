@@ -5,18 +5,20 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.xtext.seml.seML.Individual;
 
-import com.clarkparsia.pellet.owlapi.PelletReasoner;
+import com.clarkparsia.pellet.owlapiv3.PelletReasoner;
 
 import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -64,19 +66,18 @@ public class ClassSolver implements OWLClassExpressionVisitor {
     	//System.out.println("__Intersecao " + owlObjectIntersectionOf);
     	AcceptedClasses = new ArrayList<OWLObjectIntersectionOf>(1);
     	
-    	List<OWLClassExpression> classlist = new ArrayList<OWLClassExpression>(); //List of classes to be intersected
+    	Set<OWLClassExpression> classlist = new HashSet<OWLClassExpression>(); //List of classes to be intersected
 
     	//Evaluate each AND OPERAND with the visitor pattern
-    	Iterator<OWLClassExpression> it = owlObjectIntersectionOf.operands().iterator();
-    	while(it.hasNext()){
-    		OWLClassExpression o = it.next();
+    	for(OWLClassExpression ce : owlObjectIntersectionOf.getOperands()){
     		ClassSolver cs = new ClassSolver();
-    		o.accept(cs); 
+    		ce.accept(cs); 
     		List<OWLObjectIntersectionOf> andOperandIntersections = cs.getAccepted();
     		if(andOperandIntersections==null || andOperandIntersections.size() != 1) {
     			System.out.println("AND abortado "); AcceptedClasses = null; return;} //Abort if visit has failed
-    		andOperandIntersections.get(0).operands().forEach(cls -> classlist.add(cls)); //Decompose intersection and store each Class
+    		classlist.addAll(andOperandIntersections.get(0).getOperands());//Decompose intersection and store each Class
     	}
+    	
     	AcceptedClasses.add(factory.getOWLObjectIntersectionOf(classlist)); //add only one intersection with all classes
     }
     
@@ -91,7 +92,7 @@ public class ClassSolver implements OWLClassExpressionVisitor {
     	AcceptedClasses = new ArrayList<OWLObjectIntersectionOf>();
     	
     	//Evaluate each OR OPERAND with the visitor pattern
-    	Iterator<OWLClassExpression> it = owlObjectUnionOf.operands().iterator();
+    	Iterator<OWLClassExpression> it = owlObjectUnionOf.getOperands().iterator();
     	while(it.hasNext()){
     		OWLClassExpression o = it.next();
     		ClassSolver cs = new ClassSolver();

@@ -3,51 +3,53 @@
  */
 package org.xtext.seml.validation
 
-import org.eclipse.xtext.validation.Check
+import java.io.BufferedReader
 import java.io.File
-import org.xtext.seml.seML.SeMLPackage
-import org.semanticweb.owlapi.model.OWLOntology
-import org.semanticweb.owlapi.model.OWLOntologyManager
-import org.semanticweb.owlapi.apibinding.OWLManager
-import org.semanticweb.owlapi.model.OWLOntologyDocumentAlreadyExistsException
-import org.semanticweb.owlapi.model.IRI
-import org.semanticweb.owlapi.model.OWLDataFactory
-import java.util.Set
-import org.semanticweb.owlapi.reasoner.NodeSet
-import org.semanticweb.owlapi.model.OWLClass
-import com.clarkparsia.pellet.owlapi.PelletReasoner
-import com.clarkparsia.pellet.owlapi.PelletReasonerFactory
-import java.io.FileOutputStream
-import java.io.PrintWriter
-import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.core.resources.ResourcesPlugin
-import org.eclipse.core.runtime.Path
-import org.semanticweb.owlapi.util.AutoIRIMapper
-import org.eclipse.xtext.EcoreUtil2
-import org.rass.ontologies.Ontologies
-import org.rass.ontologies.MasterOntology
-import org.xtext.seml.seML.Import
+import java.io.FileInputStream
 import java.io.IOException
-import org.xtext.seml.seML.Relation
-import org.eclipse.xtext.validation.CheckMode
+import java.io.InputStreamReader
+import java.util.Arrays
+import org.eclipse.emf.common.util.URI
+import org.eclipse.emf.ecore.resource.Resource
+import org.eclipse.emf.ecore.resource.ResourceSet
+import org.eclipse.xtext.EcoreUtil2
+import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.CheckType
-import org.xtext.seml.seML.Model
+import org.rass.ontologies.MasterOntology
+import org.rass.ontologies.Ontologies
+import org.xtext.seml.seML.Component
+import org.xtext.seml.seML.ImportModel
 import org.xtext.seml.seML.Individual
-import java.text.DateFormat
-import java.text.SimpleDateFormat
 import org.xtext.seml.seML.MainModel
 import org.xtext.seml.seML.MetaIndividual
-import org.xtext.seml.seML.Component
-import org.eclipse.emf.common.util.URI
-import org.eclipse.emf.ecore.resource.ResourceSet
-import java.io.FileInputStream
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.util.Collections
-import java.util.Arrays
-import org.xtext.seml.seML.ImportModel
+import org.xtext.seml.seML.Model
+import org.xtext.seml.seML.Sentence
+import org.xtext.seml.seML.Relation
+import org.xtext.seml.seML.SeMLPackage
 import org.xtext.seml.seML.UseCharacteristic
-import org.xtext.seml.seML.SeMLFactory
+import org.xtext.seml.SeMLStandaloneSetup
+import org.eclipse.xtext.resource.XtextResourceSet
+import com.google.inject.Injector
+import org.eclipse.xtext.resource.XtextResource
+import java.io.InputStream
+import java.io.ByteArrayInputStream
+import org.rass.ontologies.Anomaly
+import org.eclipse.emf.ecore.EReference
+import org.eclipse.emf.ecore.EStructuralFeature
+import org.semanticweb.owlapi.apibinding.OWLManager
+import org.eclipse.emf.ecore.EObject
+import org.xtext.seml.seML.AnyIndividual
+import org.eclipse.xtext.validation.AbstractDeclarativeValidator
+import java.util.List
+import javax.tools.JavaCompiler
+import javax.tools.ToolProvider
+import java.net.URL
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+import org.rass.swrl.CustomSWRLBuiltin
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.Date
 
 /**
  * This class contains custom validation rules. 
@@ -58,95 +60,95 @@ class SeMLValidator extends AbstractSeMLValidator {
 	
 	static String local_log = "Validator Log: ";
 
-	
-//	public static val INVALID_NAME = 'invalidName'
-//
-//	@Check
-//	def checkGreetingStartsWithCapital(Greeting greeting) {
-//		if (!Character.isUpperCase(greeting.name.charAt(0))) {
-//			warning('Name should start with a capital', 
-//					SeMLPackage.Literals.GREETING__NAME,
-//					INVALID_NAME)
-//		}
-//	}
-
 	public static val INVALID_NAME = 'invalidName'
 	public static val GET_AXIOMS = "GetAxioms";
-	public static val FIX_GENERATED = "FixGeneratedName";
-	
+	public static val FIX_GENERATED = "FixGeneratedName";	
 	public static val GENERATE_SOLUTION = "GenerateSolution";
-	
 
-
-	
-	@Check(CheckType.NORMAL) //only when saving
-	def checkRelation(Relation rel){
-		
-	}
 	
 	@Check(CheckType.FAST) 
 	def checkIndividual(Individual ind){
 		if(ind.name.contains('#')) error("Individual name cannot contain \"#\"", SeMLPackage.Literals.ANY_INDIVIDUAL__NAME);
 	}
 	
-
-
 	
 	@Check(CheckType.FAST) 
 	def checkModel(MainModel m){
 		val String local_log = local_log + "[checkModel] ";
 		var String[] inconsistencyReport = null;
-		if(!checkImports(m)) return; //return if imports are invalid
+		if(!CheckImports(m)) return; //return if imports are invalid
 		
-		System.out.println(local_log + "Validating model...");
+		System.out.print(local_log + "Validating model...");
 		
-		val IndividualsList = EcoreUtil2.getAllContentsOfType(m, Individual);
-		val RelationsList = EcoreUtil2.getAllContentsOfType(m, Relation);
-		val UseList = EcoreUtil2.getAllContentsOfType(m, UseCharacteristic);
+		val DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+	    val Date date = new Date();
+	    System.out.println("("+dateFormat.format(date)+")");
 		
-		try { //Load Master ontology file and initialize OWLAPI objects
+		val individualsList = EcoreUtil2.getAllContentsOfType(m, Individual);
+		val relationsList = EcoreUtil2.getAllContentsOfType(m, Relation);
+		val useList = EcoreUtil2.getAllContentsOfType(m, UseCharacteristic);
+		
+		//Check if individuals classes are properly assigned (common Model error)
+		for(Individual i: individualsList){
+			if(i.name === null ) {System.out.println(local_log + "Aborted. Model contains errors.");return;}
+			for(Component c : i.getCls())
+				if(c.getIri() === null) {System.out.println(local_log + "Aborted. Model contains errors.");return;}
+		}
+		
+		//Check if relations are properly assigned (common Model error)
+		for(Relation r: relationsList){
+			if(r.instance1 === null || r.instance2 === null || r.instance1.name === null || r.instance2.name === null || r.obj.name === null) 
+				{System.out.println(local_log + "Aborted. Model contains relation errors.");return;}
+		}
+		
+		//Load Master ontology file and initialize OWLAPI objects
+		try { 
 			MasterOntology.loadMasterOntology(new File(Ontologies.GENfolder + Ontologies.masterNAME));
 		} catch (IOException e) {
 			error("Error loading master ontology file: " + e.message, m.imports.last, SeMLPackage.Literals.IMPORT__NAME); return;
 		}			
 		
 		//Add all individuals to master ontology (check for duplicates)
-		for(Individual i: IndividualsList){
-			if(!MasterOntology.addIndividual(i)) {System.out.println(local_log + "Aborted. Model contains errors.");return;}
-
-			/*inconsistencyReport =*/ 
-			//if(inconsistencyReport.get(0) != null) {error(inconsistencyReport.get(0), i, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME);return;}
-		}
+		individualsList.forEach[i | MasterOntology.addIndividual(i)];
 		
 		//Add all relations to master ontology (check for inconsistency)
-		for(Relation r: RelationsList){
-			inconsistencyReport = MasterOntology.addRelation(r);
-			if(inconsistencyReport != null) {error(inconsistencyReport.get(0), r, SeMLPackage.Literals.RELATION__OBJ);return;}
+		for(Relation r: relationsList){
+			if(!MasterOntology.addRelation(r)) 
+				{System.out.println(local_log + "Aborted. Model contains relation errors.");return;}
+				//if(!ReportAnomalies(r, SeMLPackage.Literals.RELATION__OBJ)) return;
 		}
-
-		//Check if individuals that were created in Protégé meet theirs class's restrictions
-		//Note: these errors are not detected before due to the Open World Assumption 
-		val Model importRoot = getImportModel(m.eResource, Ontologies.GENfile_relpath); //Get model of generated file
-		if(importRoot == null) {error("Error loading keywords file: " + Ontologies.GENfile_relpath, m.imports.last, SeMLPackage.Literals.IMPORT__NAME);return;}
-		val MetaIndividualsList = (importRoot as ImportModel).metaIndividuals //Get all meta individuals
-		MasterOntology.cacheIRIs(importRoot as ImportModel, IndividualsList); //must be done before calling checkRelationRestrictions
-				
+		
+		//Reason (and explain if inconsistent)
+		if(MasterOntology.ReasonAndExplainMaster()){
+			if(!ReportAnomalies(m,individualsList, relationsList)) return;
+		}
+		
+		
+		//Import keywords file to extract MetaIndividuals and all IRIs (to aid solution generation)
+		val ImportModel importRoot = getImportModel(m.eResource, Ontologies.GENfile_relpath);
+		if(importRoot === null) {error("Error loading keywords file: " + Ontologies.GENfile.absolutePath, m.imports.last, SeMLPackage.Literals.IMPORT__NAME);return;}	
+		val MetaIndividualsList = importRoot.metaIndividuals //Get all meta individuals
+		MasterOntology.cacheIRIs(importRoot, individualsList); //must be done before calling checkRelationRestrictions
+			
+		//Check if individuals that were created in Protégé meet their class's restrictions
+		//Note: these errors are not detected before due to the Open World Assumption 	
+		System.out.print(local_log + "Checking class restrictions");
 		for(MetaIndividual i: MetaIndividualsList){ 
 			for(String s: i.cls){ //Iterate each class of an individual and check the restrictions of each class
 				inconsistencyReport = MasterOntology.checkRelationRestrictions(s, i.iri);
-				if(inconsistencyReport != null) {
-					if(inconsistencyReport.get(1).empty){error("Instance: " +  i.iri + "\n" + inconsistencyReport, m.imports.last, SeMLPackage.Literals.IMPORT__NAME);}
-					else error("Instance: " +  i.iri + "\n" + inconsistencyReport, m.imports.last, SeMLPackage.Literals.IMPORT__NAME, GENERATE_SOLUTION, inconsistencyReport.get(1));
+				if(inconsistencyReport !== null) {
+					if(inconsistencyReport.get(1).empty){error("Metamodel Individual: " +  i.iri + "\n" + inconsistencyReport.get(0), m.imports.last, SeMLPackage.Literals.IMPORT__NAME);}
+					else error("Metamodel Individual: " +  i.iri + "\n" + inconsistencyReport.get(0), m.imports.last, SeMLPackage.Literals.IMPORT__NAME, GENERATE_SOLUTION, inconsistencyReport.get(1));
 					return;
 				}
 			}
 		}
 		
 		//Perform the same Check for individuals created in the DSL
-		for(Individual i: IndividualsList){
+		for(Individual i: individualsList){
 			for(Component c: i.cls){ //Check individual for multiple classes
 				inconsistencyReport = MasterOntology.checkRelationRestrictions(c.iri, MasterOntology.OWL_Master + "#" + i.getName());
-				if(inconsistencyReport != null) {
+				if(inconsistencyReport !== null) {
 					if(inconsistencyReport.get(1).empty){ error(inconsistencyReport.get(0), i, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME);}
 					else error(inconsistencyReport.get(0), i, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME, GENERATE_SOLUTION, inconsistencyReport.get(1)); //Create solution
 					return;
@@ -155,9 +157,9 @@ class SeMLValidator extends AbstractSeMLValidator {
 		}
 		
 		//Perform the equivalent check for characteristics in use
-		for(UseCharacteristic u: UseList){
+		for(UseCharacteristic u: useList){
 			inconsistencyReport = MasterOntology.checkRelationRestrictions(u.name.iri, ""); //dummy individual ""
-			if(inconsistencyReport != null) {
+			if(inconsistencyReport !== null) {
 				if(inconsistencyReport.get(1).empty){ error("Characteristic: " +  u.name.iri + "\n" + inconsistencyReport.get(0), u, SeMLPackage.Literals.USE_CHARACTERISTIC__NAME);}
 				else error("Characteristic: " +  u.name.iri + "\n" + inconsistencyReport.get(0), u, SeMLPackage.Literals.USE_CHARACTERISTIC__NAME, GENERATE_SOLUTION, inconsistencyReport.get(1));
 				return;
@@ -166,32 +168,74 @@ class SeMLValidator extends AbstractSeMLValidator {
 		
 		//Perform the same Check for the default characteristic
 		inconsistencyReport = MasterOntology.checkRelationRestrictions(Ontologies.OWL_DefaultC, ""); //dummy individual ""
-		if(inconsistencyReport != null) {
+		if(inconsistencyReport !== null) {
 			if(inconsistencyReport.get(1).empty){ error("Default Characteristic\n" + inconsistencyReport.get(0), m.imports.last, SeMLPackage.Literals.IMPORT__NAME);}
 			else error("Default Characteristic\n" + inconsistencyReport.get(0), m.imports.last, SeMLPackage.Literals.IMPORT__NAME, GENERATE_SOLUTION, inconsistencyReport.get(1));
 			return;
 		}
 		
 		
-		System.out.println(local_log + "Done.");	
+		System.out.println("\n" + local_log + "Done.");	
 	}
 	
-	def Model getImportModel(Resource contextResource, String importURIAsString) {
-		val URI importURI = URI?.createURI(importURIAsString)
-		//System.out.println(importURI);
-		val URI contextURI = contextResource?.getURI
-		//System.out.println(contextURI);
-		val URI resolvedURI = importURI?.resolve(contextURI)
-		//System.out.println(resolvedURI);
-		val ResourceSet contextResourceSet = contextResource?.resourceSet
-		//System.out.println("hey");
-		//contextResourceSet.allContents.forEach[ a | System.out.println(a)]
-		val Resource resource = contextResourceSet?.getResource(resolvedURI, false)
-		//System.out.println(resource.allContents.head);
-		return resource?.allContents?.head as Model
-		
-		
+	/**
+	 * Auxiliary function to return anomalies for individual creation and relation instantiation
+	 * @return returns false if the model is inconsistent
+	 */
+	def boolean ReportAnomalies(MainModel m, List<Individual> individualsList, List<Relation> relationsList){ //m.imports.last, SeMLPackage.Literals.IMPORT__NAME
+		val String local_log = local_log + "[checkModel] ";
+		var String issue = Anomaly.getAnomalies(); //get inconsistency/unsatisfiability
+		if(issue !== null) {RouteToAgent(m, issue, individualsList, relationsList, 1); return false;}
+		issue = Anomaly.getErrors();
+		if(issue !== null) {RouteToAgent(m, issue, individualsList, relationsList, 2);}
+		issue = Anomaly.getWarnings();
+		if(issue !== null) {RouteToAgent(m, issue, individualsList, relationsList, 3);}
+		issue = Anomaly.getInfos();
+		if(issue !== null) {RouteToAgent(m, issue, individualsList, relationsList, 4);}
+		return true;
 	}
+	
+	/**
+	 * Very basic function to dispatch the issue to its agent (only implemented for non-meta individuals)
+	 */
+	def void RouteToAgent(MainModel m, String issue, List<Individual> individualsList, List<Relation> relationsList, int type){
+		for(Individual i: individualsList){
+			if(issue.contains(i.name)){
+				DisplayAnomalies(" (related with this individual):\n" + issue, i, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME, type); return;
+			}
+		}
+		DisplayAnomalies(":\n" + issue, m.imports.last, SeMLPackage.Literals.IMPORT__NAME, type);
+	}
+
+	def void DisplayAnomalies(String s, EObject eo, EStructuralFeature eRef, int type){
+		val String local_log = local_log + "[checkModel] ";
+		switch (type) {
+			case 1: {error("Anomaly detected" + s, eo, eRef);}
+			case 2: {error("Error inferred" + s, eo, eRef);}
+			case 3: {warning("Warning inferred" + s, eo, eRef);}
+			case 4: {warning("Information inferred" + s, eo, eRef);}//System.out.println(local_log + "Information detected" + s);}
+		}
+	}
+
+	
+	/**
+	 * Load and parse ImportModel. This method loads the file on-demand
+	 * if the model contains no cross-references.
+	 * 
+	 * @param contextResource		Absolute file path of the ImportsModel
+	 * @param importURIAsString		Absolute file path of the ImportsModel
+	 * @return	the ImportModel or null in case of failure
+	 */
+
+	def ImportModel getImportModel(Resource contextResource, String importURIAsString) {
+		val URI importURI = URI?.createURI(importURIAsString)
+		val URI contextURI = contextResource?.getURI
+		val URI resolvedURI = importURI?.resolve(contextURI)
+		val ResourceSet contextResourceSet = contextResource?.resourceSet
+		val Resource resource = contextResourceSet?.getResource(resolvedURI, true)
+		return resource?.allContents?.head as ImportModel	
+	}
+	
 	
 	/**
 	 * Auxiliary function of checkModel, to check imports and create the master ontology
@@ -199,11 +243,14 @@ class SeMLValidator extends AbstractSeMLValidator {
 	 * @param m		MainModel
 	 * @return		True if imports are valid 
 	 */
-	def boolean checkImports(MainModel m){ //detects changes in Imported ontologies
+	def boolean CheckImports(MainModel m){ //detects changes in Imported ontologies
 		val String local_log = local_log + "[checkModelImports] ";
 		var long mostRecentFile = 0;
-	
-		//Check if there are any imports
+
+    	
+    	//CustomSWRLBuiltin.debug_wow;
+    	
+    	//Check if there are any imports
 		if(m.imports.empty) return false;
 		
 		//Create imports paths list

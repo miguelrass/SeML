@@ -39,8 +39,7 @@ public class SeMLQuickfixProvider extends DefaultQuickfixProvider {
       public void apply(final EObject element, final IModificationContext context) {
         try {
           final IXtextDocument xtextDocument = context.getXtextDocument();
-          String[] _data = issue.getData();
-          final String s = _data[0];
+          final String s = issue.getData()[0];
           Integer _offset = issue.getOffset();
           Integer _length = issue.getLength();
           int _plus = ((_offset).intValue() + (_length).intValue());

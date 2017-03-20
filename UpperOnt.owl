@@ -70,10 +70,10 @@
         <ObjectProperty IRI="#accesses"/>
     </Declaration>
     <Declaration>
-        <Class IRI="#Report"/>
+        <ObjectProperty IRI="#hasIO"/>
     </Declaration>
     <Declaration>
-        <ObjectProperty IRI="#hasIO"/>
+        <Class IRI="#Report"/>
     </Declaration>
     <Declaration>
         <Class IRI="#Problem"/>
@@ -171,7 +171,6 @@
         <Class IRI="#Characteristic"/>
         <Class IRI="#Component"/>
         <Class IRI="#Problem"/>
-        <Class IRI="#Report"/>
         <Class IRI="#Value"/>
     </DisjointClasses>
     <DisjointClasses>
@@ -180,11 +179,6 @@
         <Class IRI="#Process"/>
         <Class IRI="#Property"/>
         <Class IRI="#Set"/>
-    </DisjointClasses>
-    <DisjointClasses>
-        <Class IRI="#Error"/>
-        <Class IRI="#Information"/>
-        <Class IRI="#Warning"/>
     </DisjointClasses>
     <SubObjectPropertyOf>
         <ObjectProperty IRI="#hasInput"/>

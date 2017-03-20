@@ -12,7 +12,6 @@ import org.eclipse.xtext.ide.editor.syntaxcoloring.IHighlightedPositionAcceptor;
 import org.eclipse.xtext.nodemodel.BidiTreeIterable;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.INode;
-import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.resource.EObjectAtOffsetHelper;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultHighlightingConfiguration;
@@ -30,32 +29,23 @@ public class SeMLSemanticHighlightingCalculator extends DefaultSemanticHighlight
   
   @Override
   public void provideHighlightingFor(final XtextResource resource, final IHighlightedPositionAcceptor acceptor, final CancelIndicator cancelIndicator) {
-    IParseResult _parseResult = resource.getParseResult();
-    ICompositeNode rootNode = _parseResult.getRootNode();
+    ICompositeNode rootNode = resource.getParseResult().getRootNode();
     BidiTreeIterable<INode> _asTreeIterable = rootNode.getAsTreeIterable();
     for (final INode node : _asTreeIterable) {
       {
         EObject _grammarElement = node.getGrammarElement();
-        SeMLGrammarAccess.RelationElements _relationAccess = this.ga.getRelationAccess();
-        CrossReference _objObjectPropertyCrossReference_1_0 = _relationAccess.getObjObjectPropertyCrossReference_1_0();
+        CrossReference _objObjectPropertyCrossReference_1_0 = this.ga.getRelationAccess().getObjObjectPropertyCrossReference_1_0();
         boolean _equals = Objects.equal(_grammarElement, _objObjectPropertyCrossReference_1_0);
         if (_equals) {
-          int _offset = node.getOffset();
-          int _length = node.getLength();
-          acceptor.addPosition(_offset, _length, DefaultHighlightingConfiguration.KEYWORD_ID);
+          acceptor.addPosition(node.getOffset(), node.getLength(), DefaultHighlightingConfiguration.KEYWORD_ID);
         }
         if ((Objects.equal(node.getGrammarElement(), this.ga.getIndividualAccess().getClsComponentCrossReference_1_0()) || Objects.equal(node.getGrammarElement(), this.ga.getIndividualAccess().getClsComponentCrossReference_2_1_0()))) {
-          int _offset_1 = node.getOffset();
-          int _length_1 = node.getLength();
-          acceptor.addPosition(_offset_1, _length_1, DefaultHighlightingConfiguration.NUMBER_ID);
+          acceptor.addPosition(node.getOffset(), node.getLength(), DefaultHighlightingConfiguration.NUMBER_ID);
         }
         if ((Objects.equal(node.getGrammarElement(), this.ga.getRelationAccess().getInstance1AnyIndividualCrossReference_0_0()) || Objects.equal(node.getGrammarElement(), this.ga.getRelationAccess().getInstance2AnyIndividualCrossReference_2_0()))) {
-          int _offset_2 = node.getOffset();
-          final EObject target = this.helper.resolveElementAt(resource, _offset_2);
+          final EObject target = this.helper.resolveElementAt(resource, node.getOffset());
           if ((target instanceof MetaIndividual)) {
-            int _offset_3 = node.getOffset();
-            int _length_2 = node.getLength();
-            acceptor.addPosition(_offset_3, _length_2, DefaultHighlightingConfiguration.TASK_ID);
+            acceptor.addPosition(node.getOffset(), node.getLength(), DefaultHighlightingConfiguration.TASK_ID);
           }
         }
       }

@@ -1,0 +1,263 @@
+package org.rass.ontologies;
+
+import java.io.StringWriter;
+import java.util.Set;
+
+import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.model.AxiomType;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.SWRLRule;
+import org.semanticweb.owlapi.reasoner.Node;
+import org.semanticweb.owlapi.reasoner.NodeSet;
+import org.swrlapi.core.SWRLRuleEngine;
+import org.swrlapi.factory.SWRLAPIFactory;
+
+import com.clarkparsia.owlapi.explanation.PelletExplanation;
+import com.clarkparsia.owlapi.explanation.io.manchester.ManchesterSyntaxExplanationRenderer;
+import com.clarkparsia.pellet.owlapiv3.PelletReasoner;
+
+
+
+public class Anomaly {
+	
+	private static final String local_log = "Anomaly Log: ";
+	private static final ManchesterSyntaxExplanationRenderer renderer = new ManchesterSyntaxExplanationRenderer();
+	private static SWRLRuleEngine RuleEngine = null;
+	private static OWLOntology lastEngineOntology = null;
+	
+	private static StringWriter outputWriter = null;
+	private static String errorList = null;
+	private static String warningList = null;
+	private static String infoList = null;
+	
+	private static boolean hasAnomalies = false;
+	private static boolean hasErrors = false;
+	private static boolean hasWarnings = false;
+	private static boolean hasInfos = false;
+			
+	public enum ReportLevel {
+	    CONSISTENCY, SATISFIABILITY, ERROR, WARNING, INFORMATION 
+	}
+	
+	public static String getAnomalies(){if(hasAnomalies)return outputWriter.toString(); else return null;}
+	public static String getErrors(){ 	if(hasErrors)	return errorList; 	else return null;}
+	public static String getWarnings(){ if(hasWarnings) return warningList; else return null;}
+	public static String getInfos(){ 	if(hasInfos) 	return infoList; 	else return null;}
+	public static boolean hasAnyReport(){return (hasErrors || hasWarnings || hasInfos);}
+
+	
+	/**
+	 * Evaluates the ontology
+	 * 
+	 * @param reasoner
+	 * @param ontology
+	 * @param RL
+	 * @return true if any kind of report was detected (for the chosen ReportLevel)
+	 */
+	public static boolean ReasonAndExplain(PelletReasoner reasoner, OWLOntology ontology, ReportLevel RL){
+		final String local_log = Anomaly.local_log + "[ReasonAndExplain] ";
+		
+		//reset outputWriter
+		hasAnomalies = false; hasErrors = false; hasWarnings = false; hasInfos = false; 
+		
+		//================================================ Test for consistency before SWRL (to protect built-ins)
+		if(!reasoner.isConsistent()){
+			ExplainInconsistencies(ontology);
+			outputWriter.getBuffer().insert(0, "These inconsistencies were found BEFORE computing SWRL rules.\n");
+			hasAnomalies = true;
+			return true; //inconsistent ontologies cannot be further evaluated by a reasoner
+		}
+		
+		//================================================ Compute SWRL Rules (if they exist)
+			
+		if(ontology.getAxiomCount(AxiomType.SWRL_RULE) != 0){
+			
+			//Set<OWLAxiom> originalAx = ontology.getAxioms(); //debug
+			
+			//Create the Rule engine, if needed
+			CreateRuleEngine(ontology);
+
+			//Load rules and asserted OWL axioms into the rule engine, run the rule engine, and write any inferred axioms back to the OWL ontology.
+			RuleEngine.infer();
+			
+			//System.out.println("\nAxiomas Novos: " + ontology.getAxiomCount() + "\n");
+			//ontology.getAxioms().stream().filter(p -> !originalAx.contains(p)).forEach(p -> System.out.println(p));;
+			
+		}
+				
+		//================================================ Test for consistency after SWRL
+		if(!reasoner.isConsistent()){
+			ExplainInconsistencies(ontology);
+			outputWriter.getBuffer().insert(0, "These inconsistencies were found ONLY AFTER computing SWRL rules.\n");
+			hasAnomalies = true;
+			return true; //inconsistent ontologies cannot be further evaluated by a reasoner
+		}
+		
+		//------------------------------------------------ Ontology is consistent, return if goal is met
+		if(RL == ReportLevel.CONSISTENCY) return false; //no problem was detected
+		
+		//================================================ Test for unsatisfiability
+		Node<OWLClass> bottomNode = reasoner.getUnsatisfiableClasses(); //classes equivalent to owl:Nothing
+        Set<OWLClass> unsatisfiable = bottomNode.getEntitiesMinusBottom(); //unsatisfiable classes excluding owl:Nothing
+        if (!unsatisfiable.isEmpty()) {
+        	ExplainUnsatisfiability(ontology, unsatisfiable);
+        	hasAnomalies = true;
+        	return true; //unsatisfiable classes generate false reports
+        }
+        
+        //------------------------------------------------ Ontology is satisfiable, return if goal is met
+      	if(RL == ReportLevel.SATISFIABILITY) return false; //no problem was detected
+        
+        //================================================ Test for Error Class individuals
+      	String rep = HandleReports(reasoner, MasterCache.errorClasses);
+      	if(rep.length()!=0){
+      		errorList = "Error reports were found:\n" + rep;
+      		hasErrors = true;
+      	}
+      	//------------------------------------------------ Ontology might contain errors, return if goal is met
+      	if(RL == ReportLevel.ERROR) return hasErrors;
+      	
+      	 //================================================ Test for Warning Class individuals
+      	rep = HandleReports(reasoner, MasterCache.warningClasses);
+      	if(rep.length()!=0){
+      		errorList = "Warning reports were found:\n" + rep;
+      		hasWarnings = true;
+      	}
+      	//------------------------------------------------ Ontology might contain errors/warnings, return if goal is met
+      	if(RL == ReportLevel.WARNING) return (hasErrors || hasWarnings);
+      	
+      	 //================================================ Test for Information Class individuals
+      	rep = HandleReports(reasoner, MasterCache.infoClasses);
+      	if(rep.length()!=0){
+      		errorList = "Information reports were found:\n" + rep;
+      		hasInfos = true;
+      	}
+      	//------------------------------------------------ Ontology might contain errors/warnings/informations
+      	return (hasErrors || hasWarnings || hasInfos);
+      	
+	}
+	
+	/**
+	 * Create and store RuleEngine for performance reasons.
+	 * @param ontology
+	 */
+	private static void CreateRuleEngine(OWLOntology ontology){
+		final String local_log = Anomaly.local_log + "[ReasonAndExplain] "; //reason: auxiliary function
+		
+		if(ontology != lastEngineOntology){ //-------------- Check if the ontology Java Object has changed
+			
+			//---------------------------------------- Create the Rule engine
+			
+			System.out.print(local_log + "SWRL Rules were detected. Creating a rule engine...");
+			final long startTime = System.currentTimeMillis(); //log execution time	
+			RuleEngine = SWRLAPIFactory.createSWRLRuleEngine(ontology);
+			System.out.println("(" + (System.currentTimeMillis() - startTime) + "ms)");
+			lastEngineOntology = ontology;
+			
+			//---------------------------------------- Add Built-in declarations to the engine
+			RuleEngine.addSWRLBuiltIn(IRI.create("http://www.w3.org/2003/11/swrlb#not"));
+			RuleEngine.addSWRLBuiltIn(IRI.create("http://www.w3.org/2003/11/swrlb#relEQ"));
+			RuleEngine.addSWRLBuiltIn(IRI.create("http://www.w3.org/2003/11/swrlb#relGT"));
+			RuleEngine.addSWRLBuiltIn(IRI.create("http://www.w3.org/2003/11/swrlb#relGE"));
+			RuleEngine.addSWRLBuiltIn(IRI.create("http://www.w3.org/2003/11/swrlb#relLT"));
+			RuleEngine.addSWRLBuiltIn(IRI.create("http://www.w3.org/2003/11/swrlb#relLE"));
+		}
+		
+	}
+	
+	private static String HandleReports(PelletReasoner reasoner, Set<OWLClass> reportClasses){
+		final String local_log = Anomaly.local_log + "[HandleReports] ";
+		
+		StringBuilder reports = new StringBuilder(100); //set initial capacity to 100 chars
+		
+		if(reportClasses==null) {System.out.println(local_log + "Error: master cache is not loaded."); return reports.toString();}
+        
+        for(OWLClass c : reportClasses){
+        	Set<OWLNamedIndividual> agents = reasoner.getInstances(c, true).getFlattened();
+        	if(!agents.isEmpty()){
+        		reports.append(c.getIRI().getShortForm() + " - Instance Agents: ");
+	        	for(OWLNamedIndividual a : agents){ reports.append(a.getIRI().toString() + " "); }
+        	}
+        }
+
+        return reports.toString();
+	}
+	
+    private static void ExplainInconsistencies(OWLOntology ontology){
+		final String local_log = Anomaly.local_log + "[ExplainInconsistencies] ";
+		
+		//Initialize outputWriter
+		outputWriter = new StringWriter(2000);
+				
+		//Start Renderer
+		renderer.startRendering(outputWriter );
+		
+		// Create an explanation generator
+		PelletExplanation expGen = new PelletExplanation(ontology);
+		
+		//Try to get all explanations (up to 3)
+		Set<Set<OWLAxiom>> explanationAxioms = null;
+		try {
+			explanationAxioms = expGen.getInconsistencyExplanations(3);
+			while(!explanationAxioms.isEmpty()) {
+				renderer.render( explanationAxioms);
+				explanationAxioms.remove(explanationAxioms.iterator().next());
+			}
+			renderer.endRendering();
+			
+		//In case of failure try to get only the first explanation
+		} catch (Exception e) {
+			System.out.println(local_log + "Error: " + e.getMessage());
+			try {
+				explanationAxioms = expGen.getInconsistencyExplanations(1);
+				renderer.render( explanationAxioms);
+				renderer.endRendering();
+			} catch (Exception e1) {
+				
+		//In case of failure report error in console
+				System.out.println(local_log + "Error: " + e1.getMessage());
+				outputWriter.write("The inconsistencies explanation could not be rendered");
+			}
+		}
+		
+	}
+    
+    private static void ExplainUnsatisfiability(OWLOntology ontology, Set<OWLClass> unsatClasses){
+  		final String local_log = Anomaly.local_log + "[ExplainUnsatisfiability] ";
+  		
+  		//Initialize outputWriter
+  		outputWriter = new StringWriter(2000);
+  			
+  		//Start Renderer
+  		renderer.startRendering(outputWriter );
+  		
+  		// Create an explanation generator
+  		PelletExplanation expGen = new PelletExplanation(ontology);
+  		
+  		// Explain the unsatisfiable class
+  		for(OWLClass c : unsatClasses){
+  			try {
+  				outputWriter.write("Unsatisfiable Class: " + c.getIRI().toString() + "\n");
+				Set<Set<OWLAxiom>> explanationAxioms = expGen.getUnsatisfiableExplanations(c, 1);
+	  			if(!explanationAxioms.isEmpty()) {
+	  				renderer.render(explanationAxioms);
+	  			}
+	  			renderer.endRendering();
+			}catch(Exception e){
+				System.out.println(local_log + "Error while explaining " + c + " unsatisfiability: " + e.getMessage());
+			}
+  		}
+	
+  	}
+	
+}
+	
+	
+	

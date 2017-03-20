@@ -1,21 +1,11 @@
 
 CENAS A FAZER:
-
-	arranjar maneira de importar o modelo sem esperar que o eclipse use uma cross reference.... (ler ficheiro e mais rapido)
-	
-	swrl esta a gerar erros, é melhor separar as regras do resto e correr as mesmas manualmente
 	
 	colocar variabilidades nas characteristics
-	
-	tentar aplicar esta cena a um quickfix ou ver se e melhor ter uma solucao mais geral que veja os erros todos e corrija tudo
 	
 	(pensar em eventualmente fazer a automatizacao do que é pedido em cima)
 	
 	fazer a logica das characteristics (explicitamente o hasValue, percorrendo as characteristics, encontrando os values, etc) pode ficar pa depois
-	
-	fazer logica dos errors e info etc
-	
-	considerar usar reasoner.getAnnotationPropertyValues(arg0, arg1) para obter as anotacoes de individuos (nota, retorna um literal)
 	
 	verificar se os meta individuos tem a sua cor
 	
@@ -26,10 +16,35 @@ tentar fazer auto complete de parentesis como acontece aqui no eclipse, pode ser
 	
 NOTA:
 	O owlObjectOneOf permite fazer uma restricao cujo target sao individuos
+	A master ont nao pode ser preenchida incrementalmente porque dá aso a resultados SWRL precoces (quando se usa a Closed W.A.)
 
 
 
 
+Metodo que permite ler imports sem estarem no workspace: ------------------------------------------------------
+
+	/**
+	 * Load and parse ImportModel. This method replaced the imports method because the imports
+	 * are not loaded if the model contains no cross-references.
+	 * http://wiki.eclipse.org/Xtext/FAQ#How_do_I_load_my_model_in_a_standalone_Java_application.C2.A0.3F
+	 * 
+	 * @param filePath		Absolute file path of the ImportsModel
+	 * @return	the ImportModel or null in case of failure
+	 */
+	def ImportModel getImportModel(String filePath){
+		try {
+			var URI resolvedURI  = URI.createFileURI(filePath);
+			var Injector injector = new SeMLStandaloneSetup().createInjectorAndDoEMFRegistration();
+			var XtextResourceSet resourceSet = injector.getInstance(XtextResourceSet);
+			resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
+			var Resource resource = resourceSet.getResource(resolvedURI, true);
+			var ImportModel imodel = resource?.getContents()?.get(0) as ImportModel;
+			return imodel;
+		} catch (Exception e) {
+			return null;
+		}	
+	}
+------------------------------------------------------------------------------------------------------------
 
 	    //================================================================================================================
 		//================================================================================================================
