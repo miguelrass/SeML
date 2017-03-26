@@ -3,20 +3,24 @@ package org.rass.ontologies;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.rass.ontologies.Anomaly.ReportLevel;
 import org.rass.swrl.CustomSWRLBuiltin;
 import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.model.ClassExpressionType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -27,6 +31,7 @@ import org.xtext.seml.seML.ImportModel;
 import org.xtext.seml.seML.Individual;
 import org.xtext.seml.seML.MetaIndividual;
 import org.xtext.seml.seML.Relation;
+import org.xtext.seml.seML.UseCharacteristic;
 
 import com.clarkparsia.pellet.owlapiv3.PelletReasoner;
 
@@ -36,10 +41,9 @@ public class MasterOntology {
 	private static final String local_log = "Master Ontology Log: ";
 	private static OWLOntologyManager manager = null;
 	private static OWLOntology master = null; //Ontology used to validate the whole model
-	private static OWLDataFactory factory = null;
+	private static OWLDataFactory factory = OWLManager.getOWLDataFactory();
 	private static PelletReasoner reasoner = null;
 	private static HashMap<String, List<OWLClassExpression>> RestrictionsList = null;
-	//private static List<OWLClass> CharacteristicSubCls = null; //not being used, might be erased in the future
 	private static HashMap<String, String> cachedIRIs = null; //Key: Full IRI
 	private static HashMap<String, String> cachedIRIsInverse = null; //Key: Short IRI
 	 	
@@ -56,7 +60,6 @@ public class MasterOntology {
 		RestrictionsList = new HashMap<String, List<OWLClassExpression>>();
 		manager = OWLManager.createOWLOntologyManager();
 		master =  manager.loadOntologyFromOntologyDocument(masterfile);
-		factory = OWLManager.getOWLDataFactory();
         reasoner = CustomSWRLBuiltin.getSWRLReasoner(master);
         MasterCache.loadReportClasses(Ontologies.GENfolder);
         //CharacteristicSubCls = reasoner.getSubClasses(factory.getOWLClass(IRI.create(Ontologies.OWL_Characteristic)), false).entities().collect(Collectors.toList());
@@ -70,6 +73,7 @@ public class MasterOntology {
 		importM.getComponents().forEach(c -> cachedIRIs.put(c.getIri(), c.getName()));
 		importM.getObjectProperties().forEach(op -> cachedIRIs.put(op.getIri(), op.getName()));
 		importM.getMetaIndividuals().forEach(i -> cachedIRIs.put(i.getIri(), i.getName()));
+		importM.getCharacteristics().forEach(c -> cachedIRIs.put(c.getIri(), c.getName())); //used in characteristics solver
 		dslIndividuals.forEach(i -> cachedIRIs.put(OWL_Master + "#" + i.getName(), i.getName()));
 		
         Iterator<Entry<String, String>> it = cachedIRIs.entrySet().iterator();
@@ -106,7 +110,34 @@ public class MasterOntology {
 		return Anomaly.ReasonAndExplain(reasoner, master, ReportLevel.INFORMATION); 
 	}
 	
-	public static String[] checkRelationRestrictions(String clsName, String indIRI){
+	public static boolean BuildMastersCharacteristicsTree(List<UseCharacteristic> chrList) throws Exception{
+		return  CharacteristicsSolver.BuildCharacteristicsTree(chrList, master, cachedIRIs);
+	}
+
+	
+	public static String[] CheckModelRestrictions(String clsName){
+
+		OWLClass cls = factory.getOWLClass(IRI.create(clsName)); //get class of characteristic
+		
+		//---------------------------------------------- Get restrictions of class (and inherited restrictions)
+
+	    RestrictionVisitor restrVisitor = new RestrictionVisitor(master); //create visitor object	    
+	    master.getSubClassAxiomsForSubClass(cls).forEach(ax -> restrVisitor.visit(ax.getSuperClass()));// visit all restrictions    		    
+	    List<OWLClassExpression> ClsRestrList = restrVisitor.getRestrictions(); //get all restriction for the given class
+
+		//---------------------------------------------- Check if individual complies with its class restrictions
+		
+		//Get all relations and create a RestrictionOverseer object
+		RestrictionOverseer RO = new RestrictionOverseer(null, reasoner, cachedIRIs, cachedIRIsInverse);
+		
+		//Evaluate each restriction with the visitor pattern
+		ClsRestrList.forEach(r -> r.accept(RO));
+		
+		//Return the errors report (or null if no error found)
+		return RO.getFinalReport();
+	}
+	
+	public static String[] CheckRelationRestrictions(String clsName, String indIRI){
 		
 		OWLClass cls = factory.getOWLClass(IRI.create(clsName)); //get class of new individual
 		

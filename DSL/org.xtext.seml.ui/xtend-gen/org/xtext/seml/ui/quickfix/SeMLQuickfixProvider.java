@@ -54,4 +54,23 @@ public class SeMLQuickfixProvider extends DefaultQuickfixProvider {
       }
     });
   }
+  
+  @Fix(SeMLValidator.USE_SOLUTION)
+  public void GenerateUseSolution(final Issue issue, final IssueResolutionAcceptor acceptor) {
+    acceptor.accept(issue, "Insert missing characteristic options", "no description", null, new ISemanticModification() {
+      @Override
+      public void apply(final EObject element, final IModificationContext context) {
+        try {
+          final IXtextDocument xtextDocument = context.getXtextDocument();
+          final String s = issue.getData()[0];
+          Integer _offset = issue.getOffset();
+          Integer _length = issue.getLength();
+          int _plus = ((_offset).intValue() + (_length).intValue());
+          xtextDocument.replace(_plus, 0, s);
+        } catch (Throwable _e) {
+          throw Exceptions.sneakyThrow(_e);
+        }
+      }
+    });
+  }
 }

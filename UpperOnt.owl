@@ -79,6 +79,9 @@
         <Class IRI="#Problem"/>
     </Declaration>
     <Declaration>
+        <ObjectProperty IRI="#requires"/>
+    </Declaration>
+    <Declaration>
         <Class IRI="#Default"/>
     </Declaration>
     <Declaration>
@@ -265,6 +268,10 @@
         <Class IRI="#Characteristic"/>
     </ObjectPropertyDomain>
     <ObjectPropertyDomain>
+        <ObjectProperty IRI="#requires"/>
+        <Class IRI="#Characteristic"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
         <ObjectProperty IRI="#solves"/>
         <Class IRI="#Characteristic"/>
     </ObjectPropertyDomain>
@@ -319,6 +326,10 @@
         <Class IRI="#Problem"/>
     </ObjectPropertyRange>
     <ObjectPropertyRange>
+        <ObjectProperty IRI="#requires"/>
+        <Class IRI="#Characteristic"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
         <ObjectProperty IRI="#solves"/>
         <Class IRI="#Problem"/>
     </ObjectPropertyRange>
@@ -334,6 +345,11 @@
     <AnnotationAssertion>
         <AnnotationProperty IRI="#NonInstantiable"/>
         <IRI>#Component</IRI>
+        <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"></Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="#NonInstantiable"/>
+        <IRI>#Default</IRI>
         <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"></Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>

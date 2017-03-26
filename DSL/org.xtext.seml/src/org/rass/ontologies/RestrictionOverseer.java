@@ -42,13 +42,15 @@ public class RestrictionOverseer implements OWLClassExpressionVisitor {
 	private PelletReasoner reasoner;
 	private String report;
 	private String solution;
+	private boolean isCharacteristic;
 	private HashMap<String, String> cachedIRIs; //Key: Full IRI
 	private HashMap<String, String> cachedIRIsInverse; //Key: Short IRI
-	private static final String OWL_OP_demands = Ontologies.OWL_Upper + "demands";
+	//private static final String OWL_OP_demands = Ontologies.OWL_Upper + "demands";
 	private static final String OWL_OP_hasValue = Ontologies.OWL_Upper + "hasValue";
+	private static final String OWL_OP_requires = Ontologies.OWL_Upper + "requires";
 	private static final String OWL_OP_characterizes = Ontologies.OWL_Upper + "characterizes";
 	private static final String OWL_OP_isCharacterizedBy = Ontologies.OWL_Upper + "isCharacterizedBy";
-	private static final List<String> IgnoreOPs = Arrays.asList(OWL_OP_hasValue, OWL_OP_characterizes, OWL_OP_isCharacterizedBy);
+	private static final List<String> IgnoreOPs = Arrays.asList(OWL_OP_hasValue, OWL_OP_requires, OWL_OP_characterizes, OWL_OP_isCharacterizedBy);
 	
 	
 	public enum RestrType {
@@ -62,6 +64,7 @@ public class RestrictionOverseer implements OWLClassExpressionVisitor {
     	cachedIRIsInverse = cii;
     	report = "";
     	solution = "";
+    	isCharacteristic = (individual==null);
     }
 
     public String[] getFinalReport() {
@@ -145,7 +148,7 @@ public class RestrictionOverseer implements OWLClassExpressionVisitor {
     	//-------------------------------------------------------------------------- Process "characteristic" related tasks
     	if(IgnoreOPs.contains(propertyIRI)) return; //ignore these ObjProperties
     	
-    	if(propertyIRI.equals(OWL_OP_demands)) //if ObjProp is "demands" cardinality is not calculated based on no. of relations
+    	if(isCharacteristic) //if ObjProp is "demands" cardinality is not calculated based on no. of relations
     		cardinality = reasoner.getInstances(target, false).getFlattened().size(); //get no. of instances of the restricted component
     	else
     	//-----------------------------------------------------------------------------------------------------------------
@@ -172,7 +175,7 @@ public class RestrictionOverseer implements OWLClassExpressionVisitor {
     	//-------------------------------------------------------------------------- Process "characteristic" related tasks
     	if(IgnoreOPs.contains(propertyIRI)) return; //ignore these ObjProperties
     	
-    	if(propertyIRI.equals(OWL_OP_demands)) //if ObjProp is "demands" cardinality is not calculated based on no. of relations
+    	if(isCharacteristic) //if ObjProp is "demands" cardinality is not calculated based on no. of relations
     		cardinality = reasoner.getInstances(target, false).getFlattened().size(); //get no. of instances of the restricted component
     	else
     	//-----------------------------------------------------------------------------------------------------------------
@@ -195,7 +198,7 @@ public class RestrictionOverseer implements OWLClassExpressionVisitor {
     	//-------------------------------------------------------------------------- Process "characteristic" related tasks
     	if(IgnoreOPs.contains(propertyIRI)) return; //ignore these ObjProperties
     	
-    	if(propertyIRI.equals(OWL_OP_demands)) //if ObjProp is "demands" cardinality is not calculated based on no. of relations
+    	if(isCharacteristic) //if ObjProp is "demands" cardinality is not calculated based on no. of relations
     		cardinality = reasoner.getInstances(target, false).getFlattened().size(); //get no. of instances of the restricted component
     	else
     	//-----------------------------------------------------------------------------------------------------------------
@@ -287,7 +290,7 @@ public class RestrictionOverseer implements OWLClassExpressionVisitor {
     	long cardinality;
     	
     	//-------------------------------------------------------------------------- Process "characteristic" related tasks
-    	if(IgnoreOPs.contains(propertyIRI) || (!propertyIRI.equals(OWL_OP_demands))) return; //ignore these ObjProperties
+    	if(IgnoreOPs.contains(propertyIRI) || (!isCharacteristic)) return; //ignore these ObjProperties
     	cardinality = reasoner.getInstances(second, false).getFlattened().size(); //get no. of instances of the restricted component
     	
         if(cardinality > MaxCardinality){
@@ -330,7 +333,6 @@ public class RestrictionOverseer implements OWLClassExpressionVisitor {
     
     private void computeSolution(OWLObjectPropertyExpression property, OWLClassExpression target, long cardinality, long cardinalityGoal){
     	String local_log = RestrictionOverseer.local_log + "[computeSolution] ";
-    	boolean isCharacteristic = individual.getIRI().toString().isEmpty(); //if individual is "", then it is a Characteristic
     	StringBuilder solutionSB = new StringBuilder(1000); //set initial capacity to 1000 chars
     	
     	//=========================================================== Create relations between existent individuals if current individual is not a Characteristic

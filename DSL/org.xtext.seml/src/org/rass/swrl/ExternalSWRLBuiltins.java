@@ -12,8 +12,10 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -46,6 +48,14 @@ public class ExternalSWRLBuiltins {
 	private static final String OWL_ArgLiteral = OWL_RO + "literal";
 	private static final String OWL_ArgIndividual = OWL_RO + "individual";
 	private static final String OWL_ArgUnbound = OWL_RO + "unbound";
+	
+	private static final String OWL_Bi_no = OWL_RO + "no";
+	private static final String OWL_Bi_relEQ = OWL_RO + "relEQ";
+	private static final String OWL_Bi_relGT = OWL_RO + "relGT";
+	private static final String OWL_Bi_relGE = OWL_RO + "relGE";
+	private static final String OWL_Bi_relLT = OWL_RO + "relLT";
+	private static final String OWL_Bi_relLE = OWL_RO + "relLE";
+	private static final List<String> IgnoreBis = Arrays.asList(OWL_Bi_no, OWL_Bi_relEQ, OWL_Bi_relGT, OWL_Bi_relGE,OWL_Bi_relLT,OWL_Bi_relLE);
 
 	public static void LoadBuiltins(){
 		final String local_log = ExternalSWRLBuiltins.local_log + "[LoadBuiltins] ";
@@ -189,7 +199,8 @@ public class ExternalSWRLBuiltins {
 		//------------------------------------------------- Get Built-ins and Argument Groups
 		
 		Set<OWLNamedIndividual> builtins = reasoner.getInstances(fac.getOWLClass(IRI.create(OWL_Builtin)), false).getFlattened();
-		
+		builtins.removeIf(b -> IgnoreBis.contains(b.getIRI().toString())); //remove internal built-ins
+		 
 		if(builtins.isEmpty()) return;
 		System.out.println(local_log + "Generating SWRL Templates...");
 		

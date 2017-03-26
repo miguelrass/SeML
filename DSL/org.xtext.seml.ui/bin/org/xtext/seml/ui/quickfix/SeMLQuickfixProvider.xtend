@@ -83,5 +83,16 @@ class SeMLQuickfixProvider extends DefaultQuickfixProvider {
     	});
 	}
 	
+	@Fix(SeMLValidator.USE_SOLUTION)
+	def GenerateUseSolution(Issue issue, IssueResolutionAcceptor acceptor) {
+		acceptor.accept(issue, 'Insert missing characteristic options', 'no description', null, new ISemanticModification() {
+	        override apply(EObject element, IModificationContext context) {        	
+	        	val xtextDocument = context.xtextDocument
+	        	val String s = issue.data.get(0);
+	        	xtextDocument.replace(issue.offset + issue.length, 0, s);
+	        }
+    	});
+	}
+	
 
 }

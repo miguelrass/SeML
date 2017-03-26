@@ -50,6 +50,7 @@ public class Ontologies {
 	public static final String OWL_Error = OWL_Upper + "Error";
 	public static final String OWL_Information = OWL_Upper + "Information";
 	public static final String OWL_Warning = OWL_Upper + "Warning";
+	public static final String OWL_Requires = OWL_Upper + "requires";
 	 
 	public static String GENfile_NAME = "imports.seml";
 	public static File GENfile = null; //generated file object (absolute path)

@@ -50,6 +50,9 @@ import org.rass.swrl.CustomSWRLBuiltin
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Date
+import org.rass.ontologies.CharacteristicsSolver
+import org.eclipse.emf.common.util.EList
+import org.eclipse.emf.ecore.resource.Resource.Diagnostic
 
 /**
  * This class contains custom validation rules. 
@@ -64,6 +67,7 @@ class SeMLValidator extends AbstractSeMLValidator {
 	public static val GET_AXIOMS = "GetAxioms";
 	public static val FIX_GENERATED = "FixGeneratedName";	
 	public static val GENERATE_SOLUTION = "GenerateSolution";
+	public static val USE_SOLUTION = "UseSolution";
 
 	
 	@Check(CheckType.FAST) 
@@ -71,8 +75,24 @@ class SeMLValidator extends AbstractSeMLValidator {
 		if(ind.name.contains('#')) error("Individual name cannot contain \"#\"", SeMLPackage.Literals.ANY_INDIVIDUAL__NAME);
 	}
 	
-	
 	@Check(CheckType.FAST) 
+	def checkModelVal(MainModel m){
+		val String local_log = local_log + "[checkModelVal] ";
+		
+		val EList<Diagnostic> er = m.eResource.errors
+		if(er.size != 0){
+			System.err.println(local_log + "Model contains errors:")
+			er.forEach[e | System.err.println(local_log + e)]
+			return
+		}
+		
+		try {
+			checkModel(m)
+		} catch (Exception e) {
+			System.err.println(local_log + "Internal Error: " + e.toString)
+		}
+	}
+	
 	def checkModel(MainModel m){
 		val String local_log = local_log + "[checkModel] ";
 		var String[] inconsistencyReport = null;
@@ -87,19 +107,6 @@ class SeMLValidator extends AbstractSeMLValidator {
 		val individualsList = EcoreUtil2.getAllContentsOfType(m, Individual);
 		val relationsList = EcoreUtil2.getAllContentsOfType(m, Relation);
 		val useList = EcoreUtil2.getAllContentsOfType(m, UseCharacteristic);
-		
-		//Check if individuals classes are properly assigned (common Model error)
-		for(Individual i: individualsList){
-			if(i.name === null ) {System.out.println(local_log + "Aborted. Model contains errors.");return;}
-			for(Component c : i.getCls())
-				if(c.getIri() === null) {System.out.println(local_log + "Aborted. Model contains errors.");return;}
-		}
-		
-		//Check if relations are properly assigned (common Model error)
-		for(Relation r: relationsList){
-			if(r.instance1 === null || r.instance2 === null || r.instance1.name === null || r.instance2.name === null || r.obj.name === null) 
-				{System.out.println(local_log + "Aborted. Model contains relation errors.");return;}
-		}
 		
 		//Load Master ontology file and initialize OWLAPI objects
 		try { 
@@ -123,19 +130,24 @@ class SeMLValidator extends AbstractSeMLValidator {
 			if(!ReportAnomalies(m,individualsList, relationsList)) return;
 		}
 		
-		
 		//Import keywords file to extract MetaIndividuals and all IRIs (to aid solution generation)
 		val ImportModel importRoot = getImportModel(m.eResource, Ontologies.GENfile_relpath);
 		if(importRoot === null) {error("Error loading keywords file: " + Ontologies.GENfile.absolutePath, m.imports.last, SeMLPackage.Literals.IMPORT__NAME);return;}	
+		val EList<Diagnostic> er = importRoot.eResource.errors
+		if(er.size != 0){
+			System.err.println(local_log + "Keywords file contains errors:")
+			er.forEach[e | System.err.println(local_log + e)]
+			return
+		}
 		val MetaIndividualsList = importRoot.metaIndividuals //Get all meta individuals
 		MasterOntology.cacheIRIs(importRoot, individualsList); //must be done before calling checkRelationRestrictions
-			
+
 		//Check if individuals that were created in Protégé meet their class's restrictions
 		//Note: these errors are not detected before due to the Open World Assumption 	
-		System.out.print(local_log + "Checking class restrictions");
+		System.out.print(local_log + "Checking individual restrictions");
 		for(MetaIndividual i: MetaIndividualsList){ 
 			for(String s: i.cls){ //Iterate each class of an individual and check the restrictions of each class
-				inconsistencyReport = MasterOntology.checkRelationRestrictions(s, i.iri);
+				inconsistencyReport = MasterOntology.CheckRelationRestrictions(s, i.iri);
 				if(inconsistencyReport !== null) {
 					if(inconsistencyReport.get(1).empty){error("Metamodel Individual: " +  i.iri + "\n" + inconsistencyReport.get(0), m.imports.last, SeMLPackage.Literals.IMPORT__NAME);}
 					else error("Metamodel Individual: " +  i.iri + "\n" + inconsistencyReport.get(0), m.imports.last, SeMLPackage.Literals.IMPORT__NAME, GENERATE_SOLUTION, inconsistencyReport.get(1));
@@ -147,7 +159,7 @@ class SeMLValidator extends AbstractSeMLValidator {
 		//Perform the same Check for individuals created in the DSL
 		for(Individual i: individualsList){
 			for(Component c: i.cls){ //Check individual for multiple classes
-				inconsistencyReport = MasterOntology.checkRelationRestrictions(c.iri, MasterOntology.OWL_Master + "#" + i.getName());
+				inconsistencyReport = MasterOntology.CheckRelationRestrictions(c.iri, MasterOntology.OWL_Master + "#" + i.getName());
 				if(inconsistencyReport !== null) {
 					if(inconsistencyReport.get(1).empty){ error(inconsistencyReport.get(0), i, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME);}
 					else error(inconsistencyReport.get(0), i, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME, GENERATE_SOLUTION, inconsistencyReport.get(1)); //Create solution
@@ -155,28 +167,52 @@ class SeMLValidator extends AbstractSeMLValidator {
 				}
 			}
 		}
+		System.out.print("\n"); //add \n to "Checking class restrictions"
 		
+		//Build characteristics tree (at least, the default characteristic is used)
+		var EObject eo; var EStructuralFeature sf;
+		try {
+			//If the are no "use sentences", use the last import as agent
+			if(useList.isEmpty){eo = m.imports.last; sf = SeMLPackage.Literals.IMPORT__NAME;} 
+			else{eo = useList.last; sf = SeMLPackage.Literals.USE_CHARACTERISTIC__NAME;}
+			
+			if(!MasterOntology.BuildMastersCharacteristicsTree(useList)){
+				error("There are unsolved Characteristics variabilites: \n" +  CharacteristicsSolver.chrProblem, eo, sf, 
+					USE_SOLUTION, CharacteristicsSolver.chrSolution);
+				return;
+			}	
+		} catch (Exception e) {
+			error("Error related with Characteristics: \n" +  e.getMessage, eo, sf);
+			return;
+		}
+
+
 		//Perform the equivalent check for characteristics in use
-		for(UseCharacteristic u: useList){
-			inconsistencyReport = MasterOntology.checkRelationRestrictions(u.name.iri, ""); //dummy individual ""
+		System.out.print(local_log + "Checking characteristics restrictions");
+		for(String ch: CharacteristicsSolver.GetRequiredCharacteristics){
+			inconsistencyReport = MasterOntology.CheckModelRestrictions(ch); 
 			if(inconsistencyReport !== null) {
-				if(inconsistencyReport.get(1).empty){ error("Characteristic: " +  u.name.iri + "\n" + inconsistencyReport.get(0), u, SeMLPackage.Literals.USE_CHARACTERISTIC__NAME);}
-				else error("Characteristic: " +  u.name.iri + "\n" + inconsistencyReport.get(0), u, SeMLPackage.Literals.USE_CHARACTERISTIC__NAME, GENERATE_SOLUTION, inconsistencyReport.get(1));
+				//get the responsible agent
+				val UseCharacteristic uc = useList.findFirst[c | c.name.iri == ch]
+				if(uc === null){eo = m.imports.last; sf = SeMLPackage.Literals.IMPORT__NAME;} 
+				else{eo = uc; sf = SeMLPackage.Literals.USE_CHARACTERISTIC__NAME;}
+				//throw error (and solution)
+				if(inconsistencyReport.get(1).empty){ error("Characteristic: " +  ch + "\n" + inconsistencyReport.get(0), eo, sf);}
+				else error("Characteristic: " +  ch + "\n" + inconsistencyReport.get(0), eo, sf, GENERATE_SOLUTION, inconsistencyReport.get(1));
 				return;
 			}
 		}
-		
-		//Perform the same Check for the default characteristic
-		inconsistencyReport = MasterOntology.checkRelationRestrictions(Ontologies.OWL_DefaultC, ""); //dummy individual ""
-		if(inconsistencyReport !== null) {
-			if(inconsistencyReport.get(1).empty){ error("Default Characteristic\n" + inconsistencyReport.get(0), m.imports.last, SeMLPackage.Literals.IMPORT__NAME);}
-			else error("Default Characteristic\n" + inconsistencyReport.get(0), m.imports.last, SeMLPackage.Literals.IMPORT__NAME, GENERATE_SOLUTION, inconsistencyReport.get(1));
-			return;
-		}
-		
-		
+
 		System.out.println("\n" + local_log + "Done.");	
 	}
+	
+	/**
+	 * Very basic function to dispatch the issue to its agent (only implemented for non-meta individuals)
+	 */
+	def UseCharacteristic RouteCharacteristicToAgent(List<UseCharacteristic> chrList, String chIRI){
+		return chrList.findFirst[c | c.name.iri == chIRI]
+	}
+	
 	
 	/**
 	 * Auxiliary function to return anomalies for individual creation and relation instantiation
@@ -185,20 +221,20 @@ class SeMLValidator extends AbstractSeMLValidator {
 	def boolean ReportAnomalies(MainModel m, List<Individual> individualsList, List<Relation> relationsList){ //m.imports.last, SeMLPackage.Literals.IMPORT__NAME
 		val String local_log = local_log + "[checkModel] ";
 		var String issue = Anomaly.getAnomalies(); //get inconsistency/unsatisfiability
-		if(issue !== null) {RouteToAgent(m, issue, individualsList, relationsList, 1); return false;}
+		if(issue !== null) {RouteIssueToAgent(m, issue, individualsList, relationsList, 1); return false;}
 		issue = Anomaly.getErrors();
-		if(issue !== null) {RouteToAgent(m, issue, individualsList, relationsList, 2);}
+		if(issue !== null) {RouteIssueToAgent(m, issue, individualsList, relationsList, 2);}
 		issue = Anomaly.getWarnings();
-		if(issue !== null) {RouteToAgent(m, issue, individualsList, relationsList, 3);}
+		if(issue !== null) {RouteIssueToAgent(m, issue, individualsList, relationsList, 3);}
 		issue = Anomaly.getInfos();
-		if(issue !== null) {RouteToAgent(m, issue, individualsList, relationsList, 4);}
+		if(issue !== null) {RouteIssueToAgent(m, issue, individualsList, relationsList, 4);}
 		return true;
 	}
 	
 	/**
 	 * Very basic function to dispatch the issue to its agent (only implemented for non-meta individuals)
 	 */
-	def void RouteToAgent(MainModel m, String issue, List<Individual> individualsList, List<Relation> relationsList, int type){
+	def void RouteIssueToAgent(MainModel m, String issue, List<Individual> individualsList, List<Relation> relationsList, int type){
 		for(Individual i: individualsList){
 			if(issue.contains(i.name)){
 				DisplayAnomalies(" (related with this individual):\n" + issue, i, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME, type); return;

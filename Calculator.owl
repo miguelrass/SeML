@@ -22,9 +22,6 @@
     <Import>esrg:ro</Import>
     <Import>esrg:upper</Import>
     <Declaration>
-        <Class IRI="#Info"/>
-    </Declaration>
-    <Declaration>
         <Class IRI="#TwoProcessInstances"/>
     </Declaration>
     <Declaration>
@@ -49,6 +46,9 @@
         <NamedIndividual IRI="#calc"/>
     </Declaration>
     <Declaration>
+        <Class IRI="#UserFriendly"/>
+    </Declaration>
+    <Declaration>
         <Class IRI="#ClickEvent"/>
     </Declaration>
     <Declaration>
@@ -64,6 +64,9 @@
         <Class IRI="#LowContrastValue"/>
     </Declaration>
     <Declaration>
+        <Class IRI="#NoBacklight"/>
+    </Declaration>
+    <Declaration>
         <Class IRI="#MainBoard"/>
     </Declaration>
     <Declaration>
@@ -71,6 +74,9 @@
     </Declaration>
     <Declaration>
         <Class IRI="#ContentsToDisplay"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#EnergySaving"/>
     </Declaration>
     <Declaration>
         <Class IRI="#LowContrastLCD"/>
@@ -94,9 +100,6 @@
         <Class IRI="#ProcessAndStore"/>
     </Declaration>
     <Declaration>
-        <DataProperty IRI="#hasLiteral"/>
-    </Declaration>
-    <Declaration>
         <NamedIndividual IRI="#string"/>
     </Declaration>
     <Declaration>
@@ -106,10 +109,7 @@
         <Class IRI="#InputBuffer"/>
     </Declaration>
     <Declaration>
-        <Class IRI="#PowerEfficiency"/>
-    </Declaration>
-    <Declaration>
-        <Class IRI="#MechanicalInterface"/>
+        <Class IRI="#ModernInput"/>
     </Declaration>
     <SubClassOf>
         <Class IRI="#Backlight"/>
@@ -232,8 +232,18 @@
         </ObjectExactCardinality>
     </SubClassOf>
     <SubClassOf>
-        <Class IRI="#Info"/>
-        <Class abbreviatedIRI="upper:Information"/>
+        <Class IRI="#EnergySaving"/>
+        <Class abbreviatedIRI="upper:Goal"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#EnergySaving"/>
+        <ObjectExactCardinality cardinality="1">
+            <ObjectProperty abbreviatedIRI="upper:requires"/>
+            <ObjectUnionOf>
+                <Class IRI="#LowContrastLCD"/>
+                <Class IRI="#NoBacklight"/>
+            </ObjectUnionOf>
+        </ObjectExactCardinality>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="#InputBuffer"/>
@@ -294,19 +304,30 @@
         </ObjectExactCardinality>
     </SubClassOf>
     <SubClassOf>
-        <Class IRI="#MechanicalInterface"/>
+        <Class IRI="#MissingBacklight"/>
+        <Class abbreviatedIRI="upper:Warning"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ModernInput"/>
         <Class abbreviatedIRI="upper:Feature"/>
     </SubClassOf>
     <SubClassOf>
-        <Class IRI="#MechanicalInterface"/>
+        <Class IRI="#ModernInput"/>
         <ObjectExactCardinality cardinality="1">
             <ObjectProperty abbreviatedIRI="upper:demands"/>
             <Class IRI="#TouchpadController"/>
         </ObjectExactCardinality>
     </SubClassOf>
     <SubClassOf>
-        <Class IRI="#MissingBacklight"/>
-        <Class abbreviatedIRI="upper:Warning"/>
+        <Class IRI="#NoBacklight"/>
+        <Class abbreviatedIRI="upper:Feature"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#NoBacklight"/>
+        <ObjectExactCardinality cardinality="0">
+            <ObjectProperty abbreviatedIRI="upper:demands"/>
+            <Class IRI="#Backlight"/>
+        </ObjectExactCardinality>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="#ParseAndCalculate"/>
@@ -331,18 +352,6 @@
         <ObjectHasSelf>
             <ObjectProperty abbreviatedIRI="upper:precedes"/>
         </ObjectHasSelf>
-    </SubClassOf>
-    <SubClassOf>
-        <Class IRI="#PowerEfficiency"/>
-        <Class IRI="#LowContrastLCD"/>
-    </SubClassOf>
-    <SubClassOf>
-        <Class IRI="#PowerEfficiency"/>
-        <Class IRI="#MechanicalInterface"/>
-    </SubClassOf>
-    <SubClassOf>
-        <Class IRI="#PowerEfficiency"/>
-        <Class abbreviatedIRI="upper:Goal"/>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="#ProcessAndStore"/>
@@ -384,6 +393,24 @@
     <SubClassOf>
         <Class IRI="#TwoProcessInstances"/>
         <Class abbreviatedIRI="upper:Error"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#UserFriendly"/>
+        <Class abbreviatedIRI="upper:Goal"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#UserFriendly"/>
+        <ObjectExactCardinality cardinality="0">
+            <ObjectProperty abbreviatedIRI="upper:requires"/>
+            <Class IRI="#NoBacklight"/>
+        </ObjectExactCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#UserFriendly"/>
+        <ObjectExactCardinality cardinality="1">
+            <ObjectProperty abbreviatedIRI="upper:requires"/>
+            <Class IRI="#ModernInput"/>
+        </ObjectExactCardinality>
     </SubClassOf>
     <SubClassOf>
         <Class abbreviatedIRI="upper:Default"/>

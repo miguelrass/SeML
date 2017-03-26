@@ -42,10 +42,6 @@ public class SWRLbuiltins {
 
 			//Get list of related individuals
 			Set<OWLNamedIndividual> targets = reasoner.getObjectPropertyValues(ind1, obj).getFlattened();
-			Set<OWLClass> clss = reasoner.getSubClasses(fac.getOWLClass(IRI.create("kok")), false).getFlattened();
-			for(OWLClass c : clss){
-				if(reasoner.getInstances(c, true).getFlattened().size()==2) return true;
-			}
 			
 			//Return true if the required relation does NOT exist
 			OWLNamedIndividual ind2 = fac.getOWLNamedIndividual(IRI.create(args[2].getNameStr()));
