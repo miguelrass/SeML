@@ -7,6 +7,7 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
+import org.xtext.seml.seML.Relation
 
 /**
  * Generates code from your model files on save.
@@ -16,10 +17,10 @@ import org.eclipse.xtext.generator.IGeneratorContext
 class SeMLGenerator extends AbstractGenerator {
 
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
-//		fsa.generateFile('greetings.txt', 'People to greet: ' + 
+//		fsa.generateFile('generationDescription.txt', 'Tool calls: ' + 
 //			resource.allContents
-//				.filter(typeof(Greeting))
-//				.map[name]
-//				.join(', '))
+//				.filter(typeof(Relation))
+//				.map[ind1]
+//				.join('\n '))
 	}
 }

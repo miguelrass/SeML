@@ -41,21 +41,24 @@ public class ExternalSWRLBuiltins {
 	private static final String local_log = "ExternalSWRL Log: ";
 	private static Map<String,Long> loadedClasses = new HashMap<String,Long>();
 	
-	public static final String OWL_RO = "esrg:ro#";
+	public static final String OWL_C = "esrg:c#";
 	private static final String OWL_Builtin = "http://www.w3.org/2003/11/swrl#Builtin";
-	private static final String OWL_Args = OWL_RO + "swrlArguments";
-	private static final String OWL_hasArguments = OWL_RO + "hasArguments";
-	private static final String OWL_ArgLiteral = OWL_RO + "literal";
-	private static final String OWL_ArgIndividual = OWL_RO + "individual";
-	private static final String OWL_ArgUnbound = OWL_RO + "unbound";
+	private static final String OWL_Args = OWL_C + "swrlArguments";
+	private static final String OWL_hasArguments = OWL_C + "hasArguments";
+	private static final String OWL_ArgLiteral = OWL_C + "literal";
+	private static final String OWL_ArgIndividual = OWL_C + "individual";
+	private static final String OWL_ArgUnbound = OWL_C + "unbound";
 	
-	private static final String OWL_Bi_no = OWL_RO + "no";
-	private static final String OWL_Bi_relEQ = OWL_RO + "relEQ";
-	private static final String OWL_Bi_relGT = OWL_RO + "relGT";
-	private static final String OWL_Bi_relGE = OWL_RO + "relGE";
-	private static final String OWL_Bi_relLT = OWL_RO + "relLT";
-	private static final String OWL_Bi_relLE = OWL_RO + "relLE";
-	private static final List<String> IgnoreBis = Arrays.asList(OWL_Bi_no, OWL_Bi_relEQ, OWL_Bi_relGT, OWL_Bi_relGE,OWL_Bi_relLT,OWL_Bi_relLE);
+	public static final String OWL_Bi_no = OWL_C + "no";
+	public static final String OWL_Bi_relEQ = OWL_C + "relEQ";
+	public static final String OWL_Bi_relGT = OWL_C + "relGT";
+	public static final String OWL_Bi_relGE = OWL_C + "relGE";
+	public static final String OWL_Bi_relLT = OWL_C + "relLT";
+	public static final String OWL_Bi_relLE = OWL_C + "relLE";
+	public static final String OWL_Bi_notSame = OWL_C + "notSame";
+	public static final String OWL_Bi_iListSum = OWL_C + "intListSum";
+	public static final String OWL_Bi_fListSum = OWL_C + "floatListSum";
+	private static final List<String> IgnoreBis = Arrays.asList(OWL_Bi_no, OWL_Bi_relEQ, OWL_Bi_relGT, OWL_Bi_relGE,OWL_Bi_relLT,OWL_Bi_relLE,OWL_Bi_notSame,OWL_Bi_iListSum,OWL_Bi_fListSum);
 
 	public static void LoadBuiltins(){
 		final String local_log = ExternalSWRLBuiltins.local_log + "[LoadBuiltins] ";
@@ -217,7 +220,7 @@ public class ExternalSWRLBuiltins {
 			
 			StringBuilder applySB = new StringBuilder(500); //set initial capacity to 500 chars
 			StringBuilder isApplicableSB = new StringBuilder(500); //set initial capacity to 500 chars
-			String builtinName = b.getIRI().getShortForm();
+			String builtinName = Ontologies.GetShortIRI(b.getIRI());
 			
 			// Get all Argument groups for the current built-in
 			Set<OWLNamedIndividual> linkedArgGroups = reasoner.getObjectPropertyValues(b, fac.getOWLObjectProperty(IRI.create(OWL_hasArguments))).getFlattened();
@@ -250,15 +253,15 @@ public class ExternalSWRLBuiltins {
 	
 	private static Map<String,String> argMap_apply = null;
 	private static Map<String,String> argMap_isApplicable = null;
-	private static final OWLAnnotationProperty arg1 = fac.getOWLAnnotationProperty(IRI.create(OWL_RO + "Argument_1"));
-	private static final OWLAnnotationProperty arg2 = fac.getOWLAnnotationProperty(IRI.create(OWL_RO + "Argument_2"));
-	private static final OWLAnnotationProperty arg3 = fac.getOWLAnnotationProperty(IRI.create(OWL_RO + "Argument_3"));
-	private static final OWLAnnotationProperty arg4 = fac.getOWLAnnotationProperty(IRI.create(OWL_RO + "Argument_4"));
-	private static final OWLAnnotationProperty arg5 = fac.getOWLAnnotationProperty(IRI.create(OWL_RO + "Argument_5"));
-	private static final OWLAnnotationProperty arg6 = fac.getOWLAnnotationProperty(IRI.create(OWL_RO + "Argument_6"));
-	private static final OWLAnnotationProperty arg7 = fac.getOWLAnnotationProperty(IRI.create(OWL_RO + "Argument_7"));
-	private static final OWLAnnotationProperty arg8 = fac.getOWLAnnotationProperty(IRI.create(OWL_RO + "Argument_8"));
-	private static final OWLAnnotationProperty arg9 = fac.getOWLAnnotationProperty(IRI.create(OWL_RO + "Argument_9"));
+	private static final OWLAnnotationProperty arg1 = fac.getOWLAnnotationProperty(IRI.create(OWL_C + "Argument_1"));
+	private static final OWLAnnotationProperty arg2 = fac.getOWLAnnotationProperty(IRI.create(OWL_C + "Argument_2"));
+	private static final OWLAnnotationProperty arg3 = fac.getOWLAnnotationProperty(IRI.create(OWL_C + "Argument_3"));
+	private static final OWLAnnotationProperty arg4 = fac.getOWLAnnotationProperty(IRI.create(OWL_C + "Argument_4"));
+	private static final OWLAnnotationProperty arg5 = fac.getOWLAnnotationProperty(IRI.create(OWL_C + "Argument_5"));
+	private static final OWLAnnotationProperty arg6 = fac.getOWLAnnotationProperty(IRI.create(OWL_C + "Argument_6"));
+	private static final OWLAnnotationProperty arg7 = fac.getOWLAnnotationProperty(IRI.create(OWL_C + "Argument_7"));
+	private static final OWLAnnotationProperty arg8 = fac.getOWLAnnotationProperty(IRI.create(OWL_C + "Argument_8"));
+	private static final OWLAnnotationProperty arg9 = fac.getOWLAnnotationProperty(IRI.create(OWL_C + "Argument_9"));
 	
 	private static void MapArguments(OWLNamedIndividual argGroup, PelletReasoner reasoner){
 		final String local_log = ExternalSWRLBuiltins.local_log + "[MapArguments] ";
@@ -269,7 +272,7 @@ public class ExternalSWRLBuiltins {
 		for (OWLAnnotationAssertionAxiom annotation : reasoner.getRootOntology().getAnnotationAssertionAxioms(argGroup.getIRI())) { //gets annotations associated with the class		
 			String argNo = annotation.getProperty().getIRI().toString();
 
-			if(!argNo.startsWith(OWL_RO + "Argument_")) continue; //Unrelated annotation
+			if(!argNo.startsWith(OWL_C + "Argument_")) continue; //Unrelated annotation
 				
 			int no = argNo.charAt(argNo.length()-1) - '1'; //Argument Number (last ascii char to int)
 			if(no < 0 || no > 9 ){ System.out.println("Error parsing number from annotation property: " + argNo); return;} //Parse Check

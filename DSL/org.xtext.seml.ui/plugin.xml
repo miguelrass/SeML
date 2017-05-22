@@ -137,6 +137,12 @@
 			description="Copy the qualified name for the selected element"
 			name="Copy Qualified Name">
 	</command>
+ <command
+       defaultHandler="org.rass.implementation.ImplementationHandler"
+       description="Run external implementation tools"
+       id="org.xtext.seml.SeML.implement"
+       name="Implement">
+ </command>
 	</extension>
 	<extension point="org.eclipse.ui.menus">
 		<menuContribution
@@ -151,6 +157,11 @@
 				</reference>
 			</visibleWhen>
 		</command>
+    <command
+          commandId="org.xtext.seml.SeML.implement"
+          style="push"
+          tooltip="Run external implementation tools">
+    </command>
 		</menuContribution>
 		<!-- copy qualified name -->
 		<menuContribution locationURI="popup:#TextEditorContext?after=copy">
@@ -182,6 +193,14 @@
 				</visibleWhen>
 			</command>
 		</menuContribution>
+  <menuContribution
+        locationURI="menu:org.eclipse.ui.main.menu">
+     <command
+           commandId="org.xtext.seml.SeML.implement"
+           style="push"
+           tooltip="Run external implementation tools">
+     </command>
+  </menuContribution>
 	</extension>
 	<extension point="org.eclipse.ui.menus">
 		<menuContribution locationURI="popup:#TextEditorContext?endof=group.find">

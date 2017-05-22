@@ -3,56 +3,54 @@
  */
 package org.xtext.seml.validation
 
+import com.hp.hpl.jena.ontology.impl.IndividualImpl
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
 import java.io.InputStreamReader
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.ArrayList
 import java.util.Arrays
+import java.util.Date
+import java.util.HashMap
+import java.util.HashSet
+import java.util.List
+import java.util.Set
+import org.eclipse.emf.common.util.EList
 import org.eclipse.emf.common.util.URI
+import org.eclipse.emf.ecore.EObject
+import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.emf.ecore.resource.Resource
+import org.eclipse.emf.ecore.resource.Resource.Diagnostic
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.CheckType
+import org.rass.ontologies.Anomaly
 import org.rass.ontologies.MasterOntology
 import org.rass.ontologies.Ontologies
-import org.xtext.seml.seML.Component
+import org.rass.restrictions.CharacteristicsSolver
+import org.semanticweb.owlapi.model.OWLClass
+import org.xtext.seml.Console
 import org.xtext.seml.seML.ImportModel
-import org.xtext.seml.seML.Individual
 import org.xtext.seml.seML.MainModel
-import org.xtext.seml.seML.MetaIndividual
-import org.xtext.seml.seML.Model
-import org.xtext.seml.seML.Sentence
 import org.xtext.seml.seML.Relation
 import org.xtext.seml.seML.SeMLPackage
-import org.xtext.seml.seML.UseCharacteristic
-import org.xtext.seml.SeMLStandaloneSetup
-import org.eclipse.xtext.resource.XtextResourceSet
-import com.google.inject.Injector
-import org.eclipse.xtext.resource.XtextResource
-import java.io.InputStream
-import java.io.ByteArrayInputStream
-import org.rass.ontologies.Anomaly
-import org.eclipse.emf.ecore.EReference
-import org.eclipse.emf.ecore.EStructuralFeature
-import org.semanticweb.owlapi.apibinding.OWLManager
-import org.eclipse.emf.ecore.EObject
-import org.xtext.seml.seML.AnyIndividual
-import org.eclipse.xtext.validation.AbstractDeclarativeValidator
-import java.util.List
-import javax.tools.JavaCompiler
-import javax.tools.ToolProvider
-import java.net.URL
-import java.nio.file.Files
-import java.nio.file.StandardCopyOption
-import org.rass.swrl.CustomSWRLBuiltin
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.util.Date
-import org.rass.ontologies.CharacteristicsSolver
-import org.eclipse.emf.common.util.EList
-import org.eclipse.emf.ecore.resource.Resource.Diagnostic
+import org.xtext.seml.seML.impl.CharacteristicImpl
+import org.xtext.seml.seML.impl.ImportImpl
+import org.xtext.seml.seML.Individual
+import org.xtext.seml.seML.Assignment
+import org.xtext.seml.seML.FreeIndividual
+import java.util.Map.Entry
+import org.eclipse.xtext.validation.ValidationMessageAcceptor
+import org.rass.restrictions.Problem
+import org.rass.restrictions.Problem.TypeE
+import org.semanticweb.owlapi.model.OWLNamedIndividual
+import org.rass.ontologies.MasterCache
+import java.beans.FeatureDescriptor
+import org.eclipse.swt.graphics.Color
 
 /**
  * This class contains custom validation rules. 
@@ -63,193 +61,478 @@ class SeMLValidator extends AbstractSeMLValidator {
 	
 	static String local_log = "Validator Log: ";
 
-	public static val INVALID_NAME = 'invalidName'
-	public static val GET_AXIOMS = "GetAxioms";
-	public static val FIX_GENERATED = "FixGeneratedName";	
-	public static val GENERATE_SOLUTION = "GenerateSolution";
-	public static val USE_SOLUTION = "UseSolution";
+	public static val FIX_PROBLEM = "FixProblem";
+	
+	public static var HashMap<String, ArrayList<Problem>> problems; //Restriction based problems by Alias
+	public static var Problem nextProblem = null; //Most important problem
+	public static var MainModel globalMainModel; //To be accessed by the Model Solution
+	public static var ImportModel globalImportModel; //To be accessed by the Model Solution
+
+	public static var int validationState = 0; //0-Initial state, 1-Validating, 2-Failed, 3-Passed
+	private var long importDate; //Import SeML file's last modified date
+	
+	//Create map of all visible elements by alias (for error/warning purposes) (individuals)
+	private static var HashMap<String,FeaturePlace> visibilityMap = null;
+	
+	//Create list of active individuals (static + referenced)
+	private static var HashSet<Individual> activeInds = null;
+	
+	//Create map of imported individuals and object properties by alias for Quickfix
+	public static var HashMap<String,EObject> quickfixMap = null;
+	
+	private static val Color colorDefault = new Color(null, 255, 255, 255);
+	private static val Color colorValidating = new Color(null, 237, 237, 237);
+	private static val Color colorFailed = new Color(null, 255, 196, 196);
+	//private static val Color colorPassed = new Color(null, 200, 255, 196);
+	
+//	@Check(CheckType.NORMAL) 
+//	def ImplementationStage(MainModel m){
+//		val String local_log = local_log + "[ImplementationStage] ";
+//		System.err.println(local_log + "I ran!");
+//		val EList<Diagnostic> er = m.eResource.errors
+//		if(er.size != 0){
+//			System.err.println(local_log + "Model contains errors:")
+//			er.forEach[e | System.err.println(local_log + e)]
+//			return
+//		}
+//	}
+	
 
 	
 	@Check(CheckType.FAST) 
-	def checkIndividual(Individual ind){
-		if(ind.name.contains('#')) error("Individual name cannot contain \"#\"", SeMLPackage.Literals.ANY_INDIVIDUAL__NAME);
-	}
-	
-	@Check(CheckType.FAST) 
-	def checkModelVal(MainModel m){
-		val String local_log = local_log + "[checkModelVal] ";
+	def CheckModelVal(MainModel m){
+		val String local_log = local_log + "[CheckModelVal] ";
+		validationState = 1;
+		Console.ChangeConsole(colorValidating, null);
 		
 		val EList<Diagnostic> er = m.eResource.errors
 		if(er.size != 0){
 			System.err.println(local_log + "Model contains errors:")
 			er.forEach[e | System.err.println(local_log + e)]
+			validationState = 2;
+			Console.ChangeConsole(colorFailed, null);
 			return
 		}
 		
 		try {
-			checkModel(m)
+			if(checkModel(m)) {validationState = 3; Console.ChangeConsole(colorDefault, null);} 
+				else {validationState = 2; Console.ChangeConsole(colorFailed, null);}
 		} catch (Exception e) {
+			validationState = 2;
+			Console.ChangeConsole(colorFailed, null);
 			System.err.println(local_log + "Internal Error: " + e.toString)
 		}
 	}
 	
-	def checkModel(MainModel m){
+	def boolean checkModel(MainModel m){
 		val String local_log = local_log + "[checkModel] ";
-		var String[] inconsistencyReport = null;
-		if(!CheckImports(m)) return; //return if imports are invalid
-		
-		System.out.print(local_log + "Validating model...");
+		if(!CheckImports(m)) return false; //return if imports are invalid
 		
 		val DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 	    val Date date = new Date();
-	    System.out.println("("+dateFormat.format(date)+")");
-		
-		val individualsList = EcoreUtil2.getAllContentsOfType(m, Individual);
+	    
+	    //========================================================================================= Prepare Environment
+        //=============================================================================================================
+	    
+		//Check if individuals are used without being static or referenced
 		val relationsList = EcoreUtil2.getAllContentsOfType(m, Relation);
-		val useList = EcoreUtil2.getAllContentsOfType(m, UseCharacteristic);
+		//if(!CheckRelationsOrder(relationsList)) return;
+		val assignmentsList =	EcoreUtil2.getAllContentsOfType(m, Assignment);
+		val useList = 		m.useCh;		
 		
-		//Load Master ontology file and initialize OWLAPI objects
-		try { 
-			MasterOntology.loadMasterOntology(new File(Ontologies.GENfolder + Ontologies.masterNAME));
-		} catch (IOException e) {
-			error("Error loading master ontology file: " + e.message, m.imports.last, SeMLPackage.Literals.IMPORT__NAME); return;
-		}			
+		//Import keywords file
+		if(GetImportModel(m.eResource, Ontologies.GENfile_relpath)) return false;
+		Console.OutPairLn(local_log, "Validating model... ("+dateFormat.format(date)+")");
 		
-		//Add all individuals to master ontology (check for duplicates)
-		individualsList.forEach[i | MasterOntology.addIndividual(i)];
-		
-		//Add all relations to master ontology (check for inconsistency)
-		for(Relation r: relationsList){
-			if(!MasterOntology.addRelation(r)) 
-				{System.out.println(local_log + "Aborted. Model contains relation errors.");return;}
-				//if(!ReportAnomalies(r, SeMLPackage.Literals.RELATION__OBJ)) return;
-		}
-		
-		//Reason (and explain if inconsistent)
-		if(MasterOntology.ReasonAndExplainMaster()){
-			if(!ReportAnomalies(m,individualsList, relationsList)) return;
-		}
-		
-		//Import keywords file to extract MetaIndividuals and all IRIs (to aid solution generation)
-		val ImportModel importRoot = getImportModel(m.eResource, Ontologies.GENfile_relpath);
-		if(importRoot === null) {error("Error loading keywords file: " + Ontologies.GENfile.absolutePath, m.imports.last, SeMLPackage.Literals.IMPORT__NAME);return;}	
-		val EList<Diagnostic> er = importRoot.eResource.errors
+		//Check import file for errors
+		val EList<Diagnostic> er = globalImportModel.eResource.errors
 		if(er.size != 0){
-			System.err.println(local_log + "Keywords file contains errors:")
+			Console.ErrPairLn(local_log, "Aborted. Keywords file contains errors:")
 			er.forEach[e | System.err.println(local_log + e)]
-			return
+			return false
 		}
-		val MetaIndividualsList = importRoot.metaIndividuals //Get all meta individuals
-		MasterOntology.cacheIRIs(importRoot, individualsList); //must be done before calling checkRelationRestrictions
+		MasterOntology.CacheIRIs(globalImportModel); 
 
-		//Check if individuals that were created in Protégé meet their class's restrictions
-		//Note: these errors are not detected before due to the Open World Assumption 	
-		System.out.print(local_log + "Checking individual restrictions");
-		for(MetaIndividual i: MetaIndividualsList){ 
-			for(String s: i.cls){ //Iterate each class of an individual and check the restrictions of each class
-				inconsistencyReport = MasterOntology.CheckRelationRestrictions(s, i.iri);
-				if(inconsistencyReport !== null) {
-					if(inconsistencyReport.get(1).empty){error("Metamodel Individual: " +  i.iri + "\n" + inconsistencyReport.get(0), m.imports.last, SeMLPackage.Literals.IMPORT__NAME);}
-					else error("Metamodel Individual: " +  i.iri + "\n" + inconsistencyReport.get(0), m.imports.last, SeMLPackage.Literals.IMPORT__NAME, GENERATE_SOLUTION, inconsistencyReport.get(1));
-					return;
-				}
-			}
+		//================================================================================ Check non-ontological errors
+        //=============================================================================================================
+        
+        //Create list of active individuals (static + referenced)
+		activeInds = new HashSet<Individual>();
+		
+		//Add static individuals
+		globalImportModel.staticIndividuals.forEach[i | activeInds.add(i)];
+		
+        //Create list of free referenced individuals
+        val freeRefIRIs = new HashSet<String>();
+        
+		//Check Individuals chaining 
+		var boolean chainingError = false;
+		for(r : relationsList){
+			if(!activeInds.contains(r.ind1)){
+				error("Individual is not static nor previously referenced.", r, SeMLPackage.Literals.RELATION__IND1);
+				chainingError = true;
+			} 
+			activeInds.addAll(r.ind2); //add every referenced instance
+			r.ind2.forEach[i| if(i instanceof FreeIndividual) freeRefIRIs.add(i.iri)];
 		}
 		
-		//Perform the same Check for individuals created in the DSL
-		for(Individual i: individualsList){
-			for(Component c: i.cls){ //Check individual for multiple classes
-				inconsistencyReport = MasterOntology.CheckRelationRestrictions(c.iri, MasterOntology.OWL_Master + "#" + i.getName());
-				if(inconsistencyReport !== null) {
-					if(inconsistencyReport.get(1).empty){ error(inconsistencyReport.get(0), i, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME);}
-					else error(inconsistencyReport.get(0), i, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME, GENERATE_SOLUTION, inconsistencyReport.get(1)); //Create solution
-					return;
-				}
+		//Check Assignments chaining
+		for(a : assignmentsList){
+			if(!activeInds.contains(a.ind)){
+				error("Individual is not static nor referenced.", a, SeMLPackage.Literals.ASSIGNMENT__IND);
+				chainingError = true;
+			} 
+		}
+		
+		//Abort if any error was thrown
+		if(chainingError){
+			Console.ErrPairLn(local_log, "Aborted. Chaining inconsistency detected."); return false;
+		}
+			
+		//================================================================= Create visibility map for error declaration
+        //=============================================================================================================
+		
+		//Create map of all visible elements by alias (for error/warning purposes) (individuals)
+        visibilityMap = new HashMap<String,FeaturePlace>();
+        
+        //Add characteristics
+        if(useList !== null)
+        	for(var int i=0; i<useList.length; i++)
+        		visibilityMap.put(useList.get(i).name, new FeaturePlace(m, SeMLPackage.Literals.MAIN_MODEL__USE_CH, i));
+        
+        //Add individuals
+		for(r : relationsList){
+			//reason: some static individuals may never be referenced on the right side
+			visibilityMap.put(r.ind1.name, new FeaturePlace(r, SeMLPackage.Literals.RELATION__IND1));
+
+			for(var int i=0; i<r.ind2.size; i++){
+				visibilityMap.put(r.ind2.get(i).name, new FeaturePlace(r, SeMLPackage.Literals.RELATION__IND2, i));
 			}
 		}
-		System.out.print("\n"); //add \n to "Checking class restrictions"
+		for(a : assignmentsList){//reason: some static individuals may never be referenced in OP relations
+			visibilityMap.put(a.ind.name, new FeaturePlace(a, SeMLPackage.Literals.ASSIGNMENT__IND));
+		}
 		
+		
+		//============================================================================= Create objects map for Quickfix
+        //=============================================================================================================
+        
+		quickfixMap = new HashMap<String,EObject>();
+		
+		globalImportModel.staticIndividuals.forEach[i| quickfixMap.put(i.name, i)];
+		globalImportModel.individualOptions.forEach[i| quickfixMap.put(i.name, i)];
+		globalImportModel.objectProperties.forEach[o | quickfixMap.put(o.name, o)];
+		
+		//==================================================================================== Check ontological errors
+        //=============================================================================================================
+        
+        //Load Master (with referenced individuals) and initialize OWLAPI objects
+		try { 
+			MasterOntology.loadMasterOntology(new File(Ontologies.GENfolder + Ontologies.masterNAME), freeRefIRIs);
+		} catch (Exception e) {
+			Console.ErrPairLn(local_log, "Aborted. Error loading master ontology file: " + e.message); return false;
+		}	
+		
+		//Add all relations to master ontology
+		System.out.println(local_log + "Adding relations to ontology...");
+		MasterOntology.AddOPRelations(relationsList);
+		MasterOntology.AddDPRelations(assignmentsList);
+		
+		//------------------------------------------------- Check consistency errors before using reasoner
+		//Individual restrictions excess error are detected here (open world)
+
+		//Reason (if inconsistent, explain and return)
+		if(MasterOntology.ReasonAndExplainMaster()){
+			RouteIssueToAgent(m, Anomaly.getAnomalies(), 1);
+			Console.ErrPairLn(local_log, "Aborted. Ontology is inconsistent or has unsatisfiabilities."); return false;
+		}
+		
+		//------------------------------------------------- Gather all required characteristics
+
 		//Build characteristics tree (at least, the default characteristic is used)
 		var EObject eo; var EStructuralFeature sf;
 		try {
 			//If the are no "use sentences", use the last import as agent
 			if(useList.isEmpty){eo = m.imports.last; sf = SeMLPackage.Literals.IMPORT__NAME;} 
-			else{eo = useList.last; sf = SeMLPackage.Literals.USE_CHARACTERISTIC__NAME;}
+			else{eo = m; sf = SeMLPackage.Literals.MAIN_MODEL__USE_CH;}
 			
-			if(!MasterOntology.BuildMastersCharacteristicsTree(useList)){
-				error("There are unsolved Characteristics variabilites: \n" +  CharacteristicsSolver.chrProblem, eo, sf, 
-					USE_SOLUTION, CharacteristicsSolver.chrSolution);
-				return;
+			if(!MasterOntology.BuildMastersCharacteristicsTree(useList)){ 
+				error("There are unsolved Characteristics variabilites: \n" +  CharacteristicsSolver.chrProblem, eo, sf);
+				Console.ErrPairLn(local_log, "Aborted. Unsolved Characteristics variabilites.");
+				return false;
 			}	
 		} catch (Exception e) {
-			error("Error related with Characteristics: \n" +  e.getMessage, eo, sf);
-			return;
+			error(e.getMessage, eo, sf);
+			Console.ErrPairLn(local_log, "Aborted. Characteristics inconsistency.");
+			return false;
+		}
+		
+		//------------------------------------------------- Add Characteristic individuals to ontology and check consistency (SWRL)
+		
+		MasterOntology.AddChIndividuals(CharacteristicsSolver.GetRequiredCharacteristics);
+		
+		//Reason (if inconsistent, explain and return)
+		if(MasterOntology.ReasonAndExplainMaster()){
+			RouteIssueToAgent(m, Anomaly.getAnomalies(), 1);
+			Console.ErrPairLn(local_log, "Aborted. Characteristics generated inconsistencies."); return false;
+		}
+		
+		//------------------------------------------------- Check restrictions and gather authorizations
+		
+		//Save pointer to main model for Quickfix
+		globalMainModel = m;
+		
+		//List with all relations which are authorized by restrictions (OP except max/only)(DP some/only)
+	    val HashSet<List<String>> authorizatedRels = new HashSet<List<String>>(); //Aliases: Ind1,Obj,Ind2 or Ind1 (assignment)
+		
+		System.out.println(local_log + "Checking characteristics and individuals' restrictions");
+		if(!CheckModelRestrictions(false, authorizatedRels)){
+	
+			//------------------------------------------------- Check authorizations (if there are no characteristic excess errors)
+		
+			val String label = "The model does not require this relation: ";
+			var boolean ok = true;
+			
+			MasterOntology.ExtendAuthorizations(authorizatedRels); //add sub-properties to list
+			
+			for(r : relationsList) for(i : r.ind2){ //Check every relation in each sentence
+				val list = Arrays.asList(r.ind1.name, r.obj.name, i.name);
+				if(!authorizatedRels.contains(list)) {error(label+list,r,SeMLPackage.Literals.RELATION__OBJ); ok=false;}
+			}
+			
+			for(a : assignmentsList){
+				val i = a.ind.name; val list = Arrays.asList(i);
+				if(!authorizatedRels.contains(list)) {error(label+i+" = literal",a,SeMLPackage.Literals.ASSIGNMENT__IND); ok=false;}
+			}
+			
+			if(!ok) {Console.ErrPairLn(local_log, "Aborted. Unauthorized relation(s)."); return false;}
+	
 		}
 
+		//================================================================= Throw all errors, warnings and informations
+        //=============================================================================================================
 
-		//Perform the equivalent check for characteristics in use
-		System.out.print(local_log + "Checking characteristics restrictions");
-		for(String ch: CharacteristicsSolver.GetRequiredCharacteristics){
-			inconsistencyReport = MasterOntology.CheckModelRestrictions(ch); 
-			if(inconsistencyReport !== null) {
-				//get the responsible agent
-				val UseCharacteristic uc = useList.findFirst[c | c.name.iri == ch]
-				if(uc === null){eo = m.imports.last; sf = SeMLPackage.Literals.IMPORT__NAME;} 
-				else{eo = uc; sf = SeMLPackage.Literals.USE_CHARACTERISTIC__NAME;}
-				//throw error (and solution)
-				if(inconsistencyReport.get(1).empty){ error("Characteristic: " +  ch + "\n" + inconsistencyReport.get(0), eo, sf);}
-				else error("Characteristic: " +  ch + "\n" + inconsistencyReport.get(0), eo, sf, GENERATE_SOLUTION, inconsistencyReport.get(1));
+		var String fixAll; //flag to fix all problems
+		var HashSet<FeaturePlace> fixAllEOs = new HashSet<FeaturePlace>(); //max 1 fix-all Quickfix per Feature Place
+		var boolean hasErrors = false;
+		
+		for(ps : problems.entrySet){ //iterate every list of problems
+			val DefaultFP = new FeaturePlace(m.imports.last, SeMLPackage.Literals.IMPORT__NAME);
+			val FeaturePlace f = visibilityMap.getOrDefault(ps.key, DefaultFP); //each Alias translates to one FP
+			var int cnt = 0;
+			for(p : ps.value){
+				//avoid repeated fix all for the DefaultFP, and for every FP inside this loop
+				if(p.type == TypeE.SOLVED && !fixAllEOs.contains(f)){fixAllEOs.add(f); fixAll = "F";} else fixAll = "";
+				switch (p.level) {
+					case ERROR:  {error  (p.GetLabel,f.eo,f.sf,f.index,FIX_PROBLEM, ps.key, String.valueOf(cnt++), fixAll);hasErrors=true;}
+					case WARNING:{warning(p.GetLabel,f.eo,f.sf,f.index,FIX_PROBLEM, ps.key, String.valueOf(cnt++), fixAll);}
+					case INFO:	 {info   (p.GetLabel,f.eo,f.sf,f.index,FIX_PROBLEM, ps.key, String.valueOf(cnt++), fixAll);}
+				}
+			}
+		}
+		
+		//Throw all restriction related errors
+		/*for(a : problems.entrySet){ //Iterate all EObjects
+			eo = a.key;
+			
+			//Find the appropriate feature for the EObject
+			switch (eo.class) {
+				//case IndividualImpl: 		{ sf = SeMLPackage.Literals.ANY_INDIVIDUAL__NAME;}
+				case CharacteristicImpl:	{ sf = SeMLPackage.Literals.USE_CHARACTERISTIC__NAME;}
+				case ImportImpl: 			{ sf = SeMLPackage.Literals.IMPORT__NAME;} //Meta individuals
+				default: 					{ System.err.println(local_log + "Internal error: Unexpected agent") }
+			}
+			
+			//Iterate all problems of an EObject
+			var anyFix = false;
+			var String option = ""; //Quickfix's desired behavior (""-No_quickfix "x"-single_fix "xx"-general_fix "xxx"-both)
+			for(var int i=0; i<a.value.length; i++){
+				val ModelSolution mS = a.value.get(i);
+				if(!mS.fix.empty) {anyFix = true; option = "x";} //This solution contains a Fix
+				if(i==a.value.length-1 && anyFix) {option += "xx";}
+				if(mS.isWarning){
+					warning(mS.problem, eo, sf, FIX_ALL_AND_ERROR, option, String.valueOf(i), String.join("\n",mS.fix));
+				}else{
+					error(mS.problem, eo, sf, FIX_ALL_AND_ERROR, option, String.valueOf(i), String.join("\n",mS.fix));
+				}
+			}
+		}*/
+		
+		if(hasErrors){
+			Console.OutPairLn(local_log, "Done. Model has errors."); return false;	
+		}
+		
+		Console.OutPairLn(local_log, "Done. Model is valid."); return true;
+	}
+	
+
+	/**
+	 * Check characteristic imposed restrictions, individual restrictions & Reports
+	 * @return true if excess errors exist
+	 */
+	def public static boolean CheckModelRestrictions(boolean skipFullTest, HashSet<List<String>> authorizatedRels){
+		
+		nextProblem = null; //Reset next problem (used by smart Quickfix)
+		val MainModel m = globalMainModel;
+		//val individualsList = EcoreUtil2.getAllContentsOfType(m, Individual);		
+		//val useList = EcoreUtil2.getAllContentsOfType(m, UseCharacteristic); //is this not needed
+		
+		//Create database with the problems caused by individual class restrictions or model characteristics
+		//Each entry has a key which represents the agent's Alias
+		problems = new HashMap<String, ArrayList<Problem>>;
+		
+		//------------------------------------------------- Check characteristic imposed restrictions
+
+		for(OWLClass ch: CharacteristicsSolver.GetRequiredCharacteristics){
+			val ArrayList<Problem> ps = MasterOntology.CheckModelRestrictions(ch); 
+			if(!ps.empty) { //Problems exist
+				if(skipFullTest) {if(FindNextProblem(ps)) return false;} //Irrelevant return value
+				problems.put(MasterOntology.cachedIRIs.get(ch.IRI.toString), ps); //no old entry is overwritten because ch is unique every time
+			}
+		}
+		
+		//If excess errors exist, skip further checks
+		if(problems.entrySet.exists[e | e.value.exists[p | p.type==TypeE.CHAR_EXCESS]]) return true;
+		
+		//------------------------------------------------- Check individual restrictions & Reports
+
+		//Check if individuals that were created in Protégé meet their class's restrictions
+		//Note: these defect errors are not detected before due to the Open World Assumption 
+		
+		for(Individual i: activeInds){
+			var ArrayList<Problem> ps = MasterOntology.CheckRelationRestrictions(authorizatedRels, i.iri);
+			if(skipFullTest) {if(FindNextProblem(ps)) return false;}//Irrelevant return value
+			MasterOntology.CheckReports(i.iri,ps); //add Reports
+			
+			if(!ps.empty) problems.put(i.name, ps); //no old entry is overwritten because i is unique every time
+		}
+		
+		return false;
+		
+			/*for(Component c: i.cls){ //Check individual for multiple classes
+				val ArrayList<ModelSolution> mS = MasterOntology.CheckRelationRestrictions(c.iri, indIRI);
+				if(mS.size != 0) {
+					if(skipFullTest) {if(FindNextProblem(mS)) return;}
+					indProblems.addAll(mS);
+				}
+			}*/
+		
+		
+		
+		/*for(MetaIndividual i: globalImportModel.metaIndividuals){ 
+			for(String s: i.cls){ //Iterate each class of an individual and check the restrictions of each class
+				val ArrayList<ModelSolution> mS = MasterOntology.CheckRelationRestrictions(s, i.iri);
+				if(mS.size != 0) {
+					if(skipFullTest) {if(FindNextProblem(mS)) return;}
+					anonymousProblems.addAll(mS);
+				}
+			}
+			// Check if this meta-individual is referenced in any report
+			var rClasses = Anomaly.IndividualReports.get(i.iri);
+			if(rClasses !== null){
+				for(OWLClass c: rClasses){
+					val ArrayList<ModelSolution> mS = MasterOntology.CheckRelationRestrictions(c.IRI.toString, i.iri);
+					if(mS.size != 0) { //The Report contains restrictions which must be stamped
+						if(skipFullTest) {if(FindNextProblem(mS)) return;}
+						mS.forEach[sol | sol.AddReportStamp(c, MasterOntology.cachedIRIs.get(i.iri))];
+						anonymousProblems.addAll(mS);
+					}else{ //The Report does not contain any restriction
+						val ModelSolution reportMS = new ModelSolution();
+						reportMS.AddReportStamp(c, MasterOntology.cachedIRIs.get(i.iri));
+						anonymousProblems.add(reportMS);
+					}
+				}
+			}
+		}*/
+		
+		//Perform the same Check for individuals created in the DSL
+		/*for(Individual i: individualsList){
+			
+			//Individual IRI 
+			val String indIRI = MasterOntology.OWL_Master + "#" + i.getName();
+			//Individual Problems (to avoid overwriting old entries)
+			val ArrayList<ModelSolution> indProblems = new ArrayList<ModelSolution>();
+			
+			for(Component c: i.cls){ //Check individual for multiple classes
+				val ArrayList<ModelSolution> mS = MasterOntology.CheckRelationRestrictions(c.iri, indIRI);
+				if(mS.size != 0) {
+					if(skipFullTest) {if(FindNextProblem(mS)) return;}
+					indProblems.addAll(mS);
+				}
+			}
+			// Check if this individual is referenced in any report
+			var rClasses = Anomaly.IndividualReports.get(indIRI);
+			if(rClasses !== null){
+				for(OWLClass c: rClasses){
+					val ArrayList<ModelSolution> mS = MasterOntology.CheckRelationRestrictions(c.IRI.toString, indIRI);
+					if(mS.size != 0) { //The Report contains restrictions which must be stamped
+						if(skipFullTest) {if(FindNextProblem(mS)) return;}
+						mS.forEach[sol | sol.AddReportStamp(c, null)];
+						indProblems.addAll(mS);
+					}else{ //The Report does not contain any restriction
+						val ModelSolution reportMS = new ModelSolution();
+						reportMS.AddReportStamp(c, null);
+						indProblems.add(reportMS);
+					}
+				}
+			}
+			
+			//Finally add this individual's problems to the general list
+			if(!indProblems.isEmpty) problems.put(i, indProblems);
+		}
+		
+		//Finally add anonymous problems to the general list
+		if(!anonymousProblems.isEmpty) problems.put(m.imports.last, anonymousProblems);*/
+
+	}
+	
+
+	
+	/**
+	 * Searches for a SOLVED Problem
+	 * @return true if it is found
+	 */
+	def static boolean FindNextProblem(ArrayList<Problem> ps){
+		
+		for(p : ps) 
+			if(p.type == TypeE.SOLVED){nextProblem = p; return true;} 
+			
+		return false;
+	}
+	
+	
+	/**
+	 * Gets the available reports and throws errors and warning accordingly
+	 */
+	/*def void ReportAnomalies(MainModel m, List<Individual> individualsList){ 
+		val String local_log = local_log + "[checkModel] ";
+		var String issue = Anomaly.getErrors();
+		if(issue !== null) {RouteIssueToAgent(m, issue, individualsList, 2);}
+		issue = Anomaly.getWarnings();
+		if(issue !== null) {RouteIssueToAgent(m, issue, individualsList, 3);}
+		issue = Anomaly.getInfos();
+		if(issue !== null) {RouteIssueToAgent(m, issue, individualsList, 4);}
+	}*/
+	
+	/**
+	 * Very basic function to dispatch the issue to its agent (uses every visible individual)
+	 */
+	def void RouteIssueToAgent(MainModel m, String issue, int type){
+		for(Entry<String,FeaturePlace> i: visibilityMap.entrySet){
+			if(issue.contains(i.key)){
+				DisplayAnomalies(" (related with this individual):\n" + issue, i.value.eo, i.value.sf, i.value.index, type); 
 				return;
 			}
 		}
+		DisplayAnomalies(":\n" + issue, m.imports.last, SeMLPackage.Literals.IMPORT__NAME, ValidationMessageAcceptor.INSIGNIFICANT_INDEX, type);
+	} 
 
-		System.out.println("\n" + local_log + "Done.");	
-	}
-	
-	/**
-	 * Very basic function to dispatch the issue to its agent (only implemented for non-meta individuals)
-	 */
-	def UseCharacteristic RouteCharacteristicToAgent(List<UseCharacteristic> chrList, String chIRI){
-		return chrList.findFirst[c | c.name.iri == chIRI]
-	}
-	
-	
-	/**
-	 * Auxiliary function to return anomalies for individual creation and relation instantiation
-	 * @return returns false if the model is inconsistent
-	 */
-	def boolean ReportAnomalies(MainModel m, List<Individual> individualsList, List<Relation> relationsList){ //m.imports.last, SeMLPackage.Literals.IMPORT__NAME
-		val String local_log = local_log + "[checkModel] ";
-		var String issue = Anomaly.getAnomalies(); //get inconsistency/unsatisfiability
-		if(issue !== null) {RouteIssueToAgent(m, issue, individualsList, relationsList, 1); return false;}
-		issue = Anomaly.getErrors();
-		if(issue !== null) {RouteIssueToAgent(m, issue, individualsList, relationsList, 2);}
-		issue = Anomaly.getWarnings();
-		if(issue !== null) {RouteIssueToAgent(m, issue, individualsList, relationsList, 3);}
-		issue = Anomaly.getInfos();
-		if(issue !== null) {RouteIssueToAgent(m, issue, individualsList, relationsList, 4);}
-		return true;
-	}
-	
-	/**
-	 * Very basic function to dispatch the issue to its agent (only implemented for non-meta individuals)
-	 */
-	def void RouteIssueToAgent(MainModel m, String issue, List<Individual> individualsList, List<Relation> relationsList, int type){
-		for(Individual i: individualsList){
-			if(issue.contains(i.name)){
-				DisplayAnomalies(" (related with this individual):\n" + issue, i, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME, type); return;
-			}
-		}
-		DisplayAnomalies(":\n" + issue, m.imports.last, SeMLPackage.Literals.IMPORT__NAME, type);
-	}
-
-	def void DisplayAnomalies(String s, EObject eo, EStructuralFeature eRef, int type){
-		val String local_log = local_log + "[checkModel] ";
+	def void DisplayAnomalies(String s, EObject eo, EStructuralFeature eRef, int index, int type){
 		switch (type) {
-			case 1: {error("Anomaly detected" + s, eo, eRef);}
-			case 2: {error("Error inferred" + s, eo, eRef);}
-			case 3: {warning("Warning inferred" + s, eo, eRef);}
-			case 4: {warning("Information inferred" + s, eo, eRef);}//System.out.println(local_log + "Information detected" + s);}
+			case 1: {error("Anomaly" + s, eo, eRef, index);}
+			case 2: {error("Error" + s, eo, eRef, index);}
+			case 3: {warning("Warning" + s, eo, eRef, index);}
+			case 4: {info("Information" + s, eo, eRef, index);}
 		}
 	}
 
@@ -260,16 +543,29 @@ class SeMLValidator extends AbstractSeMLValidator {
 	 * 
 	 * @param contextResource		Absolute file path of the ImportsModel
 	 * @param importURIAsString		Absolute file path of the ImportsModel
-	 * @return	the ImportModel or null in case of failure
+	 * @return	false if model was untouched
 	 */
 
-	def ImportModel getImportModel(Resource contextResource, String importURIAsString) {
+	def boolean GetImportModel(Resource contextResource, String importURIAsString) {
+		var boolean modelChanged;
+		if(globalImportModel === null) {modelChanged=true;} else modelChanged=false;
+		
 		val URI importURI = URI?.createURI(importURIAsString)
 		val URI contextURI = contextResource?.getURI
 		val URI resolvedURI = importURI?.resolve(contextURI)
 		val ResourceSet contextResourceSet = contextResource?.resourceSet
-		val Resource resource = contextResourceSet?.getResource(resolvedURI, true)
-		return resource?.allContents?.head as ImportModel	
+		var Resource resource = contextResourceSet?.getResource(resolvedURI, true)
+		
+		if(resource === null) {error("Error loading keywords file: " + Ontologies.GENfile.absolutePath, globalMainModel.imports.last, SeMLPackage.Literals.IMPORT__NAME);return true;}
+		
+		if(!resource.timeStamp.equals(importDate)){ //Reload resource if modified
+			resource.unload; //Unload
+			resource = contextResourceSet?.getResource(resolvedURI, true); //Reload
+			modelChanged = true;
+		}
+		
+		globalImportModel = resource?.allContents?.head as ImportModel	
+		return modelChanged;
 	}
 	
 	
@@ -308,7 +604,8 @@ class SeMLValidator extends AbstractSeMLValidator {
 		if(Ontologies.GENfile.exists && Ontologies.GENfile.file){ //Check if file exists
 		
 			//Check if generated file is older than the most recent ontology
-			if(mostRecentFile.compareTo(Ontologies.GENfile.lastModified) < 0){
+			importDate = Ontologies.GENfile.lastModified;
+			if(mostRecentFile.compareTo(importDate) < 0){
 				
 				try {
 					//Check if every imported file matches exactly with the generated file summary
@@ -316,7 +613,7 @@ class SeMLValidator extends AbstractSeMLValidator {
 					val BufferedReader br = new BufferedReader(new InputStreamReader(fis)); //Construct BufferedReader from InputStreamReader			 
 					
 					var String line = br.readLine(); cnt = 0;
-					var int SourceFilesNo = Integer.valueOf(line.substring(Ontologies.GENfirstline.length));
+					var int SourceFilesNo = Integer.parseInt(line.substring(Ontologies.GENfirstline.length));
 					var boolean different = false;
 					
 					if(pathslist.size == SourceFilesNo){ //Check if number of source files matches
@@ -326,23 +623,24 @@ class SeMLValidator extends AbstractSeMLValidator {
 						if(!different) {
 							val File masterfile = new File(Ontologies.GENfolder + Ontologies.masterNAME);
 							if(masterfile.exists && masterfile.file) {br.close(); return true;}
-							else System.out.println(local_log + "Master Ontology file was deleted. Creating a new one...");	
+							else Console.OutPairLn(local_log, "Master Ontology file was deleted. Creating a new one...");	
 						}
-						else System.out.println(local_log + "Ontology sources have changed. Updating DSL keywords...");	
+						else Console.OutPairLn(local_log, "Ontology sources have changed. Updating DSL keywords...");	
 						
-					} else System.out.println(local_log + "Number of ontology sources has changed. Updating DSL keywords...");	
+					} else Console.OutPairLn(local_log, "Number of ontology sources has changed. Updating DSL keywords...");	
 					
 					br.close();
 				} catch (Exception e) {
-					System.out.println(local_log + "Error while reading generated file: " + e.message);
-					System.out.println(local_log + "Repairing file...");		   	
+					Console.OutPairLn(local_log, "Error while reading generated file: " + e.message);
+					Console.OutPairLn(local_log, "Repairing file...");		   	
 				}
 				
-			} else System.out.println(local_log + "Changes in ontologies detected. Updating DSL keywords...");	
-		} else System.out.println(local_log + "Importing DSL keywords for the first time...");
+			} else Console.OutPairLn(local_log, "Changes in ontologies detected. Updating DSL keywords...");	
+		} else Console.OutPairLn(local_log, "Importing DSL keywords for the first time...");
 		
 		try {
 			Ontologies.ParseOntologies(pathslist); //If there are no errors, the file was generated
+			importDate = Ontologies.GENfile.lastModified;
 		} catch (IOException e) {
 			System.out.println(local_log + e.message);
 			error(e.message, m.imports.last, SeMLPackage.Literals.IMPORT__NAME); //Error while loading or parsing ontology

@@ -1,0 +1,347 @@
+<?xml version="1.0"?>
+<Ontology xmlns="http://www.w3.org/2002/07/owl#"
+     xml:base="esrg:c"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     ontologyIRI="esrg:c">
+    <Prefix name="" IRI="esrg:c"/>
+    <Prefix name="c" IRI="esrg:c#"/>
+    <Prefix name="owl" IRI="http://www.w3.org/2002/07/owl#"/>
+    <Prefix name="rdf" IRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+    <Prefix name="xml" IRI="http://www.w3.org/XML/1998/namespace"/>
+    <Prefix name="xsd" IRI="http://www.w3.org/2001/XMLSchema#"/>
+    <Prefix name="rdfs" IRI="http://www.w3.org/2000/01/rdf-schema#"/>
+    <Import>esrg:upper</Import>
+    <Annotation>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">Conditions Ontology</Literal>
+    </Annotation>
+    <Declaration>
+        <NamedIndividual IRI="#compareTwoIndividuals"/>
+    </Declaration>
+    <Declaration>
+        <AnnotationProperty IRI="#Argument_2"/>
+    </Declaration>
+    <Declaration>
+        <AnnotationProperty IRI="#ArgumentDescription"/>
+    </Declaration>
+    <Declaration>
+        <AnnotationProperty IRI="#Argument_4"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#notSame"/>
+    </Declaration>
+    <Declaration>
+        <AnnotationProperty IRI="#Argument_6"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#swrlArguments"/>
+    </Declaration>
+    <Declaration>
+        <AnnotationProperty IRI="#Argument_8"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#stringUnbound"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#relEQ"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#individual"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#relationClassCounter"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#unbound"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasArguments"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#relGE"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#relLE"/>
+    </Declaration>
+    <Declaration>
+        <AnnotationProperty IRI="#Argument_1"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#relationIndividual"/>
+    </Declaration>
+    <Declaration>
+        <AnnotationProperty IRI="#Argument_3"/>
+    </Declaration>
+    <Declaration>
+        <AnnotationProperty IRI="#Argument_5"/>
+    </Declaration>
+    <Declaration>
+        <AnnotationProperty IRI="#Argument_7"/>
+    </Declaration>
+    <Declaration>
+        <AnnotationProperty IRI="#Argument_9"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#no"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#relGT"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#floatListSum"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#relLT"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#literal"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#intListSum"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.w3.org/2003/11/swrl#Builtin"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#relationCounter"/>
+    </Declaration>
+    <ClassAssertion>
+        <Class IRI="#swrlArguments"/>
+        <NamedIndividual IRI="#compareTwoIndividuals"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="http://www.w3.org/2003/11/swrl#Builtin"/>
+        <NamedIndividual IRI="#floatListSum"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="http://www.w3.org/2003/11/swrl#Builtin"/>
+        <NamedIndividual IRI="#intListSum"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="http://www.w3.org/2003/11/swrl#Builtin"/>
+        <NamedIndividual IRI="#no"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="http://www.w3.org/2003/11/swrl#Builtin"/>
+        <NamedIndividual IRI="#notSame"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="http://www.w3.org/2003/11/swrl#Builtin"/>
+        <NamedIndividual IRI="#relEQ"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="http://www.w3.org/2003/11/swrl#Builtin"/>
+        <NamedIndividual IRI="#relGE"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="http://www.w3.org/2003/11/swrl#Builtin"/>
+        <NamedIndividual IRI="#relGT"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="http://www.w3.org/2003/11/swrl#Builtin"/>
+        <NamedIndividual IRI="#relLE"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="http://www.w3.org/2003/11/swrl#Builtin"/>
+        <NamedIndividual IRI="#relLT"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#swrlArguments"/>
+        <NamedIndividual IRI="#relationClassCounter"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#swrlArguments"/>
+        <NamedIndividual IRI="#relationCounter"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#swrlArguments"/>
+        <NamedIndividual IRI="#relationIndividual"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#swrlArguments"/>
+        <NamedIndividual IRI="#stringUnbound"/>
+    </ClassAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#hasArguments"/>
+        <NamedIndividual IRI="#floatListSum"/>
+        <NamedIndividual IRI="#stringUnbound"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#hasArguments"/>
+        <NamedIndividual IRI="#intListSum"/>
+        <NamedIndividual IRI="#stringUnbound"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#hasArguments"/>
+        <NamedIndividual IRI="#no"/>
+        <NamedIndividual IRI="#relationIndividual"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#hasArguments"/>
+        <NamedIndividual IRI="#relEQ"/>
+        <NamedIndividual IRI="#relationClassCounter"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#hasArguments"/>
+        <NamedIndividual IRI="#relEQ"/>
+        <NamedIndividual IRI="#relationCounter"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#hasArguments"/>
+        <NamedIndividual IRI="#relGE"/>
+        <NamedIndividual IRI="#relationClassCounter"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#hasArguments"/>
+        <NamedIndividual IRI="#relGE"/>
+        <NamedIndividual IRI="#relationCounter"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#hasArguments"/>
+        <NamedIndividual IRI="#relGT"/>
+        <NamedIndividual IRI="#relationClassCounter"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#hasArguments"/>
+        <NamedIndividual IRI="#relGT"/>
+        <NamedIndividual IRI="#relationCounter"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#hasArguments"/>
+        <NamedIndividual IRI="#relLE"/>
+        <NamedIndividual IRI="#relationClassCounter"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#hasArguments"/>
+        <NamedIndividual IRI="#relLE"/>
+        <NamedIndividual IRI="#relationCounter"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#hasArguments"/>
+        <NamedIndividual IRI="#relLT"/>
+        <NamedIndividual IRI="#relationClassCounter"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#hasArguments"/>
+        <NamedIndividual IRI="#relLT"/>
+        <NamedIndividual IRI="#relationCounter"/>
+    </ObjectPropertyAssertion>
+    <SubDataPropertyOf>
+        <DataProperty IRI="#individual"/>
+        <DataProperty abbreviatedIRI="owl:topDataProperty"/>
+    </SubDataPropertyOf>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="#Argument_1"/>
+        <IRI>#compareTwoIndividuals</IRI>
+        <IRI>#individual</IRI>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="#Argument_2"/>
+        <IRI>#compareTwoIndividuals</IRI>
+        <IRI>#individual</IRI>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="#Argument_1"/>
+        <IRI>#relationClassCounter</IRI>
+        <IRI>#literal</IRI>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="#Argument_2"/>
+        <IRI>#relationClassCounter</IRI>
+        <IRI>#individual</IRI>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="#Argument_3"/>
+        <IRI>#relationClassCounter</IRI>
+        <IRI>#literal</IRI>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="#Argument_4"/>
+        <IRI>#relationClassCounter</IRI>
+        <IRI>#literal</IRI>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="#Argument_1"/>
+        <IRI>#relationCounter</IRI>
+        <IRI>#literal</IRI>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="#Argument_2"/>
+        <IRI>#relationCounter</IRI>
+        <IRI>#individual</IRI>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="#Argument_3"/>
+        <IRI>#relationCounter</IRI>
+        <IRI>#literal</IRI>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="#Argument_1"/>
+        <IRI>#relationIndividual</IRI>
+        <IRI>#individual</IRI>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="#Argument_2"/>
+        <IRI>#relationIndividual</IRI>
+        <IRI>#literal</IRI>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="#Argument_3"/>
+        <IRI>#relationIndividual</IRI>
+        <IRI>#individual</IRI>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="#Argument_1"/>
+        <IRI>#stringUnbound</IRI>
+        <IRI>#literal</IRI>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="#Argument_2"/>
+        <IRI>#stringUnbound</IRI>
+        <IRI>#unbound</IRI>
+    </AnnotationAssertion>
+    <SubAnnotationPropertyOf>
+        <AnnotationProperty IRI="#Argument_1"/>
+        <AnnotationProperty IRI="#ArgumentDescription"/>
+    </SubAnnotationPropertyOf>
+    <SubAnnotationPropertyOf>
+        <AnnotationProperty IRI="#Argument_2"/>
+        <AnnotationProperty IRI="#ArgumentDescription"/>
+    </SubAnnotationPropertyOf>
+    <SubAnnotationPropertyOf>
+        <AnnotationProperty IRI="#Argument_3"/>
+        <AnnotationProperty IRI="#ArgumentDescription"/>
+    </SubAnnotationPropertyOf>
+    <SubAnnotationPropertyOf>
+        <AnnotationProperty IRI="#Argument_4"/>
+        <AnnotationProperty IRI="#ArgumentDescription"/>
+    </SubAnnotationPropertyOf>
+    <SubAnnotationPropertyOf>
+        <AnnotationProperty IRI="#Argument_5"/>
+        <AnnotationProperty IRI="#ArgumentDescription"/>
+    </SubAnnotationPropertyOf>
+    <SubAnnotationPropertyOf>
+        <AnnotationProperty IRI="#Argument_6"/>
+        <AnnotationProperty IRI="#ArgumentDescription"/>
+    </SubAnnotationPropertyOf>
+    <SubAnnotationPropertyOf>
+        <AnnotationProperty IRI="#Argument_7"/>
+        <AnnotationProperty IRI="#ArgumentDescription"/>
+    </SubAnnotationPropertyOf>
+    <SubAnnotationPropertyOf>
+        <AnnotationProperty IRI="#Argument_8"/>
+        <AnnotationProperty IRI="#ArgumentDescription"/>
+    </SubAnnotationPropertyOf>
+    <SubAnnotationPropertyOf>
+        <AnnotationProperty IRI="#Argument_9"/>
+        <AnnotationProperty IRI="#ArgumentDescription"/>
+    </SubAnnotationPropertyOf>
+</Ontology>
+
+
+
+<!-- Generated by the OWL API (version 4.2.6.20160910-2108) https://github.com/owlcs/owlapi -->
+

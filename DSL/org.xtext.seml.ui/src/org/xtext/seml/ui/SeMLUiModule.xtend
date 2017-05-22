@@ -16,7 +16,8 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultHighlightingConfigurati
 import org.eclipse.xtext.nodemodel.INode
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.resource.EObjectAtOffsetHelper
-import org.xtext.seml.seML.MetaIndividual
+import org.eclipse.xtext.CrossReference
+import org.xtext.seml.seML.StaticIndividual
 
 /**
  * Use this class to register components to be used within the Eclipse IDE.
@@ -46,8 +47,12 @@ public class SeMLSemanticHighlightingCalculator extends DefaultSemanticHighlight
 					acceptor.addPosition(node.getOffset(), node.getLength(), DefaultHighlightingConfiguration.KEYWORD_ID);
 				}
 
-				if (node.getGrammarElement() == ga.individualAccess.clsComponentCrossReference_1_0 || node.getGrammarElement() == ga.individualAccess.clsComponentCrossReference_2_1_0) {
+				/*if (node.getGrammarElement() == ga.individualAccess.clsComponentCrossReference_1_0 || node.getGrammarElement() == ga.individualAccess.clsComponentCrossReference_2_1_0) {
 					acceptor.addPosition(node.getOffset(), node.getLength(), DefaultHighlightingConfiguration.NUMBER_ID);
+				}
+				
+				if (node.getGrammarElement() == ga.individualAccess.alternativeAlterantiveClsUnionParserRuleCall_3_0) {
+					acceptor.addPosition(node.getOffset(), node.getLength(), DefaultHighlightingConfiguration.COMMENT_ID);
 				}
 				
 				if (node.getGrammarElement() == ga.relationAccess.instance1AnyIndividualCrossReference_0_0 || node.getGrammarElement() == ga.relationAccess.instance2AnyIndividualCrossReference_2_0) {
@@ -55,7 +60,14 @@ public class SeMLSemanticHighlightingCalculator extends DefaultSemanticHighlight
 					if(target instanceof MetaIndividual){
 						acceptor.addPosition(node.getOffset(), node.getLength(), DefaultHighlightingConfiguration.TASK_ID);
 					}
+				}*/
+				
+				if(node.grammarElement instanceof CrossReference){
+					val EObject target = helper.resolveElementAt(resource, node.getOffset());
+					if(target instanceof StaticIndividual) 
+						acceptor.addPosition(node.getOffset(), node.getLength(), DefaultHighlightingConfiguration.NUMBER_ID);
 				}
+
 			
 			}
 			super.provideHighlightingFor(resource, acceptor, cancelIndicator);

@@ -1,13 +1,7 @@
 
 CENAS A FAZER:
 	
-	colocar variabilidades nas characteristics
-	
-	(pensar em eventualmente fazer a automatizacao do que é pedido em cima)
-	
 	fazer a logica das characteristics (explicitamente o hasValue, percorrendo as characteristics, encontrando os values, etc) pode ficar pa depois
-	
-	verificar se os meta individuos tem a sua cor
 	
 	auto vangloriaçao 
 

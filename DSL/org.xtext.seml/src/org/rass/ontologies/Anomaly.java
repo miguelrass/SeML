@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -37,65 +38,37 @@ public class Anomaly {
 	private static final String local_log = "Anomaly Log: ";
 	private static final ManchesterSyntaxExplanationRenderer renderer = new ManchesterSyntaxExplanationRenderer();
 	
-	private static StringWriter outputWriter = null;
-	private static String errorList = null;
-	private static String warningList = null;
-	private static String infoList = null;
-	
+	private static StringWriter outputWriter = null;	
 	private static boolean hasAnomalies = false;
-	private static boolean hasErrors = false;
-	private static boolean hasWarnings = false;
-	private static boolean hasInfos = false;
+
+	public static HashMap<String, HashSet<OWLClass>> IndividualReports = null;
 		
-			
-	public enum ReportLevel {
-	    CONSISTENCY, SATISFIABILITY, ERROR, WARNING, INFORMATION 
-	}
-	
 	public static String getAnomalies(){if(hasAnomalies)return outputWriter.toString(); else return null;}
-	public static String getErrors(){ 	if(hasErrors)	return errorList; 	else return null;}
-	public static String getWarnings(){ if(hasWarnings) return warningList; else return null;}
-	public static String getInfos(){ 	if(hasInfos) 	return infoList; 	else return null;}
-	//public static boolean hasAnyReport(){return (hasErrors || hasWarnings || hasInfos);}
-	
-	/*private static ReportLevel mainReportType = null;
-	public static String getMainReport(){
-		if(hasAnomalies){mainReportType=ReportLevel.CONSISTENCY; 	return outputWriter.toString();	}
-		if(hasErrors) 	{mainReportType=ReportLevel.ERROR; 			return errorList;				}
-		if(hasWarnings) {mainReportType=ReportLevel.WARNING; 		return warningList;				}
-		if(hasInfos) 	{mainReportType=ReportLevel.INFORMATION; 	return infoList;				}
-		return null;
-	}*/
-	
+
 
 	
 	/**
-	 * Analyze the ontology
+	 * Check for inconsistencies and unsatisfiabilities
 	 * 
 	 * @param reasoner
 	 * @param ontology
 	 * @param RL
-	 * @return true if any kind of report was detected (for the chosen ReportLevel)
+	 * @return true if inconsistencies or unsatisfiabilities exist
 	 */
-	public static boolean ReasonAndExplain(PelletReasoner reasoner, OWLOntology ontology, ReportLevel RL){
+	public static boolean ReasonAndExplain(PelletReasoner reasoner, OWLOntology ontology){
 		final String local_log = Anomaly.local_log + "[ReasonAndExplain] ";
 		
 		//reset outputWriter
-		hasAnomalies = false; hasErrors = false; hasWarnings = false; hasInfos = false; 
+		hasAnomalies = false; 
 		
 		//================================================ Test for consistency before SWRL (to protect built-ins)
-		System.out.print(local_log + "Checking for anomalies");
+		System.out.println(local_log + "Checking for anomalies");
 		
 		if(!reasoner.isConsistent()){
-			System.out.write('\n');
 			ExplainInconsistencies(ontology);
 			hasAnomalies = true;
 			return true; //inconsistent ontologies cannot be further evaluated by a reasoner
 		}
-		System.out.write('\n');
-		
-		//------------------------------------------------ Ontology is consistent, return if goal is met
-		if(RL == ReportLevel.CONSISTENCY) return false; //no problem was detected
 
 		//================================================ Test for unsatisfiability
 		Node<OWLClass> bottomNode = reasoner.getUnsatisfiableClasses(); //classes equivalent to owl:Nothing
@@ -106,56 +79,33 @@ public class Anomaly {
         	return true; //unsatisfiable classes generate false reports
         }
         
-        //------------------------------------------------ Ontology is satisfiable, return if goal is met
-      	if(RL == ReportLevel.SATISFIABILITY) return false; //no problem was detected
-        
-        //================================================ Test for Error Class individuals
-      	String rep = HandleReports(reasoner, MasterCache.errorClasses);
-      	if(rep.length()!=0){
-      		errorList = /*"Error reports were found:\n" +*/ rep;
-      		hasErrors = true;
-      	}
-      	//------------------------------------------------ Ontology might contain errors, return if goal is met
-      	if(RL == ReportLevel.ERROR) return hasErrors;
-      	
-      	 //================================================ Test for Warning Class individuals
-      	rep = HandleReports(reasoner, MasterCache.warningClasses);
-      	if(rep.length()!=0){
-      		warningList = /*"Warning reports were found:\n" +*/ rep;
-      		hasWarnings = true;
-      	}
-      	//------------------------------------------------ Ontology might contain errors/warnings, return if goal is met
-      	if(RL == ReportLevel.WARNING) return (hasErrors || hasWarnings);
-      	
-      	 //================================================ Test for Information Class individuals
-      	rep = HandleReports(reasoner, MasterCache.infoClasses);
-      	if(rep.length()!=0){
-      		infoList = /*"Information reports were found:\n" +*/ rep;
-      		hasInfos = true;
-      	}
-      	//------------------------------------------------ Ontology might contain errors/warnings/informations
-      	return (hasErrors || hasWarnings || hasInfos);
-      	
+        return false; //no problem was detected
 	}
 	
-	
-	private static String HandleReports(PelletReasoner reasoner, Set<OWLClass> reportClasses){
-		final String local_log = Anomaly.local_log + "[HandleReports] ";
+	/**
+	 * Find individuals in any of the main subclasses of Report (Error, Warning, Information)
+	 * 
+	 * @param reasoner
+	 * @return true if reports were found
+	 */
+	/*public static void FindReports(PelletReasoner reasoner){
 		
-		StringBuilder reports = new StringBuilder(100); //set initial capacity to 100 chars
+		IndividualReports = new HashMap<String, HashSet<OWLClass>>();		
 		
-		if(reportClasses==null) {System.out.println(local_log + "Error: master cache is not loaded."); return reports.toString();}
-        
-        for(OWLClass c : reportClasses){
-        	Set<OWLNamedIndividual> agents = reasoner.getInstances(c, true).getFlattened();
+        for(OWLClass c : MasterCache.reportClasses){
+        	Set<OWLNamedIndividual> agents = reasoner.getInstances(c, true).getFlattened(); //get only direct individuals
         	if(!agents.isEmpty()){
-        		reports.append(c.getIRI().getShortForm() + " - Instance Agents: ");
-	        	for(OWLNamedIndividual a : agents){ reports.append(a.getIRI().toString() + " "); }
+        		for(OWLNamedIndividual a : agents){
+        			HashSet<OWLClass> set = IndividualReports.get(a);
+        			if(set==null) {
+        				set = new HashSet<OWLClass>();
+        				IndividualReports.put(a.getIRI().toString(), set);
+        			}
+        			set.add(c); //the object is changed inside the Set
+        		}
         	}
         }
-
-        return reports.toString();
-	}
+	}*/
 	
     private static void ExplainInconsistencies(OWLOntology ontology){
 		final String local_log = Anomaly.local_log + "[ExplainInconsistencies] ";
@@ -169,7 +119,7 @@ public class Anomaly {
 		man_iso.addAxioms(ont_iso, ontology.getAxioms());
 		//================================================================ 
 		
-		System.out.print(local_log + "Explaining inconsistencies");
+		System.out.println(local_log + "Explaining inconsistencies");
 		
 		// Create an explanation generator
 		PelletExplanation expGen = new PelletExplanation(ont_iso); //Must be created before Built-in-enabled Pellet Reasoner
@@ -184,7 +134,6 @@ public class Anomaly {
 		Set<Set<OWLAxiom>> explanationAxioms = null;
 		try {
 			explanationAxioms = expGen.getInconsistencyExplanations(2);
-			System.out.write('\n');
 			if(explanationAxioms.isEmpty()){outputWriter.write("No explanation found.");}
 			while(!explanationAxioms.isEmpty()) {
 				renderer.render( explanationAxioms);
@@ -194,17 +143,16 @@ public class Anomaly {
 	
 		//In case of failure try to get only the first explanation
 		} catch (Throwable e) {
-			System.out.println("\n" + local_log + "Unable to render >1 explanation. Error: " + e.getMessage());
-			System.out.print(local_log + "Rendering 1 explanation");
+			System.out.println(local_log + "Unable to render >1 explanation. Error: " + e.getMessage());
+			System.out.println(local_log + "Rendering 1 explanation");
 			try {
 				explanationAxioms = expGen.getInconsistencyExplanations(1);
-				System.out.write('\n');
 				renderer.render( explanationAxioms);
 				renderer.endRendering();
 			} catch (Throwable e1) {
 				
 		//In case of failure report error in console
-				System.out.println('\n' + local_log + "Error: " + e1.getMessage());
+				System.out.println(local_log + "Error: " + e1.getMessage());
 				outputWriter.write("The inconsistencies explanation could not be rendered");
 			}
 		}

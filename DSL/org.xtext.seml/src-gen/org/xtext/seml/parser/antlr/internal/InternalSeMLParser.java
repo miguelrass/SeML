@@ -21,29 +21,26 @@ import java.util.ArrayList;
 @SuppressWarnings("all")
 public class InternalSeMLParser extends AbstractInternalAntlrParser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_STRING", "RULE_IRI", "RULE_INT", "RULE_FLOAT", "RULE_BOOL", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'import'", "'new'", "','", "'use'", "'CompProcess'", "'CompEvent'", "'CompProperty'", "'CompEntity'", "'ObjectProperty'", "'Characteristic'", "'MetaIndividual'"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_ALIAS", "RULE_STRING", "RULE_FLOAT", "RULE_BOOL", "RULE_INT", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'use'", "','", "'import'", "'='", "'FreeIndividual'", "'ObjectProperty'", "'Characteristic'", "'StaticIndividual'"
     };
-    public static final int RULE_IRI=5;
-    public static final int RULE_STRING=4;
+    public static final int RULE_STRING=5;
     public static final int RULE_SL_COMMENT=10;
     public static final int T__19=19;
     public static final int T__15=15;
     public static final int T__16=16;
     public static final int T__17=17;
     public static final int T__18=18;
+    public static final int RULE_ALIAS=4;
     public static final int T__13=13;
     public static final int T__14=14;
     public static final int EOF=-1;
     public static final int RULE_WS=11;
     public static final int RULE_ANY_OTHER=12;
-    public static final int RULE_BOOL=8;
-    public static final int RULE_INT=6;
-    public static final int T__22=22;
+    public static final int RULE_BOOL=7;
+    public static final int RULE_INT=8;
     public static final int RULE_ML_COMMENT=9;
-    public static final int T__23=23;
-    public static final int RULE_FLOAT=7;
+    public static final int RULE_FLOAT=6;
     public static final int T__20=20;
-    public static final int T__21=21;
 
     // delegates
     // delegators
@@ -141,10 +138,10 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
             int alt1=2;
             int LA1_0 = input.LA(1);
 
-            if ( (LA1_0==13) ) {
+            if ( (LA1_0==15) ) {
                 alt1=1;
             }
-            else if ( ((LA1_0>=17 && LA1_0<=20)) ) {
+            else if ( (LA1_0==20) ) {
                 alt1=2;
             }
             else {
@@ -249,24 +246,28 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleMainModel"
-    // InternalSeML.g:107:1: ruleMainModel returns [EObject current=null] : ( ( (lv_imports_0_0= ruleImport ) )+ ( (lv_sentences_1_0= ruleSentence ) )* ) ;
+    // InternalSeML.g:107:1: ruleMainModel returns [EObject current=null] : ( ( (lv_imports_0_0= ruleImport ) )+ (otherlv_1= 'use' ( (otherlv_2= RULE_ALIAS ) ) (otherlv_3= ',' ( (otherlv_4= RULE_ALIAS ) ) )* )? ( (lv_sentences_5_0= ruleSentence ) )* ) ;
     public final EObject ruleMainModel() throws RecognitionException {
         EObject current = null;
 
+        Token otherlv_1=null;
+        Token otherlv_2=null;
+        Token otherlv_3=null;
+        Token otherlv_4=null;
         EObject lv_imports_0_0 = null;
 
-        EObject lv_sentences_1_0 = null;
+        EObject lv_sentences_5_0 = null;
 
 
 
         	enterRule();
 
         try {
-            // InternalSeML.g:113:2: ( ( ( (lv_imports_0_0= ruleImport ) )+ ( (lv_sentences_1_0= ruleSentence ) )* ) )
-            // InternalSeML.g:114:2: ( ( (lv_imports_0_0= ruleImport ) )+ ( (lv_sentences_1_0= ruleSentence ) )* )
+            // InternalSeML.g:113:2: ( ( ( (lv_imports_0_0= ruleImport ) )+ (otherlv_1= 'use' ( (otherlv_2= RULE_ALIAS ) ) (otherlv_3= ',' ( (otherlv_4= RULE_ALIAS ) ) )* )? ( (lv_sentences_5_0= ruleSentence ) )* ) )
+            // InternalSeML.g:114:2: ( ( (lv_imports_0_0= ruleImport ) )+ (otherlv_1= 'use' ( (otherlv_2= RULE_ALIAS ) ) (otherlv_3= ',' ( (otherlv_4= RULE_ALIAS ) ) )* )? ( (lv_sentences_5_0= ruleSentence ) )* )
             {
-            // InternalSeML.g:114:2: ( ( (lv_imports_0_0= ruleImport ) )+ ( (lv_sentences_1_0= ruleSentence ) )* )
-            // InternalSeML.g:115:3: ( (lv_imports_0_0= ruleImport ) )+ ( (lv_sentences_1_0= ruleSentence ) )*
+            // InternalSeML.g:114:2: ( ( (lv_imports_0_0= ruleImport ) )+ (otherlv_1= 'use' ( (otherlv_2= RULE_ALIAS ) ) (otherlv_3= ',' ( (otherlv_4= RULE_ALIAS ) ) )* )? ( (lv_sentences_5_0= ruleSentence ) )* )
+            // InternalSeML.g:115:3: ( (lv_imports_0_0= ruleImport ) )+ (otherlv_1= 'use' ( (otherlv_2= RULE_ALIAS ) ) (otherlv_3= ',' ( (otherlv_4= RULE_ALIAS ) ) )* )? ( (lv_sentences_5_0= ruleSentence ) )*
             {
             // InternalSeML.g:115:3: ( (lv_imports_0_0= ruleImport ) )+
             int cnt2=0;
@@ -275,7 +276,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
                 int alt2=2;
                 int LA2_0 = input.LA(1);
 
-                if ( (LA2_0==13) ) {
+                if ( (LA2_0==15) ) {
                     alt2=1;
                 }
 
@@ -322,29 +323,120 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
                 cnt2++;
             } while (true);
 
-            // InternalSeML.g:134:3: ( (lv_sentences_1_0= ruleSentence ) )*
-            loop3:
-            do {
-                int alt3=2;
-                int LA3_0 = input.LA(1);
+            // InternalSeML.g:134:3: (otherlv_1= 'use' ( (otherlv_2= RULE_ALIAS ) ) (otherlv_3= ',' ( (otherlv_4= RULE_ALIAS ) ) )* )?
+            int alt4=2;
+            int LA4_0 = input.LA(1);
 
-                if ( (LA3_0==RULE_IRI||LA3_0==14||LA3_0==16) ) {
-                    alt3=1;
+            if ( (LA4_0==13) ) {
+                alt4=1;
+            }
+            switch (alt4) {
+                case 1 :
+                    // InternalSeML.g:135:4: otherlv_1= 'use' ( (otherlv_2= RULE_ALIAS ) ) (otherlv_3= ',' ( (otherlv_4= RULE_ALIAS ) ) )*
+                    {
+                    otherlv_1=(Token)match(input,13,FOLLOW_4); 
+
+                    				newLeafNode(otherlv_1, grammarAccess.getMainModelAccess().getUseKeyword_1_0());
+                    			
+                    // InternalSeML.g:139:4: ( (otherlv_2= RULE_ALIAS ) )
+                    // InternalSeML.g:140:5: (otherlv_2= RULE_ALIAS )
+                    {
+                    // InternalSeML.g:140:5: (otherlv_2= RULE_ALIAS )
+                    // InternalSeML.g:141:6: otherlv_2= RULE_ALIAS
+                    {
+
+                    						if (current==null) {
+                    							current = createModelElement(grammarAccess.getMainModelRule());
+                    						}
+                    					
+                    otherlv_2=(Token)match(input,RULE_ALIAS,FOLLOW_5); 
+
+                    						newLeafNode(otherlv_2, grammarAccess.getMainModelAccess().getUseChCharacteristicCrossReference_1_1_0());
+                    					
+
+                    }
+
+
+                    }
+
+                    // InternalSeML.g:152:4: (otherlv_3= ',' ( (otherlv_4= RULE_ALIAS ) ) )*
+                    loop3:
+                    do {
+                        int alt3=2;
+                        int LA3_0 = input.LA(1);
+
+                        if ( (LA3_0==14) ) {
+                            alt3=1;
+                        }
+
+
+                        switch (alt3) {
+                    	case 1 :
+                    	    // InternalSeML.g:153:5: otherlv_3= ',' ( (otherlv_4= RULE_ALIAS ) )
+                    	    {
+                    	    otherlv_3=(Token)match(input,14,FOLLOW_4); 
+
+                    	    					newLeafNode(otherlv_3, grammarAccess.getMainModelAccess().getCommaKeyword_1_2_0());
+                    	    				
+                    	    // InternalSeML.g:157:5: ( (otherlv_4= RULE_ALIAS ) )
+                    	    // InternalSeML.g:158:6: (otherlv_4= RULE_ALIAS )
+                    	    {
+                    	    // InternalSeML.g:158:6: (otherlv_4= RULE_ALIAS )
+                    	    // InternalSeML.g:159:7: otherlv_4= RULE_ALIAS
+                    	    {
+
+                    	    							if (current==null) {
+                    	    								current = createModelElement(grammarAccess.getMainModelRule());
+                    	    							}
+                    	    						
+                    	    otherlv_4=(Token)match(input,RULE_ALIAS,FOLLOW_5); 
+
+                    	    							newLeafNode(otherlv_4, grammarAccess.getMainModelAccess().getUseChCharacteristicCrossReference_1_2_1_0());
+                    	    						
+
+                    	    }
+
+
+                    	    }
+
+
+                    	    }
+                    	    break;
+
+                    	default :
+                    	    break loop3;
+                        }
+                    } while (true);
+
+
+                    }
+                    break;
+
+            }
+
+            // InternalSeML.g:172:3: ( (lv_sentences_5_0= ruleSentence ) )*
+            loop5:
+            do {
+                int alt5=2;
+                int LA5_0 = input.LA(1);
+
+                if ( (LA5_0==RULE_ALIAS) ) {
+                    alt5=1;
                 }
 
 
-                switch (alt3) {
+                switch (alt5) {
             	case 1 :
-            	    // InternalSeML.g:135:4: (lv_sentences_1_0= ruleSentence )
+            	    // InternalSeML.g:173:4: (lv_sentences_5_0= ruleSentence )
             	    {
-            	    // InternalSeML.g:135:4: (lv_sentences_1_0= ruleSentence )
-            	    // InternalSeML.g:136:5: lv_sentences_1_0= ruleSentence
+            	    // InternalSeML.g:173:4: (lv_sentences_5_0= ruleSentence )
+            	    // InternalSeML.g:174:5: lv_sentences_5_0= ruleSentence
             	    {
 
-            	    					newCompositeNode(grammarAccess.getMainModelAccess().getSentencesSentenceParserRuleCall_1_0());
+            	    					newCompositeNode(grammarAccess.getMainModelAccess().getSentencesSentenceParserRuleCall_2_0());
             	    				
-            	    pushFollow(FOLLOW_4);
-            	    lv_sentences_1_0=ruleSentence();
+            	    pushFollow(FOLLOW_6);
+            	    lv_sentences_5_0=ruleSentence();
 
             	    state._fsp--;
 
@@ -355,7 +447,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
             	    					add(
             	    						current,
             	    						"sentences",
-            	    						lv_sentences_1_0,
+            	    						lv_sentences_5_0,
             	    						"org.xtext.seml.SeML.Sentence");
             	    					afterParserOrEnumRuleCall();
             	    				
@@ -367,7 +459,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
             	    break;
 
             	default :
-            	    break loop3;
+            	    break loop5;
                 }
             } while (true);
 
@@ -394,7 +486,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleImportModel"
-    // InternalSeML.g:157:1: entryRuleImportModel returns [EObject current=null] : iv_ruleImportModel= ruleImportModel EOF ;
+    // InternalSeML.g:195:1: entryRuleImportModel returns [EObject current=null] : iv_ruleImportModel= ruleImportModel EOF ;
     public final EObject entryRuleImportModel() throws RecognitionException {
         EObject current = null;
 
@@ -402,8 +494,8 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalSeML.g:157:52: (iv_ruleImportModel= ruleImportModel EOF )
-            // InternalSeML.g:158:2: iv_ruleImportModel= ruleImportModel EOF
+            // InternalSeML.g:195:52: (iv_ruleImportModel= ruleImportModel EOF )
+            // InternalSeML.g:196:2: iv_ruleImportModel= ruleImportModel EOF
             {
              newCompositeNode(grammarAccess.getImportModelRule()); 
             pushFollow(FOLLOW_1);
@@ -430,155 +522,53 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleImportModel"
-    // InternalSeML.g:164:1: ruleImportModel returns [EObject current=null] : ( ( (lv_components_0_0= ruleComponent ) )+ ( (lv_characteristics_1_0= ruleCharacteristic ) )* ( (lv_objectProperties_2_0= ruleObjectProperty ) )* ( (lv_metaIndividuals_3_0= ruleMetaIndividual ) )* ) ;
+    // InternalSeML.g:202:1: ruleImportModel returns [EObject current=null] : ( ( (lv_staticIndividuals_0_0= ruleStaticIndividual ) )+ ( (lv_individualOptions_1_0= ruleFreeIndividual ) )* ( (lv_characteristics_2_0= ruleCharacteristic ) )* ( (lv_objectProperties_3_0= ruleObjectProperty ) )* ) ;
     public final EObject ruleImportModel() throws RecognitionException {
         EObject current = null;
 
-        EObject lv_components_0_0 = null;
+        EObject lv_staticIndividuals_0_0 = null;
 
-        EObject lv_characteristics_1_0 = null;
+        EObject lv_individualOptions_1_0 = null;
 
-        EObject lv_objectProperties_2_0 = null;
+        EObject lv_characteristics_2_0 = null;
 
-        EObject lv_metaIndividuals_3_0 = null;
+        EObject lv_objectProperties_3_0 = null;
 
 
 
         	enterRule();
 
         try {
-            // InternalSeML.g:170:2: ( ( ( (lv_components_0_0= ruleComponent ) )+ ( (lv_characteristics_1_0= ruleCharacteristic ) )* ( (lv_objectProperties_2_0= ruleObjectProperty ) )* ( (lv_metaIndividuals_3_0= ruleMetaIndividual ) )* ) )
-            // InternalSeML.g:171:2: ( ( (lv_components_0_0= ruleComponent ) )+ ( (lv_characteristics_1_0= ruleCharacteristic ) )* ( (lv_objectProperties_2_0= ruleObjectProperty ) )* ( (lv_metaIndividuals_3_0= ruleMetaIndividual ) )* )
+            // InternalSeML.g:208:2: ( ( ( (lv_staticIndividuals_0_0= ruleStaticIndividual ) )+ ( (lv_individualOptions_1_0= ruleFreeIndividual ) )* ( (lv_characteristics_2_0= ruleCharacteristic ) )* ( (lv_objectProperties_3_0= ruleObjectProperty ) )* ) )
+            // InternalSeML.g:209:2: ( ( (lv_staticIndividuals_0_0= ruleStaticIndividual ) )+ ( (lv_individualOptions_1_0= ruleFreeIndividual ) )* ( (lv_characteristics_2_0= ruleCharacteristic ) )* ( (lv_objectProperties_3_0= ruleObjectProperty ) )* )
             {
-            // InternalSeML.g:171:2: ( ( (lv_components_0_0= ruleComponent ) )+ ( (lv_characteristics_1_0= ruleCharacteristic ) )* ( (lv_objectProperties_2_0= ruleObjectProperty ) )* ( (lv_metaIndividuals_3_0= ruleMetaIndividual ) )* )
-            // InternalSeML.g:172:3: ( (lv_components_0_0= ruleComponent ) )+ ( (lv_characteristics_1_0= ruleCharacteristic ) )* ( (lv_objectProperties_2_0= ruleObjectProperty ) )* ( (lv_metaIndividuals_3_0= ruleMetaIndividual ) )*
+            // InternalSeML.g:209:2: ( ( (lv_staticIndividuals_0_0= ruleStaticIndividual ) )+ ( (lv_individualOptions_1_0= ruleFreeIndividual ) )* ( (lv_characteristics_2_0= ruleCharacteristic ) )* ( (lv_objectProperties_3_0= ruleObjectProperty ) )* )
+            // InternalSeML.g:210:3: ( (lv_staticIndividuals_0_0= ruleStaticIndividual ) )+ ( (lv_individualOptions_1_0= ruleFreeIndividual ) )* ( (lv_characteristics_2_0= ruleCharacteristic ) )* ( (lv_objectProperties_3_0= ruleObjectProperty ) )*
             {
-            // InternalSeML.g:172:3: ( (lv_components_0_0= ruleComponent ) )+
-            int cnt4=0;
-            loop4:
-            do {
-                int alt4=2;
-                int LA4_0 = input.LA(1);
-
-                if ( ((LA4_0>=17 && LA4_0<=20)) ) {
-                    alt4=1;
-                }
-
-
-                switch (alt4) {
-            	case 1 :
-            	    // InternalSeML.g:173:4: (lv_components_0_0= ruleComponent )
-            	    {
-            	    // InternalSeML.g:173:4: (lv_components_0_0= ruleComponent )
-            	    // InternalSeML.g:174:5: lv_components_0_0= ruleComponent
-            	    {
-
-            	    					newCompositeNode(grammarAccess.getImportModelAccess().getComponentsComponentParserRuleCall_0_0());
-            	    				
-            	    pushFollow(FOLLOW_5);
-            	    lv_components_0_0=ruleComponent();
-
-            	    state._fsp--;
-
-
-            	    					if (current==null) {
-            	    						current = createModelElementForParent(grammarAccess.getImportModelRule());
-            	    					}
-            	    					add(
-            	    						current,
-            	    						"components",
-            	    						lv_components_0_0,
-            	    						"org.xtext.seml.SeML.Component");
-            	    					afterParserOrEnumRuleCall();
-            	    				
-
-            	    }
-
-
-            	    }
-            	    break;
-
-            	default :
-            	    if ( cnt4 >= 1 ) break loop4;
-                        EarlyExitException eee =
-                            new EarlyExitException(4, input);
-                        throw eee;
-                }
-                cnt4++;
-            } while (true);
-
-            // InternalSeML.g:191:3: ( (lv_characteristics_1_0= ruleCharacteristic ) )*
-            loop5:
-            do {
-                int alt5=2;
-                int LA5_0 = input.LA(1);
-
-                if ( (LA5_0==22) ) {
-                    alt5=1;
-                }
-
-
-                switch (alt5) {
-            	case 1 :
-            	    // InternalSeML.g:192:4: (lv_characteristics_1_0= ruleCharacteristic )
-            	    {
-            	    // InternalSeML.g:192:4: (lv_characteristics_1_0= ruleCharacteristic )
-            	    // InternalSeML.g:193:5: lv_characteristics_1_0= ruleCharacteristic
-            	    {
-
-            	    					newCompositeNode(grammarAccess.getImportModelAccess().getCharacteristicsCharacteristicParserRuleCall_1_0());
-            	    				
-            	    pushFollow(FOLLOW_6);
-            	    lv_characteristics_1_0=ruleCharacteristic();
-
-            	    state._fsp--;
-
-
-            	    					if (current==null) {
-            	    						current = createModelElementForParent(grammarAccess.getImportModelRule());
-            	    					}
-            	    					add(
-            	    						current,
-            	    						"characteristics",
-            	    						lv_characteristics_1_0,
-            	    						"org.xtext.seml.SeML.Characteristic");
-            	    					afterParserOrEnumRuleCall();
-            	    				
-
-            	    }
-
-
-            	    }
-            	    break;
-
-            	default :
-            	    break loop5;
-                }
-            } while (true);
-
-            // InternalSeML.g:210:3: ( (lv_objectProperties_2_0= ruleObjectProperty ) )*
+            // InternalSeML.g:210:3: ( (lv_staticIndividuals_0_0= ruleStaticIndividual ) )+
+            int cnt6=0;
             loop6:
             do {
                 int alt6=2;
                 int LA6_0 = input.LA(1);
 
-                if ( (LA6_0==21) ) {
+                if ( (LA6_0==20) ) {
                     alt6=1;
                 }
 
 
                 switch (alt6) {
             	case 1 :
-            	    // InternalSeML.g:211:4: (lv_objectProperties_2_0= ruleObjectProperty )
+            	    // InternalSeML.g:211:4: (lv_staticIndividuals_0_0= ruleStaticIndividual )
             	    {
-            	    // InternalSeML.g:211:4: (lv_objectProperties_2_0= ruleObjectProperty )
-            	    // InternalSeML.g:212:5: lv_objectProperties_2_0= ruleObjectProperty
+            	    // InternalSeML.g:211:4: (lv_staticIndividuals_0_0= ruleStaticIndividual )
+            	    // InternalSeML.g:212:5: lv_staticIndividuals_0_0= ruleStaticIndividual
             	    {
 
-            	    					newCompositeNode(grammarAccess.getImportModelAccess().getObjectPropertiesObjectPropertyParserRuleCall_2_0());
+            	    					newCompositeNode(grammarAccess.getImportModelAccess().getStaticIndividualsStaticIndividualParserRuleCall_0_0());
             	    				
             	    pushFollow(FOLLOW_7);
-            	    lv_objectProperties_2_0=ruleObjectProperty();
+            	    lv_staticIndividuals_0_0=ruleStaticIndividual();
 
             	    state._fsp--;
 
@@ -588,9 +578,9 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
             	    					}
             	    					add(
             	    						current,
-            	    						"objectProperties",
-            	    						lv_objectProperties_2_0,
-            	    						"org.xtext.seml.SeML.ObjectProperty");
+            	    						"staticIndividuals",
+            	    						lv_staticIndividuals_0_0,
+            	    						"org.xtext.seml.SeML.StaticIndividual");
             	    					afterParserOrEnumRuleCall();
             	    				
 
@@ -601,33 +591,37 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
             	    break;
 
             	default :
-            	    break loop6;
+            	    if ( cnt6 >= 1 ) break loop6;
+                        EarlyExitException eee =
+                            new EarlyExitException(6, input);
+                        throw eee;
                 }
+                cnt6++;
             } while (true);
 
-            // InternalSeML.g:229:3: ( (lv_metaIndividuals_3_0= ruleMetaIndividual ) )*
+            // InternalSeML.g:229:3: ( (lv_individualOptions_1_0= ruleFreeIndividual ) )*
             loop7:
             do {
                 int alt7=2;
                 int LA7_0 = input.LA(1);
 
-                if ( (LA7_0==23) ) {
+                if ( (LA7_0==17) ) {
                     alt7=1;
                 }
 
 
                 switch (alt7) {
             	case 1 :
-            	    // InternalSeML.g:230:4: (lv_metaIndividuals_3_0= ruleMetaIndividual )
+            	    // InternalSeML.g:230:4: (lv_individualOptions_1_0= ruleFreeIndividual )
             	    {
-            	    // InternalSeML.g:230:4: (lv_metaIndividuals_3_0= ruleMetaIndividual )
-            	    // InternalSeML.g:231:5: lv_metaIndividuals_3_0= ruleMetaIndividual
+            	    // InternalSeML.g:230:4: (lv_individualOptions_1_0= ruleFreeIndividual )
+            	    // InternalSeML.g:231:5: lv_individualOptions_1_0= ruleFreeIndividual
             	    {
 
-            	    					newCompositeNode(grammarAccess.getImportModelAccess().getMetaIndividualsMetaIndividualParserRuleCall_3_0());
+            	    					newCompositeNode(grammarAccess.getImportModelAccess().getIndividualOptionsFreeIndividualParserRuleCall_1_0());
             	    				
             	    pushFollow(FOLLOW_8);
-            	    lv_metaIndividuals_3_0=ruleMetaIndividual();
+            	    lv_individualOptions_1_0=ruleFreeIndividual();
 
             	    state._fsp--;
 
@@ -637,9 +631,9 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
             	    					}
             	    					add(
             	    						current,
-            	    						"metaIndividuals",
-            	    						lv_metaIndividuals_3_0,
-            	    						"org.xtext.seml.SeML.MetaIndividual");
+            	    						"individualOptions",
+            	    						lv_individualOptions_1_0,
+            	    						"org.xtext.seml.SeML.FreeIndividual");
             	    					afterParserOrEnumRuleCall();
             	    				
 
@@ -651,6 +645,104 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
             	default :
             	    break loop7;
+                }
+            } while (true);
+
+            // InternalSeML.g:248:3: ( (lv_characteristics_2_0= ruleCharacteristic ) )*
+            loop8:
+            do {
+                int alt8=2;
+                int LA8_0 = input.LA(1);
+
+                if ( (LA8_0==19) ) {
+                    alt8=1;
+                }
+
+
+                switch (alt8) {
+            	case 1 :
+            	    // InternalSeML.g:249:4: (lv_characteristics_2_0= ruleCharacteristic )
+            	    {
+            	    // InternalSeML.g:249:4: (lv_characteristics_2_0= ruleCharacteristic )
+            	    // InternalSeML.g:250:5: lv_characteristics_2_0= ruleCharacteristic
+            	    {
+
+            	    					newCompositeNode(grammarAccess.getImportModelAccess().getCharacteristicsCharacteristicParserRuleCall_2_0());
+            	    				
+            	    pushFollow(FOLLOW_9);
+            	    lv_characteristics_2_0=ruleCharacteristic();
+
+            	    state._fsp--;
+
+
+            	    					if (current==null) {
+            	    						current = createModelElementForParent(grammarAccess.getImportModelRule());
+            	    					}
+            	    					add(
+            	    						current,
+            	    						"characteristics",
+            	    						lv_characteristics_2_0,
+            	    						"org.xtext.seml.SeML.Characteristic");
+            	    					afterParserOrEnumRuleCall();
+            	    				
+
+            	    }
+
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop8;
+                }
+            } while (true);
+
+            // InternalSeML.g:267:3: ( (lv_objectProperties_3_0= ruleObjectProperty ) )*
+            loop9:
+            do {
+                int alt9=2;
+                int LA9_0 = input.LA(1);
+
+                if ( (LA9_0==18) ) {
+                    alt9=1;
+                }
+
+
+                switch (alt9) {
+            	case 1 :
+            	    // InternalSeML.g:268:4: (lv_objectProperties_3_0= ruleObjectProperty )
+            	    {
+            	    // InternalSeML.g:268:4: (lv_objectProperties_3_0= ruleObjectProperty )
+            	    // InternalSeML.g:269:5: lv_objectProperties_3_0= ruleObjectProperty
+            	    {
+
+            	    					newCompositeNode(grammarAccess.getImportModelAccess().getObjectPropertiesObjectPropertyParserRuleCall_3_0());
+            	    				
+            	    pushFollow(FOLLOW_10);
+            	    lv_objectProperties_3_0=ruleObjectProperty();
+
+            	    state._fsp--;
+
+
+            	    					if (current==null) {
+            	    						current = createModelElementForParent(grammarAccess.getImportModelRule());
+            	    					}
+            	    					add(
+            	    						current,
+            	    						"objectProperties",
+            	    						lv_objectProperties_3_0,
+            	    						"org.xtext.seml.SeML.ObjectProperty");
+            	    					afterParserOrEnumRuleCall();
+            	    				
+
+            	    }
+
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop9;
                 }
             } while (true);
 
@@ -677,7 +769,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleImport"
-    // InternalSeML.g:252:1: entryRuleImport returns [EObject current=null] : iv_ruleImport= ruleImport EOF ;
+    // InternalSeML.g:290:1: entryRuleImport returns [EObject current=null] : iv_ruleImport= ruleImport EOF ;
     public final EObject entryRuleImport() throws RecognitionException {
         EObject current = null;
 
@@ -685,8 +777,8 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalSeML.g:252:47: (iv_ruleImport= ruleImport EOF )
-            // InternalSeML.g:253:2: iv_ruleImport= ruleImport EOF
+            // InternalSeML.g:290:47: (iv_ruleImport= ruleImport EOF )
+            // InternalSeML.g:291:2: iv_ruleImport= ruleImport EOF
             {
              newCompositeNode(grammarAccess.getImportRule()); 
             pushFollow(FOLLOW_1);
@@ -713,7 +805,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleImport"
-    // InternalSeML.g:259:1: ruleImport returns [EObject current=null] : (otherlv_0= 'import' ( (lv_name_1_0= RULE_STRING ) ) ) ;
+    // InternalSeML.g:297:1: ruleImport returns [EObject current=null] : (otherlv_0= 'import' ( (lv_name_1_0= RULE_STRING ) ) ) ;
     public final EObject ruleImport() throws RecognitionException {
         EObject current = null;
 
@@ -724,21 +816,21 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalSeML.g:265:2: ( (otherlv_0= 'import' ( (lv_name_1_0= RULE_STRING ) ) ) )
-            // InternalSeML.g:266:2: (otherlv_0= 'import' ( (lv_name_1_0= RULE_STRING ) ) )
+            // InternalSeML.g:303:2: ( (otherlv_0= 'import' ( (lv_name_1_0= RULE_STRING ) ) ) )
+            // InternalSeML.g:304:2: (otherlv_0= 'import' ( (lv_name_1_0= RULE_STRING ) ) )
             {
-            // InternalSeML.g:266:2: (otherlv_0= 'import' ( (lv_name_1_0= RULE_STRING ) ) )
-            // InternalSeML.g:267:3: otherlv_0= 'import' ( (lv_name_1_0= RULE_STRING ) )
+            // InternalSeML.g:304:2: (otherlv_0= 'import' ( (lv_name_1_0= RULE_STRING ) ) )
+            // InternalSeML.g:305:3: otherlv_0= 'import' ( (lv_name_1_0= RULE_STRING ) )
             {
-            otherlv_0=(Token)match(input,13,FOLLOW_9); 
+            otherlv_0=(Token)match(input,15,FOLLOW_11); 
 
             			newLeafNode(otherlv_0, grammarAccess.getImportAccess().getImportKeyword_0());
             		
-            // InternalSeML.g:271:3: ( (lv_name_1_0= RULE_STRING ) )
-            // InternalSeML.g:272:4: (lv_name_1_0= RULE_STRING )
+            // InternalSeML.g:309:3: ( (lv_name_1_0= RULE_STRING ) )
+            // InternalSeML.g:310:4: (lv_name_1_0= RULE_STRING )
             {
-            // InternalSeML.g:272:4: (lv_name_1_0= RULE_STRING )
-            // InternalSeML.g:273:5: lv_name_1_0= RULE_STRING
+            // InternalSeML.g:310:4: (lv_name_1_0= RULE_STRING )
+            // InternalSeML.g:311:5: lv_name_1_0= RULE_STRING
             {
             lv_name_1_0=(Token)match(input,RULE_STRING,FOLLOW_2); 
 
@@ -783,7 +875,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleSentence"
-    // InternalSeML.g:293:1: entryRuleSentence returns [EObject current=null] : iv_ruleSentence= ruleSentence EOF ;
+    // InternalSeML.g:331:1: entryRuleSentence returns [EObject current=null] : iv_ruleSentence= ruleSentence EOF ;
     public final EObject entryRuleSentence() throws RecognitionException {
         EObject current = null;
 
@@ -791,8 +883,8 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalSeML.g:293:49: (iv_ruleSentence= ruleSentence EOF )
-            // InternalSeML.g:294:2: iv_ruleSentence= ruleSentence EOF
+            // InternalSeML.g:331:49: (iv_ruleSentence= ruleSentence EOF )
+            // InternalSeML.g:332:2: iv_ruleSentence= ruleSentence EOF
             {
              newCompositeNode(grammarAccess.getSentenceRule()); 
             pushFollow(FOLLOW_1);
@@ -819,99 +911,80 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleSentence"
-    // InternalSeML.g:300:1: ruleSentence returns [EObject current=null] : (this_Individual_0= ruleIndividual | this_Relation_1= ruleRelation | this_UseCharacteristic_2= ruleUseCharacteristic ) ;
+    // InternalSeML.g:338:1: ruleSentence returns [EObject current=null] : (this_Relation_0= ruleRelation | this_Assignment_1= ruleAssignment ) ;
     public final EObject ruleSentence() throws RecognitionException {
         EObject current = null;
 
-        EObject this_Individual_0 = null;
+        EObject this_Relation_0 = null;
 
-        EObject this_Relation_1 = null;
-
-        EObject this_UseCharacteristic_2 = null;
+        EObject this_Assignment_1 = null;
 
 
 
         	enterRule();
 
         try {
-            // InternalSeML.g:306:2: ( (this_Individual_0= ruleIndividual | this_Relation_1= ruleRelation | this_UseCharacteristic_2= ruleUseCharacteristic ) )
-            // InternalSeML.g:307:2: (this_Individual_0= ruleIndividual | this_Relation_1= ruleRelation | this_UseCharacteristic_2= ruleUseCharacteristic )
+            // InternalSeML.g:344:2: ( (this_Relation_0= ruleRelation | this_Assignment_1= ruleAssignment ) )
+            // InternalSeML.g:345:2: (this_Relation_0= ruleRelation | this_Assignment_1= ruleAssignment )
             {
-            // InternalSeML.g:307:2: (this_Individual_0= ruleIndividual | this_Relation_1= ruleRelation | this_UseCharacteristic_2= ruleUseCharacteristic )
-            int alt8=3;
-            switch ( input.LA(1) ) {
-            case 14:
-                {
-                alt8=1;
+            // InternalSeML.g:345:2: (this_Relation_0= ruleRelation | this_Assignment_1= ruleAssignment )
+            int alt10=2;
+            int LA10_0 = input.LA(1);
+
+            if ( (LA10_0==RULE_ALIAS) ) {
+                int LA10_1 = input.LA(2);
+
+                if ( (LA10_1==RULE_ALIAS) ) {
+                    alt10=1;
                 }
-                break;
-            case RULE_IRI:
-                {
-                alt8=2;
+                else if ( (LA10_1==16) ) {
+                    alt10=2;
                 }
-                break;
-            case 16:
-                {
-                alt8=3;
+                else {
+                    NoViableAltException nvae =
+                        new NoViableAltException("", 10, 1, input);
+
+                    throw nvae;
                 }
-                break;
-            default:
+            }
+            else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 8, 0, input);
+                    new NoViableAltException("", 10, 0, input);
 
                 throw nvae;
             }
-
-            switch (alt8) {
+            switch (alt10) {
                 case 1 :
-                    // InternalSeML.g:308:3: this_Individual_0= ruleIndividual
+                    // InternalSeML.g:346:3: this_Relation_0= ruleRelation
                     {
 
-                    			newCompositeNode(grammarAccess.getSentenceAccess().getIndividualParserRuleCall_0());
+                    			newCompositeNode(grammarAccess.getSentenceAccess().getRelationParserRuleCall_0());
                     		
                     pushFollow(FOLLOW_2);
-                    this_Individual_0=ruleIndividual();
+                    this_Relation_0=ruleRelation();
 
                     state._fsp--;
 
 
-                    			current = this_Individual_0;
+                    			current = this_Relation_0;
                     			afterParserOrEnumRuleCall();
                     		
 
                     }
                     break;
                 case 2 :
-                    // InternalSeML.g:317:3: this_Relation_1= ruleRelation
+                    // InternalSeML.g:355:3: this_Assignment_1= ruleAssignment
                     {
 
-                    			newCompositeNode(grammarAccess.getSentenceAccess().getRelationParserRuleCall_1());
+                    			newCompositeNode(grammarAccess.getSentenceAccess().getAssignmentParserRuleCall_1());
                     		
                     pushFollow(FOLLOW_2);
-                    this_Relation_1=ruleRelation();
+                    this_Assignment_1=ruleAssignment();
 
                     state._fsp--;
 
 
-                    			current = this_Relation_1;
-                    			afterParserOrEnumRuleCall();
-                    		
-
-                    }
-                    break;
-                case 3 :
-                    // InternalSeML.g:326:3: this_UseCharacteristic_2= ruleUseCharacteristic
-                    {
-
-                    			newCompositeNode(grammarAccess.getSentenceAccess().getUseCharacteristicParserRuleCall_2());
-                    		
-                    pushFollow(FOLLOW_2);
-                    this_UseCharacteristic_2=ruleUseCharacteristic();
-
-                    state._fsp--;
-
-
-                    			current = this_UseCharacteristic_2;
+                    			current = this_Assignment_1;
                     			afterParserOrEnumRuleCall();
                     		
 
@@ -939,288 +1012,8 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
     // $ANTLR end "ruleSentence"
 
 
-    // $ANTLR start "entryRuleIndividual"
-    // InternalSeML.g:338:1: entryRuleIndividual returns [EObject current=null] : iv_ruleIndividual= ruleIndividual EOF ;
-    public final EObject entryRuleIndividual() throws RecognitionException {
-        EObject current = null;
-
-        EObject iv_ruleIndividual = null;
-
-
-        try {
-            // InternalSeML.g:338:51: (iv_ruleIndividual= ruleIndividual EOF )
-            // InternalSeML.g:339:2: iv_ruleIndividual= ruleIndividual EOF
-            {
-             newCompositeNode(grammarAccess.getIndividualRule()); 
-            pushFollow(FOLLOW_1);
-            iv_ruleIndividual=ruleIndividual();
-
-            state._fsp--;
-
-             current =iv_ruleIndividual; 
-            match(input,EOF,FOLLOW_2); 
-
-            }
-
-        }
-
-            catch (RecognitionException re) {
-                recover(input,re);
-                appendSkippedTokens();
-            }
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "entryRuleIndividual"
-
-
-    // $ANTLR start "ruleIndividual"
-    // InternalSeML.g:345:1: ruleIndividual returns [EObject current=null] : (otherlv_0= 'new' ( (otherlv_1= RULE_IRI ) ) (otherlv_2= ',' ( (otherlv_3= RULE_IRI ) ) )* ( (lv_name_4_0= RULE_IRI ) ) ) ;
-    public final EObject ruleIndividual() throws RecognitionException {
-        EObject current = null;
-
-        Token otherlv_0=null;
-        Token otherlv_1=null;
-        Token otherlv_2=null;
-        Token otherlv_3=null;
-        Token lv_name_4_0=null;
-
-
-        	enterRule();
-
-        try {
-            // InternalSeML.g:351:2: ( (otherlv_0= 'new' ( (otherlv_1= RULE_IRI ) ) (otherlv_2= ',' ( (otherlv_3= RULE_IRI ) ) )* ( (lv_name_4_0= RULE_IRI ) ) ) )
-            // InternalSeML.g:352:2: (otherlv_0= 'new' ( (otherlv_1= RULE_IRI ) ) (otherlv_2= ',' ( (otherlv_3= RULE_IRI ) ) )* ( (lv_name_4_0= RULE_IRI ) ) )
-            {
-            // InternalSeML.g:352:2: (otherlv_0= 'new' ( (otherlv_1= RULE_IRI ) ) (otherlv_2= ',' ( (otherlv_3= RULE_IRI ) ) )* ( (lv_name_4_0= RULE_IRI ) ) )
-            // InternalSeML.g:353:3: otherlv_0= 'new' ( (otherlv_1= RULE_IRI ) ) (otherlv_2= ',' ( (otherlv_3= RULE_IRI ) ) )* ( (lv_name_4_0= RULE_IRI ) )
-            {
-            otherlv_0=(Token)match(input,14,FOLLOW_10); 
-
-            			newLeafNode(otherlv_0, grammarAccess.getIndividualAccess().getNewKeyword_0());
-            		
-            // InternalSeML.g:357:3: ( (otherlv_1= RULE_IRI ) )
-            // InternalSeML.g:358:4: (otherlv_1= RULE_IRI )
-            {
-            // InternalSeML.g:358:4: (otherlv_1= RULE_IRI )
-            // InternalSeML.g:359:5: otherlv_1= RULE_IRI
-            {
-
-            					if (current==null) {
-            						current = createModelElement(grammarAccess.getIndividualRule());
-            					}
-            				
-            otherlv_1=(Token)match(input,RULE_IRI,FOLLOW_11); 
-
-            					newLeafNode(otherlv_1, grammarAccess.getIndividualAccess().getClsComponentCrossReference_1_0());
-            				
-
-            }
-
-
-            }
-
-            // InternalSeML.g:370:3: (otherlv_2= ',' ( (otherlv_3= RULE_IRI ) ) )*
-            loop9:
-            do {
-                int alt9=2;
-                int LA9_0 = input.LA(1);
-
-                if ( (LA9_0==15) ) {
-                    alt9=1;
-                }
-
-
-                switch (alt9) {
-            	case 1 :
-            	    // InternalSeML.g:371:4: otherlv_2= ',' ( (otherlv_3= RULE_IRI ) )
-            	    {
-            	    otherlv_2=(Token)match(input,15,FOLLOW_10); 
-
-            	    				newLeafNode(otherlv_2, grammarAccess.getIndividualAccess().getCommaKeyword_2_0());
-            	    			
-            	    // InternalSeML.g:375:4: ( (otherlv_3= RULE_IRI ) )
-            	    // InternalSeML.g:376:5: (otherlv_3= RULE_IRI )
-            	    {
-            	    // InternalSeML.g:376:5: (otherlv_3= RULE_IRI )
-            	    // InternalSeML.g:377:6: otherlv_3= RULE_IRI
-            	    {
-
-            	    						if (current==null) {
-            	    							current = createModelElement(grammarAccess.getIndividualRule());
-            	    						}
-            	    					
-            	    otherlv_3=(Token)match(input,RULE_IRI,FOLLOW_11); 
-
-            	    						newLeafNode(otherlv_3, grammarAccess.getIndividualAccess().getClsComponentCrossReference_2_1_0());
-            	    					
-
-            	    }
-
-
-            	    }
-
-
-            	    }
-            	    break;
-
-            	default :
-            	    break loop9;
-                }
-            } while (true);
-
-            // InternalSeML.g:389:3: ( (lv_name_4_0= RULE_IRI ) )
-            // InternalSeML.g:390:4: (lv_name_4_0= RULE_IRI )
-            {
-            // InternalSeML.g:390:4: (lv_name_4_0= RULE_IRI )
-            // InternalSeML.g:391:5: lv_name_4_0= RULE_IRI
-            {
-            lv_name_4_0=(Token)match(input,RULE_IRI,FOLLOW_2); 
-
-            					newLeafNode(lv_name_4_0, grammarAccess.getIndividualAccess().getNameIRITerminalRuleCall_3_0());
-            				
-
-            					if (current==null) {
-            						current = createModelElement(grammarAccess.getIndividualRule());
-            					}
-            					setWithLastConsumed(
-            						current,
-            						"name",
-            						lv_name_4_0,
-            						"org.xtext.seml.SeML.IRI");
-            				
-
-            }
-
-
-            }
-
-
-            }
-
-
-            }
-
-
-            	leaveRule();
-
-        }
-
-            catch (RecognitionException re) {
-                recover(input,re);
-                appendSkippedTokens();
-            }
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "ruleIndividual"
-
-
-    // $ANTLR start "entryRuleUseCharacteristic"
-    // InternalSeML.g:411:1: entryRuleUseCharacteristic returns [EObject current=null] : iv_ruleUseCharacteristic= ruleUseCharacteristic EOF ;
-    public final EObject entryRuleUseCharacteristic() throws RecognitionException {
-        EObject current = null;
-
-        EObject iv_ruleUseCharacteristic = null;
-
-
-        try {
-            // InternalSeML.g:411:58: (iv_ruleUseCharacteristic= ruleUseCharacteristic EOF )
-            // InternalSeML.g:412:2: iv_ruleUseCharacteristic= ruleUseCharacteristic EOF
-            {
-             newCompositeNode(grammarAccess.getUseCharacteristicRule()); 
-            pushFollow(FOLLOW_1);
-            iv_ruleUseCharacteristic=ruleUseCharacteristic();
-
-            state._fsp--;
-
-             current =iv_ruleUseCharacteristic; 
-            match(input,EOF,FOLLOW_2); 
-
-            }
-
-        }
-
-            catch (RecognitionException re) {
-                recover(input,re);
-                appendSkippedTokens();
-            }
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "entryRuleUseCharacteristic"
-
-
-    // $ANTLR start "ruleUseCharacteristic"
-    // InternalSeML.g:418:1: ruleUseCharacteristic returns [EObject current=null] : (otherlv_0= 'use' ( (otherlv_1= RULE_IRI ) ) ) ;
-    public final EObject ruleUseCharacteristic() throws RecognitionException {
-        EObject current = null;
-
-        Token otherlv_0=null;
-        Token otherlv_1=null;
-
-
-        	enterRule();
-
-        try {
-            // InternalSeML.g:424:2: ( (otherlv_0= 'use' ( (otherlv_1= RULE_IRI ) ) ) )
-            // InternalSeML.g:425:2: (otherlv_0= 'use' ( (otherlv_1= RULE_IRI ) ) )
-            {
-            // InternalSeML.g:425:2: (otherlv_0= 'use' ( (otherlv_1= RULE_IRI ) ) )
-            // InternalSeML.g:426:3: otherlv_0= 'use' ( (otherlv_1= RULE_IRI ) )
-            {
-            otherlv_0=(Token)match(input,16,FOLLOW_10); 
-
-            			newLeafNode(otherlv_0, grammarAccess.getUseCharacteristicAccess().getUseKeyword_0());
-            		
-            // InternalSeML.g:430:3: ( (otherlv_1= RULE_IRI ) )
-            // InternalSeML.g:431:4: (otherlv_1= RULE_IRI )
-            {
-            // InternalSeML.g:431:4: (otherlv_1= RULE_IRI )
-            // InternalSeML.g:432:5: otherlv_1= RULE_IRI
-            {
-
-            					if (current==null) {
-            						current = createModelElement(grammarAccess.getUseCharacteristicRule());
-            					}
-            				
-            otherlv_1=(Token)match(input,RULE_IRI,FOLLOW_2); 
-
-            					newLeafNode(otherlv_1, grammarAccess.getUseCharacteristicAccess().getNameCharacteristicCrossReference_1_0());
-            				
-
-            }
-
-
-            }
-
-
-            }
-
-
-            }
-
-
-            	leaveRule();
-
-        }
-
-            catch (RecognitionException re) {
-                recover(input,re);
-                appendSkippedTokens();
-            }
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "ruleUseCharacteristic"
-
-
     // $ANTLR start "entryRuleRelation"
-    // InternalSeML.g:447:1: entryRuleRelation returns [EObject current=null] : iv_ruleRelation= ruleRelation EOF ;
+    // InternalSeML.g:367:1: entryRuleRelation returns [EObject current=null] : iv_ruleRelation= ruleRelation EOF ;
     public final EObject entryRuleRelation() throws RecognitionException {
         EObject current = null;
 
@@ -1228,8 +1021,8 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalSeML.g:447:49: (iv_ruleRelation= ruleRelation EOF )
-            // InternalSeML.g:448:2: iv_ruleRelation= ruleRelation EOF
+            // InternalSeML.g:367:49: (iv_ruleRelation= ruleRelation EOF )
+            // InternalSeML.g:368:2: iv_ruleRelation= ruleRelation EOF
             {
              newCompositeNode(grammarAccess.getRelationRule()); 
             pushFollow(FOLLOW_1);
@@ -1256,38 +1049,40 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleRelation"
-    // InternalSeML.g:454:1: ruleRelation returns [EObject current=null] : ( ( (otherlv_0= RULE_IRI ) ) ( (otherlv_1= RULE_IRI ) ) ( (otherlv_2= RULE_IRI ) ) ) ;
+    // InternalSeML.g:374:1: ruleRelation returns [EObject current=null] : ( ( (otherlv_0= RULE_ALIAS ) ) ( (otherlv_1= RULE_ALIAS ) ) ( (otherlv_2= RULE_ALIAS ) ) (otherlv_3= ',' ( (otherlv_4= RULE_ALIAS ) ) )* ) ;
     public final EObject ruleRelation() throws RecognitionException {
         EObject current = null;
 
         Token otherlv_0=null;
         Token otherlv_1=null;
         Token otherlv_2=null;
+        Token otherlv_3=null;
+        Token otherlv_4=null;
 
 
         	enterRule();
 
         try {
-            // InternalSeML.g:460:2: ( ( ( (otherlv_0= RULE_IRI ) ) ( (otherlv_1= RULE_IRI ) ) ( (otherlv_2= RULE_IRI ) ) ) )
-            // InternalSeML.g:461:2: ( ( (otherlv_0= RULE_IRI ) ) ( (otherlv_1= RULE_IRI ) ) ( (otherlv_2= RULE_IRI ) ) )
+            // InternalSeML.g:380:2: ( ( ( (otherlv_0= RULE_ALIAS ) ) ( (otherlv_1= RULE_ALIAS ) ) ( (otherlv_2= RULE_ALIAS ) ) (otherlv_3= ',' ( (otherlv_4= RULE_ALIAS ) ) )* ) )
+            // InternalSeML.g:381:2: ( ( (otherlv_0= RULE_ALIAS ) ) ( (otherlv_1= RULE_ALIAS ) ) ( (otherlv_2= RULE_ALIAS ) ) (otherlv_3= ',' ( (otherlv_4= RULE_ALIAS ) ) )* )
             {
-            // InternalSeML.g:461:2: ( ( (otherlv_0= RULE_IRI ) ) ( (otherlv_1= RULE_IRI ) ) ( (otherlv_2= RULE_IRI ) ) )
-            // InternalSeML.g:462:3: ( (otherlv_0= RULE_IRI ) ) ( (otherlv_1= RULE_IRI ) ) ( (otherlv_2= RULE_IRI ) )
+            // InternalSeML.g:381:2: ( ( (otherlv_0= RULE_ALIAS ) ) ( (otherlv_1= RULE_ALIAS ) ) ( (otherlv_2= RULE_ALIAS ) ) (otherlv_3= ',' ( (otherlv_4= RULE_ALIAS ) ) )* )
+            // InternalSeML.g:382:3: ( (otherlv_0= RULE_ALIAS ) ) ( (otherlv_1= RULE_ALIAS ) ) ( (otherlv_2= RULE_ALIAS ) ) (otherlv_3= ',' ( (otherlv_4= RULE_ALIAS ) ) )*
             {
-            // InternalSeML.g:462:3: ( (otherlv_0= RULE_IRI ) )
-            // InternalSeML.g:463:4: (otherlv_0= RULE_IRI )
+            // InternalSeML.g:382:3: ( (otherlv_0= RULE_ALIAS ) )
+            // InternalSeML.g:383:4: (otherlv_0= RULE_ALIAS )
             {
-            // InternalSeML.g:463:4: (otherlv_0= RULE_IRI )
-            // InternalSeML.g:464:5: otherlv_0= RULE_IRI
+            // InternalSeML.g:383:4: (otherlv_0= RULE_ALIAS )
+            // InternalSeML.g:384:5: otherlv_0= RULE_ALIAS
             {
 
             					if (current==null) {
             						current = createModelElement(grammarAccess.getRelationRule());
             					}
             				
-            otherlv_0=(Token)match(input,RULE_IRI,FOLLOW_10); 
+            otherlv_0=(Token)match(input,RULE_ALIAS,FOLLOW_4); 
 
-            					newLeafNode(otherlv_0, grammarAccess.getRelationAccess().getInstance1AnyIndividualCrossReference_0_0());
+            					newLeafNode(otherlv_0, grammarAccess.getRelationAccess().getInd1IndividualCrossReference_0_0());
             				
 
             }
@@ -1295,18 +1090,18 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalSeML.g:475:3: ( (otherlv_1= RULE_IRI ) )
-            // InternalSeML.g:476:4: (otherlv_1= RULE_IRI )
+            // InternalSeML.g:395:3: ( (otherlv_1= RULE_ALIAS ) )
+            // InternalSeML.g:396:4: (otherlv_1= RULE_ALIAS )
             {
-            // InternalSeML.g:476:4: (otherlv_1= RULE_IRI )
-            // InternalSeML.g:477:5: otherlv_1= RULE_IRI
+            // InternalSeML.g:396:4: (otherlv_1= RULE_ALIAS )
+            // InternalSeML.g:397:5: otherlv_1= RULE_ALIAS
             {
 
             					if (current==null) {
             						current = createModelElement(grammarAccess.getRelationRule());
             					}
             				
-            otherlv_1=(Token)match(input,RULE_IRI,FOLLOW_10); 
+            otherlv_1=(Token)match(input,RULE_ALIAS,FOLLOW_4); 
 
             					newLeafNode(otherlv_1, grammarAccess.getRelationAccess().getObjObjectPropertyCrossReference_1_0());
             				
@@ -1316,26 +1111,75 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalSeML.g:488:3: ( (otherlv_2= RULE_IRI ) )
-            // InternalSeML.g:489:4: (otherlv_2= RULE_IRI )
+            // InternalSeML.g:408:3: ( (otherlv_2= RULE_ALIAS ) )
+            // InternalSeML.g:409:4: (otherlv_2= RULE_ALIAS )
             {
-            // InternalSeML.g:489:4: (otherlv_2= RULE_IRI )
-            // InternalSeML.g:490:5: otherlv_2= RULE_IRI
+            // InternalSeML.g:409:4: (otherlv_2= RULE_ALIAS )
+            // InternalSeML.g:410:5: otherlv_2= RULE_ALIAS
             {
 
             					if (current==null) {
             						current = createModelElement(grammarAccess.getRelationRule());
             					}
             				
-            otherlv_2=(Token)match(input,RULE_IRI,FOLLOW_2); 
+            otherlv_2=(Token)match(input,RULE_ALIAS,FOLLOW_12); 
 
-            					newLeafNode(otherlv_2, grammarAccess.getRelationAccess().getInstance2AnyIndividualCrossReference_2_0());
+            					newLeafNode(otherlv_2, grammarAccess.getRelationAccess().getInd2IndividualCrossReference_2_0());
             				
 
             }
 
 
             }
+
+            // InternalSeML.g:421:3: (otherlv_3= ',' ( (otherlv_4= RULE_ALIAS ) ) )*
+            loop11:
+            do {
+                int alt11=2;
+                int LA11_0 = input.LA(1);
+
+                if ( (LA11_0==14) ) {
+                    alt11=1;
+                }
+
+
+                switch (alt11) {
+            	case 1 :
+            	    // InternalSeML.g:422:4: otherlv_3= ',' ( (otherlv_4= RULE_ALIAS ) )
+            	    {
+            	    otherlv_3=(Token)match(input,14,FOLLOW_4); 
+
+            	    				newLeafNode(otherlv_3, grammarAccess.getRelationAccess().getCommaKeyword_3_0());
+            	    			
+            	    // InternalSeML.g:426:4: ( (otherlv_4= RULE_ALIAS ) )
+            	    // InternalSeML.g:427:5: (otherlv_4= RULE_ALIAS )
+            	    {
+            	    // InternalSeML.g:427:5: (otherlv_4= RULE_ALIAS )
+            	    // InternalSeML.g:428:6: otherlv_4= RULE_ALIAS
+            	    {
+
+            	    						if (current==null) {
+            	    							current = createModelElement(grammarAccess.getRelationRule());
+            	    						}
+            	    					
+            	    otherlv_4=(Token)match(input,RULE_ALIAS,FOLLOW_12); 
+
+            	    						newLeafNode(otherlv_4, grammarAccess.getRelationAccess().getInd2IndividualCrossReference_3_1_0());
+            	    					
+
+            	    }
+
+
+            	    }
+
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop11;
+                }
+            } while (true);
 
 
             }
@@ -1359,25 +1203,25 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
     // $ANTLR end "ruleRelation"
 
 
-    // $ANTLR start "entryRuleComponent"
-    // InternalSeML.g:505:1: entryRuleComponent returns [EObject current=null] : iv_ruleComponent= ruleComponent EOF ;
-    public final EObject entryRuleComponent() throws RecognitionException {
+    // $ANTLR start "entryRuleAssignment"
+    // InternalSeML.g:444:1: entryRuleAssignment returns [EObject current=null] : iv_ruleAssignment= ruleAssignment EOF ;
+    public final EObject entryRuleAssignment() throws RecognitionException {
         EObject current = null;
 
-        EObject iv_ruleComponent = null;
+        EObject iv_ruleAssignment = null;
 
 
         try {
-            // InternalSeML.g:505:50: (iv_ruleComponent= ruleComponent EOF )
-            // InternalSeML.g:506:2: iv_ruleComponent= ruleComponent EOF
+            // InternalSeML.g:444:51: (iv_ruleAssignment= ruleAssignment EOF )
+            // InternalSeML.g:445:2: iv_ruleAssignment= ruleAssignment EOF
             {
-             newCompositeNode(grammarAccess.getComponentRule()); 
+             newCompositeNode(grammarAccess.getAssignmentRule()); 
             pushFollow(FOLLOW_1);
-            iv_ruleComponent=ruleComponent();
+            iv_ruleAssignment=ruleAssignment();
 
             state._fsp--;
 
-             current =iv_ruleComponent; 
+             current =iv_ruleAssignment; 
             match(input,EOF,FOLLOW_2); 
 
             }
@@ -1392,130 +1236,384 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end "entryRuleComponent"
+    // $ANTLR end "entryRuleAssignment"
 
 
-    // $ANTLR start "ruleComponent"
-    // InternalSeML.g:512:1: ruleComponent returns [EObject current=null] : (this_Component_Process_0= ruleComponent_Process | this_Component_Event_1= ruleComponent_Event | this_Component_Property_2= ruleComponent_Property | this_Component_Entity_3= ruleComponent_Entity ) ;
-    public final EObject ruleComponent() throws RecognitionException {
+    // $ANTLR start "ruleAssignment"
+    // InternalSeML.g:451:1: ruleAssignment returns [EObject current=null] : ( ( (otherlv_0= RULE_ALIAS ) ) otherlv_1= '=' ( (lv_literal_2_0= ruleValue ) ) ) ;
+    public final EObject ruleAssignment() throws RecognitionException {
         EObject current = null;
 
-        EObject this_Component_Process_0 = null;
-
-        EObject this_Component_Event_1 = null;
-
-        EObject this_Component_Property_2 = null;
-
-        EObject this_Component_Entity_3 = null;
+        Token otherlv_0=null;
+        Token otherlv_1=null;
+        EObject lv_literal_2_0 = null;
 
 
 
         	enterRule();
 
         try {
-            // InternalSeML.g:518:2: ( (this_Component_Process_0= ruleComponent_Process | this_Component_Event_1= ruleComponent_Event | this_Component_Property_2= ruleComponent_Property | this_Component_Entity_3= ruleComponent_Entity ) )
-            // InternalSeML.g:519:2: (this_Component_Process_0= ruleComponent_Process | this_Component_Event_1= ruleComponent_Event | this_Component_Property_2= ruleComponent_Property | this_Component_Entity_3= ruleComponent_Entity )
+            // InternalSeML.g:457:2: ( ( ( (otherlv_0= RULE_ALIAS ) ) otherlv_1= '=' ( (lv_literal_2_0= ruleValue ) ) ) )
+            // InternalSeML.g:458:2: ( ( (otherlv_0= RULE_ALIAS ) ) otherlv_1= '=' ( (lv_literal_2_0= ruleValue ) ) )
             {
-            // InternalSeML.g:519:2: (this_Component_Process_0= ruleComponent_Process | this_Component_Event_1= ruleComponent_Event | this_Component_Property_2= ruleComponent_Property | this_Component_Entity_3= ruleComponent_Entity )
-            int alt10=4;
+            // InternalSeML.g:458:2: ( ( (otherlv_0= RULE_ALIAS ) ) otherlv_1= '=' ( (lv_literal_2_0= ruleValue ) ) )
+            // InternalSeML.g:459:3: ( (otherlv_0= RULE_ALIAS ) ) otherlv_1= '=' ( (lv_literal_2_0= ruleValue ) )
+            {
+            // InternalSeML.g:459:3: ( (otherlv_0= RULE_ALIAS ) )
+            // InternalSeML.g:460:4: (otherlv_0= RULE_ALIAS )
+            {
+            // InternalSeML.g:460:4: (otherlv_0= RULE_ALIAS )
+            // InternalSeML.g:461:5: otherlv_0= RULE_ALIAS
+            {
+
+            					if (current==null) {
+            						current = createModelElement(grammarAccess.getAssignmentRule());
+            					}
+            				
+            otherlv_0=(Token)match(input,RULE_ALIAS,FOLLOW_13); 
+
+            					newLeafNode(otherlv_0, grammarAccess.getAssignmentAccess().getIndIndividualCrossReference_0_0());
+            				
+
+            }
+
+
+            }
+
+            otherlv_1=(Token)match(input,16,FOLLOW_14); 
+
+            			newLeafNode(otherlv_1, grammarAccess.getAssignmentAccess().getEqualsSignKeyword_1());
+            		
+            // InternalSeML.g:476:3: ( (lv_literal_2_0= ruleValue ) )
+            // InternalSeML.g:477:4: (lv_literal_2_0= ruleValue )
+            {
+            // InternalSeML.g:477:4: (lv_literal_2_0= ruleValue )
+            // InternalSeML.g:478:5: lv_literal_2_0= ruleValue
+            {
+
+            					newCompositeNode(grammarAccess.getAssignmentAccess().getLiteralValueParserRuleCall_2_0());
+            				
+            pushFollow(FOLLOW_2);
+            lv_literal_2_0=ruleValue();
+
+            state._fsp--;
+
+
+            					if (current==null) {
+            						current = createModelElementForParent(grammarAccess.getAssignmentRule());
+            					}
+            					set(
+            						current,
+            						"literal",
+            						lv_literal_2_0,
+            						"org.xtext.seml.SeML.Value");
+            					afterParserOrEnumRuleCall();
+            				
+
+            }
+
+
+            }
+
+
+            }
+
+
+            }
+
+
+            	leaveRule();
+
+        }
+
+            catch (RecognitionException re) {
+                recover(input,re);
+                appendSkippedTokens();
+            }
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "ruleAssignment"
+
+
+    // $ANTLR start "entryRuleValue"
+    // InternalSeML.g:499:1: entryRuleValue returns [EObject current=null] : iv_ruleValue= ruleValue EOF ;
+    public final EObject entryRuleValue() throws RecognitionException {
+        EObject current = null;
+
+        EObject iv_ruleValue = null;
+
+
+        try {
+            // InternalSeML.g:499:46: (iv_ruleValue= ruleValue EOF )
+            // InternalSeML.g:500:2: iv_ruleValue= ruleValue EOF
+            {
+             newCompositeNode(grammarAccess.getValueRule()); 
+            pushFollow(FOLLOW_1);
+            iv_ruleValue=ruleValue();
+
+            state._fsp--;
+
+             current =iv_ruleValue; 
+            match(input,EOF,FOLLOW_2); 
+
+            }
+
+        }
+
+            catch (RecognitionException re) {
+                recover(input,re);
+                appendSkippedTokens();
+            }
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "entryRuleValue"
+
+
+    // $ANTLR start "ruleValue"
+    // InternalSeML.g:506:1: ruleValue returns [EObject current=null] : ( ( () ( (lv_val_1_0= RULE_FLOAT ) ) ) | ( () ( (lv_val_3_0= RULE_BOOL ) ) ) | ( () ( (lv_val_5_0= RULE_INT ) ) ) | ( () ( (lv_val_7_0= RULE_STRING ) ) ) ) ;
+    public final EObject ruleValue() throws RecognitionException {
+        EObject current = null;
+
+        Token lv_val_1_0=null;
+        Token lv_val_3_0=null;
+        Token lv_val_5_0=null;
+        Token lv_val_7_0=null;
+
+
+        	enterRule();
+
+        try {
+            // InternalSeML.g:512:2: ( ( ( () ( (lv_val_1_0= RULE_FLOAT ) ) ) | ( () ( (lv_val_3_0= RULE_BOOL ) ) ) | ( () ( (lv_val_5_0= RULE_INT ) ) ) | ( () ( (lv_val_7_0= RULE_STRING ) ) ) ) )
+            // InternalSeML.g:513:2: ( ( () ( (lv_val_1_0= RULE_FLOAT ) ) ) | ( () ( (lv_val_3_0= RULE_BOOL ) ) ) | ( () ( (lv_val_5_0= RULE_INT ) ) ) | ( () ( (lv_val_7_0= RULE_STRING ) ) ) )
+            {
+            // InternalSeML.g:513:2: ( ( () ( (lv_val_1_0= RULE_FLOAT ) ) ) | ( () ( (lv_val_3_0= RULE_BOOL ) ) ) | ( () ( (lv_val_5_0= RULE_INT ) ) ) | ( () ( (lv_val_7_0= RULE_STRING ) ) ) )
+            int alt12=4;
             switch ( input.LA(1) ) {
-            case 17:
+            case RULE_FLOAT:
                 {
-                alt10=1;
+                alt12=1;
                 }
                 break;
-            case 18:
+            case RULE_BOOL:
                 {
-                alt10=2;
+                alt12=2;
                 }
                 break;
-            case 19:
+            case RULE_INT:
                 {
-                alt10=3;
+                alt12=3;
                 }
                 break;
-            case 20:
+            case RULE_STRING:
                 {
-                alt10=4;
+                alt12=4;
                 }
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("", 10, 0, input);
+                    new NoViableAltException("", 12, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt10) {
+            switch (alt12) {
                 case 1 :
-                    // InternalSeML.g:520:3: this_Component_Process_0= ruleComponent_Process
+                    // InternalSeML.g:514:3: ( () ( (lv_val_1_0= RULE_FLOAT ) ) )
+                    {
+                    // InternalSeML.g:514:3: ( () ( (lv_val_1_0= RULE_FLOAT ) ) )
+                    // InternalSeML.g:515:4: () ( (lv_val_1_0= RULE_FLOAT ) )
+                    {
+                    // InternalSeML.g:515:4: ()
+                    // InternalSeML.g:516:5: 
                     {
 
-                    			newCompositeNode(grammarAccess.getComponentAccess().getComponent_ProcessParserRuleCall_0());
-                    		
-                    pushFollow(FOLLOW_2);
-                    this_Component_Process_0=ruleComponent_Process();
+                    					current = forceCreateModelElement(
+                    						grammarAccess.getValueAccess().getFloatValAction_0_0(),
+                    						current);
+                    				
 
-                    state._fsp--;
+                    }
+
+                    // InternalSeML.g:522:4: ( (lv_val_1_0= RULE_FLOAT ) )
+                    // InternalSeML.g:523:5: (lv_val_1_0= RULE_FLOAT )
+                    {
+                    // InternalSeML.g:523:5: (lv_val_1_0= RULE_FLOAT )
+                    // InternalSeML.g:524:6: lv_val_1_0= RULE_FLOAT
+                    {
+                    lv_val_1_0=(Token)match(input,RULE_FLOAT,FOLLOW_2); 
+
+                    						newLeafNode(lv_val_1_0, grammarAccess.getValueAccess().getValFLOATTerminalRuleCall_0_1_0());
+                    					
+
+                    						if (current==null) {
+                    							current = createModelElement(grammarAccess.getValueRule());
+                    						}
+                    						setWithLastConsumed(
+                    							current,
+                    							"val",
+                    							lv_val_1_0,
+                    							"org.xtext.seml.SeML.FLOAT");
+                    					
+
+                    }
 
 
-                    			current = this_Component_Process_0;
-                    			afterParserOrEnumRuleCall();
-                    		
+                    }
+
+
+                    }
+
 
                     }
                     break;
                 case 2 :
-                    // InternalSeML.g:529:3: this_Component_Event_1= ruleComponent_Event
+                    // InternalSeML.g:542:3: ( () ( (lv_val_3_0= RULE_BOOL ) ) )
+                    {
+                    // InternalSeML.g:542:3: ( () ( (lv_val_3_0= RULE_BOOL ) ) )
+                    // InternalSeML.g:543:4: () ( (lv_val_3_0= RULE_BOOL ) )
+                    {
+                    // InternalSeML.g:543:4: ()
+                    // InternalSeML.g:544:5: 
                     {
 
-                    			newCompositeNode(grammarAccess.getComponentAccess().getComponent_EventParserRuleCall_1());
-                    		
-                    pushFollow(FOLLOW_2);
-                    this_Component_Event_1=ruleComponent_Event();
+                    					current = forceCreateModelElement(
+                    						grammarAccess.getValueAccess().getBoolValAction_1_0(),
+                    						current);
+                    				
 
-                    state._fsp--;
+                    }
+
+                    // InternalSeML.g:550:4: ( (lv_val_3_0= RULE_BOOL ) )
+                    // InternalSeML.g:551:5: (lv_val_3_0= RULE_BOOL )
+                    {
+                    // InternalSeML.g:551:5: (lv_val_3_0= RULE_BOOL )
+                    // InternalSeML.g:552:6: lv_val_3_0= RULE_BOOL
+                    {
+                    lv_val_3_0=(Token)match(input,RULE_BOOL,FOLLOW_2); 
+
+                    						newLeafNode(lv_val_3_0, grammarAccess.getValueAccess().getValBOOLTerminalRuleCall_1_1_0());
+                    					
+
+                    						if (current==null) {
+                    							current = createModelElement(grammarAccess.getValueRule());
+                    						}
+                    						setWithLastConsumed(
+                    							current,
+                    							"val",
+                    							lv_val_3_0,
+                    							"org.xtext.seml.SeML.BOOL");
+                    					
+
+                    }
 
 
-                    			current = this_Component_Event_1;
-                    			afterParserOrEnumRuleCall();
-                    		
+                    }
+
+
+                    }
+
 
                     }
                     break;
                 case 3 :
-                    // InternalSeML.g:538:3: this_Component_Property_2= ruleComponent_Property
+                    // InternalSeML.g:570:3: ( () ( (lv_val_5_0= RULE_INT ) ) )
+                    {
+                    // InternalSeML.g:570:3: ( () ( (lv_val_5_0= RULE_INT ) ) )
+                    // InternalSeML.g:571:4: () ( (lv_val_5_0= RULE_INT ) )
+                    {
+                    // InternalSeML.g:571:4: ()
+                    // InternalSeML.g:572:5: 
                     {
 
-                    			newCompositeNode(grammarAccess.getComponentAccess().getComponent_PropertyParserRuleCall_2());
-                    		
-                    pushFollow(FOLLOW_2);
-                    this_Component_Property_2=ruleComponent_Property();
+                    					current = forceCreateModelElement(
+                    						grammarAccess.getValueAccess().getIntValAction_2_0(),
+                    						current);
+                    				
 
-                    state._fsp--;
+                    }
+
+                    // InternalSeML.g:578:4: ( (lv_val_5_0= RULE_INT ) )
+                    // InternalSeML.g:579:5: (lv_val_5_0= RULE_INT )
+                    {
+                    // InternalSeML.g:579:5: (lv_val_5_0= RULE_INT )
+                    // InternalSeML.g:580:6: lv_val_5_0= RULE_INT
+                    {
+                    lv_val_5_0=(Token)match(input,RULE_INT,FOLLOW_2); 
+
+                    						newLeafNode(lv_val_5_0, grammarAccess.getValueAccess().getValINTTerminalRuleCall_2_1_0());
+                    					
+
+                    						if (current==null) {
+                    							current = createModelElement(grammarAccess.getValueRule());
+                    						}
+                    						setWithLastConsumed(
+                    							current,
+                    							"val",
+                    							lv_val_5_0,
+                    							"org.xtext.seml.SeML.INT");
+                    					
+
+                    }
 
 
-                    			current = this_Component_Property_2;
-                    			afterParserOrEnumRuleCall();
-                    		
+                    }
+
+
+                    }
+
 
                     }
                     break;
                 case 4 :
-                    // InternalSeML.g:547:3: this_Component_Entity_3= ruleComponent_Entity
+                    // InternalSeML.g:598:3: ( () ( (lv_val_7_0= RULE_STRING ) ) )
+                    {
+                    // InternalSeML.g:598:3: ( () ( (lv_val_7_0= RULE_STRING ) ) )
+                    // InternalSeML.g:599:4: () ( (lv_val_7_0= RULE_STRING ) )
+                    {
+                    // InternalSeML.g:599:4: ()
+                    // InternalSeML.g:600:5: 
                     {
 
-                    			newCompositeNode(grammarAccess.getComponentAccess().getComponent_EntityParserRuleCall_3());
-                    		
-                    pushFollow(FOLLOW_2);
-                    this_Component_Entity_3=ruleComponent_Entity();
+                    					current = forceCreateModelElement(
+                    						grammarAccess.getValueAccess().getStringValAction_3_0(),
+                    						current);
+                    				
 
-                    state._fsp--;
+                    }
+
+                    // InternalSeML.g:606:4: ( (lv_val_7_0= RULE_STRING ) )
+                    // InternalSeML.g:607:5: (lv_val_7_0= RULE_STRING )
+                    {
+                    // InternalSeML.g:607:5: (lv_val_7_0= RULE_STRING )
+                    // InternalSeML.g:608:6: lv_val_7_0= RULE_STRING
+                    {
+                    lv_val_7_0=(Token)match(input,RULE_STRING,FOLLOW_2); 
+
+                    						newLeafNode(lv_val_7_0, grammarAccess.getValueAccess().getValSTRINGTerminalRuleCall_3_1_0());
+                    					
+
+                    						if (current==null) {
+                    							current = createModelElement(grammarAccess.getValueRule());
+                    						}
+                    						setWithLastConsumed(
+                    							current,
+                    							"val",
+                    							lv_val_7_0,
+                    							"org.xtext.seml.SeML.STRING");
+                    					
+
+                    }
 
 
-                    			current = this_Component_Entity_3;
-                    			afterParserOrEnumRuleCall();
-                    		
+                    }
+
+
+                    }
+
 
                     }
                     break;
@@ -1538,28 +1636,28 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end "ruleComponent"
+    // $ANTLR end "ruleValue"
 
 
-    // $ANTLR start "entryRuleComponent_Process"
-    // InternalSeML.g:559:1: entryRuleComponent_Process returns [EObject current=null] : iv_ruleComponent_Process= ruleComponent_Process EOF ;
-    public final EObject entryRuleComponent_Process() throws RecognitionException {
+    // $ANTLR start "entryRuleFreeIndividual"
+    // InternalSeML.g:629:1: entryRuleFreeIndividual returns [EObject current=null] : iv_ruleFreeIndividual= ruleFreeIndividual EOF ;
+    public final EObject entryRuleFreeIndividual() throws RecognitionException {
         EObject current = null;
 
-        EObject iv_ruleComponent_Process = null;
+        EObject iv_ruleFreeIndividual = null;
 
 
         try {
-            // InternalSeML.g:559:58: (iv_ruleComponent_Process= ruleComponent_Process EOF )
-            // InternalSeML.g:560:2: iv_ruleComponent_Process= ruleComponent_Process EOF
+            // InternalSeML.g:629:55: (iv_ruleFreeIndividual= ruleFreeIndividual EOF )
+            // InternalSeML.g:630:2: iv_ruleFreeIndividual= ruleFreeIndividual EOF
             {
-             newCompositeNode(grammarAccess.getComponent_ProcessRule()); 
+             newCompositeNode(grammarAccess.getFreeIndividualRule()); 
             pushFollow(FOLLOW_1);
-            iv_ruleComponent_Process=ruleComponent_Process();
+            iv_ruleFreeIndividual=ruleFreeIndividual();
 
             state._fsp--;
 
-             current =iv_ruleComponent_Process; 
+             current =iv_ruleFreeIndividual; 
             match(input,EOF,FOLLOW_2); 
 
             }
@@ -1574,12 +1672,12 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end "entryRuleComponent_Process"
+    // $ANTLR end "entryRuleFreeIndividual"
 
 
-    // $ANTLR start "ruleComponent_Process"
-    // InternalSeML.g:566:1: ruleComponent_Process returns [EObject current=null] : (otherlv_0= 'CompProcess' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) ;
-    public final EObject ruleComponent_Process() throws RecognitionException {
+    // $ANTLR start "ruleFreeIndividual"
+    // InternalSeML.g:636:1: ruleFreeIndividual returns [EObject current=null] : (otherlv_0= 'FreeIndividual' ( (lv_name_1_0= RULE_ALIAS ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) ;
+    public final EObject ruleFreeIndividual() throws RecognitionException {
         EObject current = null;
 
         Token otherlv_0=null;
@@ -1590,35 +1688,35 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalSeML.g:572:2: ( (otherlv_0= 'CompProcess' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) )
-            // InternalSeML.g:573:2: (otherlv_0= 'CompProcess' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
+            // InternalSeML.g:642:2: ( (otherlv_0= 'FreeIndividual' ( (lv_name_1_0= RULE_ALIAS ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) )
+            // InternalSeML.g:643:2: (otherlv_0= 'FreeIndividual' ( (lv_name_1_0= RULE_ALIAS ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
             {
-            // InternalSeML.g:573:2: (otherlv_0= 'CompProcess' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
-            // InternalSeML.g:574:3: otherlv_0= 'CompProcess' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) )
+            // InternalSeML.g:643:2: (otherlv_0= 'FreeIndividual' ( (lv_name_1_0= RULE_ALIAS ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
+            // InternalSeML.g:644:3: otherlv_0= 'FreeIndividual' ( (lv_name_1_0= RULE_ALIAS ) ) ( (lv_iri_2_0= RULE_STRING ) )
             {
-            otherlv_0=(Token)match(input,17,FOLLOW_10); 
+            otherlv_0=(Token)match(input,17,FOLLOW_4); 
 
-            			newLeafNode(otherlv_0, grammarAccess.getComponent_ProcessAccess().getCompProcessKeyword_0());
+            			newLeafNode(otherlv_0, grammarAccess.getFreeIndividualAccess().getFreeIndividualKeyword_0());
             		
-            // InternalSeML.g:578:3: ( (lv_name_1_0= RULE_IRI ) )
-            // InternalSeML.g:579:4: (lv_name_1_0= RULE_IRI )
+            // InternalSeML.g:648:3: ( (lv_name_1_0= RULE_ALIAS ) )
+            // InternalSeML.g:649:4: (lv_name_1_0= RULE_ALIAS )
             {
-            // InternalSeML.g:579:4: (lv_name_1_0= RULE_IRI )
-            // InternalSeML.g:580:5: lv_name_1_0= RULE_IRI
+            // InternalSeML.g:649:4: (lv_name_1_0= RULE_ALIAS )
+            // InternalSeML.g:650:5: lv_name_1_0= RULE_ALIAS
             {
-            lv_name_1_0=(Token)match(input,RULE_IRI,FOLLOW_9); 
+            lv_name_1_0=(Token)match(input,RULE_ALIAS,FOLLOW_11); 
 
-            					newLeafNode(lv_name_1_0, grammarAccess.getComponent_ProcessAccess().getNameIRITerminalRuleCall_1_0());
+            					newLeafNode(lv_name_1_0, grammarAccess.getFreeIndividualAccess().getNameALIASTerminalRuleCall_1_0());
             				
 
             					if (current==null) {
-            						current = createModelElement(grammarAccess.getComponent_ProcessRule());
+            						current = createModelElement(grammarAccess.getFreeIndividualRule());
             					}
             					setWithLastConsumed(
             						current,
             						"name",
             						lv_name_1_0,
-            						"org.xtext.seml.SeML.IRI");
+            						"org.xtext.seml.SeML.ALIAS");
             				
 
             }
@@ -1626,19 +1724,19 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalSeML.g:596:3: ( (lv_iri_2_0= RULE_STRING ) )
-            // InternalSeML.g:597:4: (lv_iri_2_0= RULE_STRING )
+            // InternalSeML.g:666:3: ( (lv_iri_2_0= RULE_STRING ) )
+            // InternalSeML.g:667:4: (lv_iri_2_0= RULE_STRING )
             {
-            // InternalSeML.g:597:4: (lv_iri_2_0= RULE_STRING )
-            // InternalSeML.g:598:5: lv_iri_2_0= RULE_STRING
+            // InternalSeML.g:667:4: (lv_iri_2_0= RULE_STRING )
+            // InternalSeML.g:668:5: lv_iri_2_0= RULE_STRING
             {
             lv_iri_2_0=(Token)match(input,RULE_STRING,FOLLOW_2); 
 
-            					newLeafNode(lv_iri_2_0, grammarAccess.getComponent_ProcessAccess().getIriSTRINGTerminalRuleCall_2_0());
+            					newLeafNode(lv_iri_2_0, grammarAccess.getFreeIndividualAccess().getIriSTRINGTerminalRuleCall_2_0());
             				
 
             					if (current==null) {
-            						current = createModelElement(grammarAccess.getComponent_ProcessRule());
+            						current = createModelElement(grammarAccess.getFreeIndividualRule());
             					}
             					setWithLastConsumed(
             						current,
@@ -1671,410 +1769,11 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end "ruleComponent_Process"
-
-
-    // $ANTLR start "entryRuleComponent_Event"
-    // InternalSeML.g:618:1: entryRuleComponent_Event returns [EObject current=null] : iv_ruleComponent_Event= ruleComponent_Event EOF ;
-    public final EObject entryRuleComponent_Event() throws RecognitionException {
-        EObject current = null;
-
-        EObject iv_ruleComponent_Event = null;
-
-
-        try {
-            // InternalSeML.g:618:56: (iv_ruleComponent_Event= ruleComponent_Event EOF )
-            // InternalSeML.g:619:2: iv_ruleComponent_Event= ruleComponent_Event EOF
-            {
-             newCompositeNode(grammarAccess.getComponent_EventRule()); 
-            pushFollow(FOLLOW_1);
-            iv_ruleComponent_Event=ruleComponent_Event();
-
-            state._fsp--;
-
-             current =iv_ruleComponent_Event; 
-            match(input,EOF,FOLLOW_2); 
-
-            }
-
-        }
-
-            catch (RecognitionException re) {
-                recover(input,re);
-                appendSkippedTokens();
-            }
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "entryRuleComponent_Event"
-
-
-    // $ANTLR start "ruleComponent_Event"
-    // InternalSeML.g:625:1: ruleComponent_Event returns [EObject current=null] : (otherlv_0= 'CompEvent' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) ;
-    public final EObject ruleComponent_Event() throws RecognitionException {
-        EObject current = null;
-
-        Token otherlv_0=null;
-        Token lv_name_1_0=null;
-        Token lv_iri_2_0=null;
-
-
-        	enterRule();
-
-        try {
-            // InternalSeML.g:631:2: ( (otherlv_0= 'CompEvent' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) )
-            // InternalSeML.g:632:2: (otherlv_0= 'CompEvent' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
-            {
-            // InternalSeML.g:632:2: (otherlv_0= 'CompEvent' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
-            // InternalSeML.g:633:3: otherlv_0= 'CompEvent' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) )
-            {
-            otherlv_0=(Token)match(input,18,FOLLOW_10); 
-
-            			newLeafNode(otherlv_0, grammarAccess.getComponent_EventAccess().getCompEventKeyword_0());
-            		
-            // InternalSeML.g:637:3: ( (lv_name_1_0= RULE_IRI ) )
-            // InternalSeML.g:638:4: (lv_name_1_0= RULE_IRI )
-            {
-            // InternalSeML.g:638:4: (lv_name_1_0= RULE_IRI )
-            // InternalSeML.g:639:5: lv_name_1_0= RULE_IRI
-            {
-            lv_name_1_0=(Token)match(input,RULE_IRI,FOLLOW_9); 
-
-            					newLeafNode(lv_name_1_0, grammarAccess.getComponent_EventAccess().getNameIRITerminalRuleCall_1_0());
-            				
-
-            					if (current==null) {
-            						current = createModelElement(grammarAccess.getComponent_EventRule());
-            					}
-            					setWithLastConsumed(
-            						current,
-            						"name",
-            						lv_name_1_0,
-            						"org.xtext.seml.SeML.IRI");
-            				
-
-            }
-
-
-            }
-
-            // InternalSeML.g:655:3: ( (lv_iri_2_0= RULE_STRING ) )
-            // InternalSeML.g:656:4: (lv_iri_2_0= RULE_STRING )
-            {
-            // InternalSeML.g:656:4: (lv_iri_2_0= RULE_STRING )
-            // InternalSeML.g:657:5: lv_iri_2_0= RULE_STRING
-            {
-            lv_iri_2_0=(Token)match(input,RULE_STRING,FOLLOW_2); 
-
-            					newLeafNode(lv_iri_2_0, grammarAccess.getComponent_EventAccess().getIriSTRINGTerminalRuleCall_2_0());
-            				
-
-            					if (current==null) {
-            						current = createModelElement(grammarAccess.getComponent_EventRule());
-            					}
-            					setWithLastConsumed(
-            						current,
-            						"iri",
-            						lv_iri_2_0,
-            						"org.xtext.seml.SeML.STRING");
-            				
-
-            }
-
-
-            }
-
-
-            }
-
-
-            }
-
-
-            	leaveRule();
-
-        }
-
-            catch (RecognitionException re) {
-                recover(input,re);
-                appendSkippedTokens();
-            }
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "ruleComponent_Event"
-
-
-    // $ANTLR start "entryRuleComponent_Property"
-    // InternalSeML.g:677:1: entryRuleComponent_Property returns [EObject current=null] : iv_ruleComponent_Property= ruleComponent_Property EOF ;
-    public final EObject entryRuleComponent_Property() throws RecognitionException {
-        EObject current = null;
-
-        EObject iv_ruleComponent_Property = null;
-
-
-        try {
-            // InternalSeML.g:677:59: (iv_ruleComponent_Property= ruleComponent_Property EOF )
-            // InternalSeML.g:678:2: iv_ruleComponent_Property= ruleComponent_Property EOF
-            {
-             newCompositeNode(grammarAccess.getComponent_PropertyRule()); 
-            pushFollow(FOLLOW_1);
-            iv_ruleComponent_Property=ruleComponent_Property();
-
-            state._fsp--;
-
-             current =iv_ruleComponent_Property; 
-            match(input,EOF,FOLLOW_2); 
-
-            }
-
-        }
-
-            catch (RecognitionException re) {
-                recover(input,re);
-                appendSkippedTokens();
-            }
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "entryRuleComponent_Property"
-
-
-    // $ANTLR start "ruleComponent_Property"
-    // InternalSeML.g:684:1: ruleComponent_Property returns [EObject current=null] : (otherlv_0= 'CompProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) ;
-    public final EObject ruleComponent_Property() throws RecognitionException {
-        EObject current = null;
-
-        Token otherlv_0=null;
-        Token lv_name_1_0=null;
-        Token lv_iri_2_0=null;
-
-
-        	enterRule();
-
-        try {
-            // InternalSeML.g:690:2: ( (otherlv_0= 'CompProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) )
-            // InternalSeML.g:691:2: (otherlv_0= 'CompProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
-            {
-            // InternalSeML.g:691:2: (otherlv_0= 'CompProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
-            // InternalSeML.g:692:3: otherlv_0= 'CompProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) )
-            {
-            otherlv_0=(Token)match(input,19,FOLLOW_10); 
-
-            			newLeafNode(otherlv_0, grammarAccess.getComponent_PropertyAccess().getCompPropertyKeyword_0());
-            		
-            // InternalSeML.g:696:3: ( (lv_name_1_0= RULE_IRI ) )
-            // InternalSeML.g:697:4: (lv_name_1_0= RULE_IRI )
-            {
-            // InternalSeML.g:697:4: (lv_name_1_0= RULE_IRI )
-            // InternalSeML.g:698:5: lv_name_1_0= RULE_IRI
-            {
-            lv_name_1_0=(Token)match(input,RULE_IRI,FOLLOW_9); 
-
-            					newLeafNode(lv_name_1_0, grammarAccess.getComponent_PropertyAccess().getNameIRITerminalRuleCall_1_0());
-            				
-
-            					if (current==null) {
-            						current = createModelElement(grammarAccess.getComponent_PropertyRule());
-            					}
-            					setWithLastConsumed(
-            						current,
-            						"name",
-            						lv_name_1_0,
-            						"org.xtext.seml.SeML.IRI");
-            				
-
-            }
-
-
-            }
-
-            // InternalSeML.g:714:3: ( (lv_iri_2_0= RULE_STRING ) )
-            // InternalSeML.g:715:4: (lv_iri_2_0= RULE_STRING )
-            {
-            // InternalSeML.g:715:4: (lv_iri_2_0= RULE_STRING )
-            // InternalSeML.g:716:5: lv_iri_2_0= RULE_STRING
-            {
-            lv_iri_2_0=(Token)match(input,RULE_STRING,FOLLOW_2); 
-
-            					newLeafNode(lv_iri_2_0, grammarAccess.getComponent_PropertyAccess().getIriSTRINGTerminalRuleCall_2_0());
-            				
-
-            					if (current==null) {
-            						current = createModelElement(grammarAccess.getComponent_PropertyRule());
-            					}
-            					setWithLastConsumed(
-            						current,
-            						"iri",
-            						lv_iri_2_0,
-            						"org.xtext.seml.SeML.STRING");
-            				
-
-            }
-
-
-            }
-
-
-            }
-
-
-            }
-
-
-            	leaveRule();
-
-        }
-
-            catch (RecognitionException re) {
-                recover(input,re);
-                appendSkippedTokens();
-            }
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "ruleComponent_Property"
-
-
-    // $ANTLR start "entryRuleComponent_Entity"
-    // InternalSeML.g:736:1: entryRuleComponent_Entity returns [EObject current=null] : iv_ruleComponent_Entity= ruleComponent_Entity EOF ;
-    public final EObject entryRuleComponent_Entity() throws RecognitionException {
-        EObject current = null;
-
-        EObject iv_ruleComponent_Entity = null;
-
-
-        try {
-            // InternalSeML.g:736:57: (iv_ruleComponent_Entity= ruleComponent_Entity EOF )
-            // InternalSeML.g:737:2: iv_ruleComponent_Entity= ruleComponent_Entity EOF
-            {
-             newCompositeNode(grammarAccess.getComponent_EntityRule()); 
-            pushFollow(FOLLOW_1);
-            iv_ruleComponent_Entity=ruleComponent_Entity();
-
-            state._fsp--;
-
-             current =iv_ruleComponent_Entity; 
-            match(input,EOF,FOLLOW_2); 
-
-            }
-
-        }
-
-            catch (RecognitionException re) {
-                recover(input,re);
-                appendSkippedTokens();
-            }
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "entryRuleComponent_Entity"
-
-
-    // $ANTLR start "ruleComponent_Entity"
-    // InternalSeML.g:743:1: ruleComponent_Entity returns [EObject current=null] : (otherlv_0= 'CompEntity' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) ;
-    public final EObject ruleComponent_Entity() throws RecognitionException {
-        EObject current = null;
-
-        Token otherlv_0=null;
-        Token lv_name_1_0=null;
-        Token lv_iri_2_0=null;
-
-
-        	enterRule();
-
-        try {
-            // InternalSeML.g:749:2: ( (otherlv_0= 'CompEntity' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) )
-            // InternalSeML.g:750:2: (otherlv_0= 'CompEntity' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
-            {
-            // InternalSeML.g:750:2: (otherlv_0= 'CompEntity' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
-            // InternalSeML.g:751:3: otherlv_0= 'CompEntity' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) )
-            {
-            otherlv_0=(Token)match(input,20,FOLLOW_10); 
-
-            			newLeafNode(otherlv_0, grammarAccess.getComponent_EntityAccess().getCompEntityKeyword_0());
-            		
-            // InternalSeML.g:755:3: ( (lv_name_1_0= RULE_IRI ) )
-            // InternalSeML.g:756:4: (lv_name_1_0= RULE_IRI )
-            {
-            // InternalSeML.g:756:4: (lv_name_1_0= RULE_IRI )
-            // InternalSeML.g:757:5: lv_name_1_0= RULE_IRI
-            {
-            lv_name_1_0=(Token)match(input,RULE_IRI,FOLLOW_9); 
-
-            					newLeafNode(lv_name_1_0, grammarAccess.getComponent_EntityAccess().getNameIRITerminalRuleCall_1_0());
-            				
-
-            					if (current==null) {
-            						current = createModelElement(grammarAccess.getComponent_EntityRule());
-            					}
-            					setWithLastConsumed(
-            						current,
-            						"name",
-            						lv_name_1_0,
-            						"org.xtext.seml.SeML.IRI");
-            				
-
-            }
-
-
-            }
-
-            // InternalSeML.g:773:3: ( (lv_iri_2_0= RULE_STRING ) )
-            // InternalSeML.g:774:4: (lv_iri_2_0= RULE_STRING )
-            {
-            // InternalSeML.g:774:4: (lv_iri_2_0= RULE_STRING )
-            // InternalSeML.g:775:5: lv_iri_2_0= RULE_STRING
-            {
-            lv_iri_2_0=(Token)match(input,RULE_STRING,FOLLOW_2); 
-
-            					newLeafNode(lv_iri_2_0, grammarAccess.getComponent_EntityAccess().getIriSTRINGTerminalRuleCall_2_0());
-            				
-
-            					if (current==null) {
-            						current = createModelElement(grammarAccess.getComponent_EntityRule());
-            					}
-            					setWithLastConsumed(
-            						current,
-            						"iri",
-            						lv_iri_2_0,
-            						"org.xtext.seml.SeML.STRING");
-            				
-
-            }
-
-
-            }
-
-
-            }
-
-
-            }
-
-
-            	leaveRule();
-
-        }
-
-            catch (RecognitionException re) {
-                recover(input,re);
-                appendSkippedTokens();
-            }
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "ruleComponent_Entity"
+    // $ANTLR end "ruleFreeIndividual"
 
 
     // $ANTLR start "entryRuleObjectProperty"
-    // InternalSeML.g:795:1: entryRuleObjectProperty returns [EObject current=null] : iv_ruleObjectProperty= ruleObjectProperty EOF ;
+    // InternalSeML.g:688:1: entryRuleObjectProperty returns [EObject current=null] : iv_ruleObjectProperty= ruleObjectProperty EOF ;
     public final EObject entryRuleObjectProperty() throws RecognitionException {
         EObject current = null;
 
@@ -2082,8 +1781,8 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalSeML.g:795:55: (iv_ruleObjectProperty= ruleObjectProperty EOF )
-            // InternalSeML.g:796:2: iv_ruleObjectProperty= ruleObjectProperty EOF
+            // InternalSeML.g:688:55: (iv_ruleObjectProperty= ruleObjectProperty EOF )
+            // InternalSeML.g:689:2: iv_ruleObjectProperty= ruleObjectProperty EOF
             {
              newCompositeNode(grammarAccess.getObjectPropertyRule()); 
             pushFollow(FOLLOW_1);
@@ -2110,7 +1809,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleObjectProperty"
-    // InternalSeML.g:802:1: ruleObjectProperty returns [EObject current=null] : (otherlv_0= 'ObjectProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) ;
+    // InternalSeML.g:695:1: ruleObjectProperty returns [EObject current=null] : (otherlv_0= 'ObjectProperty' ( (lv_name_1_0= RULE_ALIAS ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) ;
     public final EObject ruleObjectProperty() throws RecognitionException {
         EObject current = null;
 
@@ -2122,25 +1821,25 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalSeML.g:808:2: ( (otherlv_0= 'ObjectProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) )
-            // InternalSeML.g:809:2: (otherlv_0= 'ObjectProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
+            // InternalSeML.g:701:2: ( (otherlv_0= 'ObjectProperty' ( (lv_name_1_0= RULE_ALIAS ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) )
+            // InternalSeML.g:702:2: (otherlv_0= 'ObjectProperty' ( (lv_name_1_0= RULE_ALIAS ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
             {
-            // InternalSeML.g:809:2: (otherlv_0= 'ObjectProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
-            // InternalSeML.g:810:3: otherlv_0= 'ObjectProperty' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) )
+            // InternalSeML.g:702:2: (otherlv_0= 'ObjectProperty' ( (lv_name_1_0= RULE_ALIAS ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
+            // InternalSeML.g:703:3: otherlv_0= 'ObjectProperty' ( (lv_name_1_0= RULE_ALIAS ) ) ( (lv_iri_2_0= RULE_STRING ) )
             {
-            otherlv_0=(Token)match(input,21,FOLLOW_10); 
+            otherlv_0=(Token)match(input,18,FOLLOW_4); 
 
             			newLeafNode(otherlv_0, grammarAccess.getObjectPropertyAccess().getObjectPropertyKeyword_0());
             		
-            // InternalSeML.g:814:3: ( (lv_name_1_0= RULE_IRI ) )
-            // InternalSeML.g:815:4: (lv_name_1_0= RULE_IRI )
+            // InternalSeML.g:707:3: ( (lv_name_1_0= RULE_ALIAS ) )
+            // InternalSeML.g:708:4: (lv_name_1_0= RULE_ALIAS )
             {
-            // InternalSeML.g:815:4: (lv_name_1_0= RULE_IRI )
-            // InternalSeML.g:816:5: lv_name_1_0= RULE_IRI
+            // InternalSeML.g:708:4: (lv_name_1_0= RULE_ALIAS )
+            // InternalSeML.g:709:5: lv_name_1_0= RULE_ALIAS
             {
-            lv_name_1_0=(Token)match(input,RULE_IRI,FOLLOW_9); 
+            lv_name_1_0=(Token)match(input,RULE_ALIAS,FOLLOW_11); 
 
-            					newLeafNode(lv_name_1_0, grammarAccess.getObjectPropertyAccess().getNameIRITerminalRuleCall_1_0());
+            					newLeafNode(lv_name_1_0, grammarAccess.getObjectPropertyAccess().getNameALIASTerminalRuleCall_1_0());
             				
 
             					if (current==null) {
@@ -2150,7 +1849,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
             						current,
             						"name",
             						lv_name_1_0,
-            						"org.xtext.seml.SeML.IRI");
+            						"org.xtext.seml.SeML.ALIAS");
             				
 
             }
@@ -2158,11 +1857,11 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalSeML.g:832:3: ( (lv_iri_2_0= RULE_STRING ) )
-            // InternalSeML.g:833:4: (lv_iri_2_0= RULE_STRING )
+            // InternalSeML.g:725:3: ( (lv_iri_2_0= RULE_STRING ) )
+            // InternalSeML.g:726:4: (lv_iri_2_0= RULE_STRING )
             {
-            // InternalSeML.g:833:4: (lv_iri_2_0= RULE_STRING )
-            // InternalSeML.g:834:5: lv_iri_2_0= RULE_STRING
+            // InternalSeML.g:726:4: (lv_iri_2_0= RULE_STRING )
+            // InternalSeML.g:727:5: lv_iri_2_0= RULE_STRING
             {
             lv_iri_2_0=(Token)match(input,RULE_STRING,FOLLOW_2); 
 
@@ -2207,7 +1906,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleCharacteristic"
-    // InternalSeML.g:854:1: entryRuleCharacteristic returns [EObject current=null] : iv_ruleCharacteristic= ruleCharacteristic EOF ;
+    // InternalSeML.g:747:1: entryRuleCharacteristic returns [EObject current=null] : iv_ruleCharacteristic= ruleCharacteristic EOF ;
     public final EObject entryRuleCharacteristic() throws RecognitionException {
         EObject current = null;
 
@@ -2215,8 +1914,8 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalSeML.g:854:55: (iv_ruleCharacteristic= ruleCharacteristic EOF )
-            // InternalSeML.g:855:2: iv_ruleCharacteristic= ruleCharacteristic EOF
+            // InternalSeML.g:747:55: (iv_ruleCharacteristic= ruleCharacteristic EOF )
+            // InternalSeML.g:748:2: iv_ruleCharacteristic= ruleCharacteristic EOF
             {
              newCompositeNode(grammarAccess.getCharacteristicRule()); 
             pushFollow(FOLLOW_1);
@@ -2243,7 +1942,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleCharacteristic"
-    // InternalSeML.g:861:1: ruleCharacteristic returns [EObject current=null] : (otherlv_0= 'Characteristic' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) ;
+    // InternalSeML.g:754:1: ruleCharacteristic returns [EObject current=null] : (otherlv_0= 'Characteristic' ( (lv_name_1_0= RULE_ALIAS ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) ;
     public final EObject ruleCharacteristic() throws RecognitionException {
         EObject current = null;
 
@@ -2255,25 +1954,25 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalSeML.g:867:2: ( (otherlv_0= 'Characteristic' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) )
-            // InternalSeML.g:868:2: (otherlv_0= 'Characteristic' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
+            // InternalSeML.g:760:2: ( (otherlv_0= 'Characteristic' ( (lv_name_1_0= RULE_ALIAS ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) )
+            // InternalSeML.g:761:2: (otherlv_0= 'Characteristic' ( (lv_name_1_0= RULE_ALIAS ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
             {
-            // InternalSeML.g:868:2: (otherlv_0= 'Characteristic' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
-            // InternalSeML.g:869:3: otherlv_0= 'Characteristic' ( (lv_name_1_0= RULE_IRI ) ) ( (lv_iri_2_0= RULE_STRING ) )
+            // InternalSeML.g:761:2: (otherlv_0= 'Characteristic' ( (lv_name_1_0= RULE_ALIAS ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
+            // InternalSeML.g:762:3: otherlv_0= 'Characteristic' ( (lv_name_1_0= RULE_ALIAS ) ) ( (lv_iri_2_0= RULE_STRING ) )
             {
-            otherlv_0=(Token)match(input,22,FOLLOW_10); 
+            otherlv_0=(Token)match(input,19,FOLLOW_4); 
 
             			newLeafNode(otherlv_0, grammarAccess.getCharacteristicAccess().getCharacteristicKeyword_0());
             		
-            // InternalSeML.g:873:3: ( (lv_name_1_0= RULE_IRI ) )
-            // InternalSeML.g:874:4: (lv_name_1_0= RULE_IRI )
+            // InternalSeML.g:766:3: ( (lv_name_1_0= RULE_ALIAS ) )
+            // InternalSeML.g:767:4: (lv_name_1_0= RULE_ALIAS )
             {
-            // InternalSeML.g:874:4: (lv_name_1_0= RULE_IRI )
-            // InternalSeML.g:875:5: lv_name_1_0= RULE_IRI
+            // InternalSeML.g:767:4: (lv_name_1_0= RULE_ALIAS )
+            // InternalSeML.g:768:5: lv_name_1_0= RULE_ALIAS
             {
-            lv_name_1_0=(Token)match(input,RULE_IRI,FOLLOW_9); 
+            lv_name_1_0=(Token)match(input,RULE_ALIAS,FOLLOW_11); 
 
-            					newLeafNode(lv_name_1_0, grammarAccess.getCharacteristicAccess().getNameIRITerminalRuleCall_1_0());
+            					newLeafNode(lv_name_1_0, grammarAccess.getCharacteristicAccess().getNameALIASTerminalRuleCall_1_0());
             				
 
             					if (current==null) {
@@ -2283,7 +1982,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
             						current,
             						"name",
             						lv_name_1_0,
-            						"org.xtext.seml.SeML.IRI");
+            						"org.xtext.seml.SeML.ALIAS");
             				
 
             }
@@ -2291,11 +1990,11 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalSeML.g:891:3: ( (lv_iri_2_0= RULE_STRING ) )
-            // InternalSeML.g:892:4: (lv_iri_2_0= RULE_STRING )
+            // InternalSeML.g:784:3: ( (lv_iri_2_0= RULE_STRING ) )
+            // InternalSeML.g:785:4: (lv_iri_2_0= RULE_STRING )
             {
-            // InternalSeML.g:892:4: (lv_iri_2_0= RULE_STRING )
-            // InternalSeML.g:893:5: lv_iri_2_0= RULE_STRING
+            // InternalSeML.g:785:4: (lv_iri_2_0= RULE_STRING )
+            // InternalSeML.g:786:5: lv_iri_2_0= RULE_STRING
             {
             lv_iri_2_0=(Token)match(input,RULE_STRING,FOLLOW_2); 
 
@@ -2339,25 +2038,25 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
     // $ANTLR end "ruleCharacteristic"
 
 
-    // $ANTLR start "entryRuleMetaIndividual"
-    // InternalSeML.g:913:1: entryRuleMetaIndividual returns [EObject current=null] : iv_ruleMetaIndividual= ruleMetaIndividual EOF ;
-    public final EObject entryRuleMetaIndividual() throws RecognitionException {
+    // $ANTLR start "entryRuleStaticIndividual"
+    // InternalSeML.g:806:1: entryRuleStaticIndividual returns [EObject current=null] : iv_ruleStaticIndividual= ruleStaticIndividual EOF ;
+    public final EObject entryRuleStaticIndividual() throws RecognitionException {
         EObject current = null;
 
-        EObject iv_ruleMetaIndividual = null;
+        EObject iv_ruleStaticIndividual = null;
 
 
         try {
-            // InternalSeML.g:913:55: (iv_ruleMetaIndividual= ruleMetaIndividual EOF )
-            // InternalSeML.g:914:2: iv_ruleMetaIndividual= ruleMetaIndividual EOF
+            // InternalSeML.g:806:57: (iv_ruleStaticIndividual= ruleStaticIndividual EOF )
+            // InternalSeML.g:807:2: iv_ruleStaticIndividual= ruleStaticIndividual EOF
             {
-             newCompositeNode(grammarAccess.getMetaIndividualRule()); 
+             newCompositeNode(grammarAccess.getStaticIndividualRule()); 
             pushFollow(FOLLOW_1);
-            iv_ruleMetaIndividual=ruleMetaIndividual();
+            iv_ruleStaticIndividual=ruleStaticIndividual();
 
             state._fsp--;
 
-             current =iv_ruleMetaIndividual; 
+             current =iv_ruleStaticIndividual; 
             match(input,EOF,FOLLOW_2); 
 
             }
@@ -2372,101 +2071,51 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end "entryRuleMetaIndividual"
+    // $ANTLR end "entryRuleStaticIndividual"
 
 
-    // $ANTLR start "ruleMetaIndividual"
-    // InternalSeML.g:920:1: ruleMetaIndividual returns [EObject current=null] : (otherlv_0= 'MetaIndividual' ( (lv_cls_1_0= RULE_STRING ) )+ ( (lv_name_2_0= RULE_IRI ) ) ( (lv_iri_3_0= RULE_STRING ) ) ) ;
-    public final EObject ruleMetaIndividual() throws RecognitionException {
+    // $ANTLR start "ruleStaticIndividual"
+    // InternalSeML.g:813:1: ruleStaticIndividual returns [EObject current=null] : (otherlv_0= 'StaticIndividual' ( (lv_name_1_0= RULE_ALIAS ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) ;
+    public final EObject ruleStaticIndividual() throws RecognitionException {
         EObject current = null;
 
         Token otherlv_0=null;
-        Token lv_cls_1_0=null;
-        Token lv_name_2_0=null;
-        Token lv_iri_3_0=null;
+        Token lv_name_1_0=null;
+        Token lv_iri_2_0=null;
 
 
         	enterRule();
 
         try {
-            // InternalSeML.g:926:2: ( (otherlv_0= 'MetaIndividual' ( (lv_cls_1_0= RULE_STRING ) )+ ( (lv_name_2_0= RULE_IRI ) ) ( (lv_iri_3_0= RULE_STRING ) ) ) )
-            // InternalSeML.g:927:2: (otherlv_0= 'MetaIndividual' ( (lv_cls_1_0= RULE_STRING ) )+ ( (lv_name_2_0= RULE_IRI ) ) ( (lv_iri_3_0= RULE_STRING ) ) )
+            // InternalSeML.g:819:2: ( (otherlv_0= 'StaticIndividual' ( (lv_name_1_0= RULE_ALIAS ) ) ( (lv_iri_2_0= RULE_STRING ) ) ) )
+            // InternalSeML.g:820:2: (otherlv_0= 'StaticIndividual' ( (lv_name_1_0= RULE_ALIAS ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
             {
-            // InternalSeML.g:927:2: (otherlv_0= 'MetaIndividual' ( (lv_cls_1_0= RULE_STRING ) )+ ( (lv_name_2_0= RULE_IRI ) ) ( (lv_iri_3_0= RULE_STRING ) ) )
-            // InternalSeML.g:928:3: otherlv_0= 'MetaIndividual' ( (lv_cls_1_0= RULE_STRING ) )+ ( (lv_name_2_0= RULE_IRI ) ) ( (lv_iri_3_0= RULE_STRING ) )
+            // InternalSeML.g:820:2: (otherlv_0= 'StaticIndividual' ( (lv_name_1_0= RULE_ALIAS ) ) ( (lv_iri_2_0= RULE_STRING ) ) )
+            // InternalSeML.g:821:3: otherlv_0= 'StaticIndividual' ( (lv_name_1_0= RULE_ALIAS ) ) ( (lv_iri_2_0= RULE_STRING ) )
             {
-            otherlv_0=(Token)match(input,23,FOLLOW_9); 
+            otherlv_0=(Token)match(input,20,FOLLOW_4); 
 
-            			newLeafNode(otherlv_0, grammarAccess.getMetaIndividualAccess().getMetaIndividualKeyword_0());
+            			newLeafNode(otherlv_0, grammarAccess.getStaticIndividualAccess().getStaticIndividualKeyword_0());
             		
-            // InternalSeML.g:932:3: ( (lv_cls_1_0= RULE_STRING ) )+
-            int cnt11=0;
-            loop11:
-            do {
-                int alt11=2;
-                int LA11_0 = input.LA(1);
-
-                if ( (LA11_0==RULE_STRING) ) {
-                    alt11=1;
-                }
-
-
-                switch (alt11) {
-            	case 1 :
-            	    // InternalSeML.g:933:4: (lv_cls_1_0= RULE_STRING )
-            	    {
-            	    // InternalSeML.g:933:4: (lv_cls_1_0= RULE_STRING )
-            	    // InternalSeML.g:934:5: lv_cls_1_0= RULE_STRING
-            	    {
-            	    lv_cls_1_0=(Token)match(input,RULE_STRING,FOLLOW_12); 
-
-            	    					newLeafNode(lv_cls_1_0, grammarAccess.getMetaIndividualAccess().getClsSTRINGTerminalRuleCall_1_0());
-            	    				
-
-            	    					if (current==null) {
-            	    						current = createModelElement(grammarAccess.getMetaIndividualRule());
-            	    					}
-            	    					addWithLastConsumed(
-            	    						current,
-            	    						"cls",
-            	    						lv_cls_1_0,
-            	    						"org.xtext.seml.SeML.STRING");
-            	    				
-
-            	    }
-
-
-            	    }
-            	    break;
-
-            	default :
-            	    if ( cnt11 >= 1 ) break loop11;
-                        EarlyExitException eee =
-                            new EarlyExitException(11, input);
-                        throw eee;
-                }
-                cnt11++;
-            } while (true);
-
-            // InternalSeML.g:950:3: ( (lv_name_2_0= RULE_IRI ) )
-            // InternalSeML.g:951:4: (lv_name_2_0= RULE_IRI )
+            // InternalSeML.g:825:3: ( (lv_name_1_0= RULE_ALIAS ) )
+            // InternalSeML.g:826:4: (lv_name_1_0= RULE_ALIAS )
             {
-            // InternalSeML.g:951:4: (lv_name_2_0= RULE_IRI )
-            // InternalSeML.g:952:5: lv_name_2_0= RULE_IRI
+            // InternalSeML.g:826:4: (lv_name_1_0= RULE_ALIAS )
+            // InternalSeML.g:827:5: lv_name_1_0= RULE_ALIAS
             {
-            lv_name_2_0=(Token)match(input,RULE_IRI,FOLLOW_9); 
+            lv_name_1_0=(Token)match(input,RULE_ALIAS,FOLLOW_11); 
 
-            					newLeafNode(lv_name_2_0, grammarAccess.getMetaIndividualAccess().getNameIRITerminalRuleCall_2_0());
+            					newLeafNode(lv_name_1_0, grammarAccess.getStaticIndividualAccess().getNameALIASTerminalRuleCall_1_0());
             				
 
             					if (current==null) {
-            						current = createModelElement(grammarAccess.getMetaIndividualRule());
+            						current = createModelElement(grammarAccess.getStaticIndividualRule());
             					}
             					setWithLastConsumed(
             						current,
             						"name",
-            						lv_name_2_0,
-            						"org.xtext.seml.SeML.IRI");
+            						lv_name_1_0,
+            						"org.xtext.seml.SeML.ALIAS");
             				
 
             }
@@ -2474,24 +2123,24 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalSeML.g:968:3: ( (lv_iri_3_0= RULE_STRING ) )
-            // InternalSeML.g:969:4: (lv_iri_3_0= RULE_STRING )
+            // InternalSeML.g:843:3: ( (lv_iri_2_0= RULE_STRING ) )
+            // InternalSeML.g:844:4: (lv_iri_2_0= RULE_STRING )
             {
-            // InternalSeML.g:969:4: (lv_iri_3_0= RULE_STRING )
-            // InternalSeML.g:970:5: lv_iri_3_0= RULE_STRING
+            // InternalSeML.g:844:4: (lv_iri_2_0= RULE_STRING )
+            // InternalSeML.g:845:5: lv_iri_2_0= RULE_STRING
             {
-            lv_iri_3_0=(Token)match(input,RULE_STRING,FOLLOW_2); 
+            lv_iri_2_0=(Token)match(input,RULE_STRING,FOLLOW_2); 
 
-            					newLeafNode(lv_iri_3_0, grammarAccess.getMetaIndividualAccess().getIriSTRINGTerminalRuleCall_3_0());
+            					newLeafNode(lv_iri_2_0, grammarAccess.getStaticIndividualAccess().getIriSTRINGTerminalRuleCall_2_0());
             				
 
             					if (current==null) {
-            						current = createModelElement(grammarAccess.getMetaIndividualRule());
+            						current = createModelElement(grammarAccess.getStaticIndividualRule());
             					}
             					setWithLastConsumed(
             						current,
             						"iri",
-            						lv_iri_3_0,
+            						lv_iri_2_0,
             						"org.xtext.seml.SeML.STRING");
             				
 
@@ -2519,7 +2168,7 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end "ruleMetaIndividual"
+    // $ANTLR end "ruleStaticIndividual"
 
     // Delegated rules
 
@@ -2528,15 +2177,17 @@ public class InternalSeMLParser extends AbstractInternalAntlrParser {
 
     public static final BitSet FOLLOW_1 = new BitSet(new long[]{0x0000000000000000L});
     public static final BitSet FOLLOW_2 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_3 = new BitSet(new long[]{0x0000000000016022L});
-    public static final BitSet FOLLOW_4 = new BitSet(new long[]{0x0000000000014022L});
-    public static final BitSet FOLLOW_5 = new BitSet(new long[]{0x0000000000FE0002L});
-    public static final BitSet FOLLOW_6 = new BitSet(new long[]{0x0000000000E00002L});
-    public static final BitSet FOLLOW_7 = new BitSet(new long[]{0x0000000000A00002L});
-    public static final BitSet FOLLOW_8 = new BitSet(new long[]{0x0000000000800002L});
-    public static final BitSet FOLLOW_9 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_10 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_11 = new BitSet(new long[]{0x0000000000008020L});
-    public static final BitSet FOLLOW_12 = new BitSet(new long[]{0x0000000000000030L});
+    public static final BitSet FOLLOW_3 = new BitSet(new long[]{0x000000000000A012L});
+    public static final BitSet FOLLOW_4 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_5 = new BitSet(new long[]{0x0000000000004012L});
+    public static final BitSet FOLLOW_6 = new BitSet(new long[]{0x0000000000000012L});
+    public static final BitSet FOLLOW_7 = new BitSet(new long[]{0x00000000001E0002L});
+    public static final BitSet FOLLOW_8 = new BitSet(new long[]{0x00000000000E0002L});
+    public static final BitSet FOLLOW_9 = new BitSet(new long[]{0x00000000000C0002L});
+    public static final BitSet FOLLOW_10 = new BitSet(new long[]{0x0000000000040002L});
+    public static final BitSet FOLLOW_11 = new BitSet(new long[]{0x0000000000000020L});
+    public static final BitSet FOLLOW_12 = new BitSet(new long[]{0x0000000000004002L});
+    public static final BitSet FOLLOW_13 = new BitSet(new long[]{0x0000000000010000L});
+    public static final BitSet FOLLOW_14 = new BitSet(new long[]{0x00000000000001E0L});
 
 }

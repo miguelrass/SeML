@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,44 +15,62 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.ecore.EObject;
-import org.rass.ontologies.Anomaly.ReportLevel;
+import org.eclipse.xtext.xbase.lib.Pair;
 import org.rass.swrl.CustomSWRLBuiltin;
 import org.rass.swrl.ExternalSWRLBuiltins;
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
-import org.semanticweb.owlapi.model.OWLAnnotationProperty;
-import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLDataFactory;
-import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-import org.semanticweb.owlapi.model.OWLOntologyManager;
-import org.semanticweb.owlapi.model.OWLOntologyStorageException;
+import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.NodeSet;
 import org.semanticweb.owlapi.util.AutoIRIMapper;
+import org.semanticweb.owlapi.util.OWLEntityRemover;
 
 import com.clarkparsia.pellet.owlapiv3.PelletReasoner;
 
 public class Ontologies {
 	
 	private static final String local_log = "Ontologies Log: ";
+	private static final OWLDataFactory fac = OWLManager.getOWLDataFactory();
+	
 	public static final String OWL_Upper = "esrg:upper#";
 	public static final String OWL_Nothing = "http://www.w3.org/2002/07/owl#Nothing";
-	public static final String OWL_Thing = "http://www.w3.org/2002/07/owl#Thing";
-	public static final String OWL_TopObjProperty = "http://www.w3.org/2002/07/owl#bottomObjectProperty"; //Note: reasoner.getTopObjectPropertyNode().iterator().next();
 	public static final String OWL_Component = OWL_Upper + "Component";
-	public static final String OWL_Event = OWL_Upper + "Event";
 	public static final String OWL_Entity = OWL_Upper + "Entity";
 	public static final String OWL_Process = OWL_Upper + "Process";
 	public static final String OWL_Property = OWL_Upper + "Property";
 	public static final String OWL_Characteristic = OWL_Upper + "Characteristic";
 	public static final String OWL_Goal = OWL_Upper + "Goal";
 	public static final String OWL_Feature = OWL_Upper + "Feature";
-	public static final String OWL_Annotation_NONInstantiable = OWL_Upper + "NonInstantiable";
-	public static final String OWL_DefaultC = OWL_Upper + "Default";
-	public static final String OWL_Error = OWL_Upper + "Error";
-	public static final String OWL_Information = OWL_Upper + "Information";
-	public static final String OWL_Warning = OWL_Upper + "Warning";
+	public static final String OWL_DefaultCh = OWL_Upper + "Default";
 	public static final String OWL_Requires = OWL_Upper + "requires";
+	
+	public static final OWLClass OWLC_Thing = fac.getOWLClass(IRI.create("http://www.w3.org/2002/07/owl#Thing"));
+	public static final OWLClass OWLC_Component = fac.getOWLClass(IRI.create(OWL_Component));
+	public static final OWLClass OWLC_DefaultCh = fac.getOWLClass(IRI.create(OWL_DefaultCh));
+	
+	public static final String OWL_OP_Bottom = "http://www.w3.org/2002/07/owl#bottomObjectProperty";
+	public static final String OWL_OP_demands = OWL_Upper + "demands";
+	public static final String OWL_DP_hasValue = OWL_Upper + "hasValue";
+	public static final String OWL_DP_hasReport = OWL_Upper + "hasReport";
+	public static final String OWL_DP_hasError = OWL_Upper + "hasError";
+	public static final String OWL_DP_hasWarning = OWL_Upper + "hasWarning";
+	public static final String OWL_DP_hasInfo = OWL_Upper + "hasInfo";
+	
+	public static final OWLObjectProperty OWLP_OP_Bottom = fac.getOWLObjectProperty(IRI.create(OWL_OP_Bottom));
+	public static final OWLDataProperty OWLP_DP_hasValue = fac.getOWLDataProperty(IRI.create(OWL_DP_hasValue));
+	public static final OWLDataProperty OWLP_DP_hasReport = fac.getOWLDataProperty(IRI.create(OWL_DP_hasReport));
+	public static final OWLDataProperty OWLP_DP_hasError = fac.getOWLDataProperty(IRI.create(OWL_DP_hasError));
+	public static final OWLDataProperty OWLP_DP_hasWarning = fac.getOWLDataProperty(IRI.create(OWL_DP_hasWarning));
+	public static final OWLDataProperty OWLP_DP_hasInfo = fac.getOWLDataProperty(IRI.create(OWL_DP_hasInfo));
+	
+	public static final String OWL_Ann_NonInstantiable = OWL_Upper + "NonInstantiable";
+	public static final String OWL_Ann_ArraySize = OWL_Upper + "ArraySize";
+	public static final String OWL_Ann_StaticIndividual = OWL_Upper + "StaticIndividual";
+	public static final String OWL_Ann_DefaultValue = OWL_Upper + "DefaultValue";
+	public static final String OWL_Ann_ImplArg = OWL_Upper + "ImplArg";
+	public static final String OWL_Ann_ImplDP = OWL_Upper + "ImplDP";
+	public static final String OWL_Ann_ImplOP= OWL_Upper + "ImplOP";
+	public static final String OWL_Ann_ImplInd = OWL_Upper + "ImplInd";
+	
 	 
 	public static String GENfile_NAME = "imports.seml";
 	public static File GENfile = null; //generated file object (absolute path)
@@ -63,6 +83,8 @@ public class Ontologies {
 	public static final String GENfirstline = "/* Automatically generated file. Source files: ";
 	public static final String masterNAME = "master.owl";
 	public static final String masterIRI = "Se:ML";
+	
+	
 
 	
 	public static void ParseOntologies(String[] imports) throws IOException {
@@ -90,134 +112,202 @@ public class Ontologies {
 		manager.getOntologies().forEach(o -> System.out.println(local_log + o.getOntologyID().getOntologyIRI().get().toString()));		
 	
 		
-		//------------------------------------------------- Create master ontology		
+		//------------------------------------------------- Create merged ontology (master)
 		
 		long startTime = System.currentTimeMillis(); //log execution time	
     	try {
-			master = manager.createOntology(IRI.create(masterIRI));
+    		master = manager.createOntology(IRI.create(masterIRI), manager.getOntologies());
 		} catch (OWLOntologyCreationException e) {//Error occurred while creating ontology	
 			throw new IOException("Error creating Master Ontology: " + e.getMessage());
 		} 	  
   
-    	
-    	//------------------------------------------------- Merge them all
-    	
-    	manager.getOntologies().forEach(o -> manager.addAxioms(master, o.getAxioms()) );
-        System.out.println(local_log + "(" + (System.currentTimeMillis() - startTime) + "ms) Merged Ontology has: " + master.getAxiomCount() + " axioms");
-        
-        
-        //------------------------------------------------- Save Ontology
-        
-        File masterfile = new File(GENfolder + masterNAME);
-        try {
-			manager.saveOntology(master,IRI.create(masterfile.toURI()));
-		} catch (OWLOntologyStorageException e) {
-			throw new IOException("Error saving Master Ontology: " + e.getMessage());
-		}
-        
-        //========================================================================================= Prepare Environment
-        //=============================================================================================================
-		
-        //------------------------------------------------- Prepare destination folder
-        
-	    final File GENfolder_f = new File(GENfolder);
-	    
-	    if(!GENfolder_f.exists()){ //Check if folder exists, create it otherwise
-			if(!GENfolder_f.mkdir()){
-				throw new IOException("Error creating directory: " + GENfolder); //Error occurred while creating generated files directory	
-			}
-			else System.out.println(local_log + "Directory for generated files was created: " + GENfolder);
-	    }
-	    
-	    
 	    //------------------------------------------------- Create reasoner
 	    
 	    final PelletReasoner reasoner = CustomSWRLBuiltin.getSWRLReasoner(master);
 	    
-	    //listens to all changes for all ontologies and updates the reasoner
-		//manager.addOntologyChangeListener( reasoner );
-	    
 		//test master ontology for inconsistencies and unsatisfiable classes (otherwise, it becomes impossible to reason)
-		if(Anomaly.ReasonAndExplain(reasoner, master, ReportLevel.SATISFIABILITY)){
+		if(Anomaly.ReasonAndExplain(reasoner, master)){
 			throw new IOException("Master ontology has anomalies:\n" + Anomaly.getAnomalies()); //This check must be performed to use the reasoner (this cannot be fixed inside the DSL, use protégé)
 		}
 	    
 	    reasoner.precomputeInferences();// Ask the reasoner to do all the necessary work now
 	    
-	    //------------------------------------------------- Create Templates for SWRL Built-ins
+	    //------------------------------------------------- Add individuals to empty classes
 	    
+	    //Get subclasses of Component
+		Set<OWLClass> compSubs = reasoner.getSubClasses(fac.getOWLClass(IRI.create(OWL_Component)), false).getFlattened();
+		
+		//Remove non-instantiable classes
+		compSubs.removeIf(c -> !isInstantiable(c.getIRI(),master));
+		
+		//Create list of used aliases (also avoid DSL keywords)
+		HashSet<String> aliases = new HashSet<String>(Arrays.asList("import","use","true","false","FreeIndividual","ObjectProperty","Characteristic","StaticIndividual")); //avoid DSL keywords
+		
+		//Add an individual to each empty class
+		ArrayList<String> newiReferences = new ArrayList<String>(); //Alias, IRI
+		HashMap<String,String> oldiReferences = new HashMap<String,String>(); //IRI, Alias
+		HashMap<String,String> staticiReferences = new HashMap<String,String>(); //IRI, Alias
+		
+		//Store individuals to be added and then removed in the validation process
+		HashSet<OWLAxiom> newAxioms = new HashSet<OWLAxiom>(); //do not add while reasoning (causes large delays)
+		MasterCache.freeIndividuals = new HashSet<OWLNamedIndividual>();	
+		
+		//Store individuals classes to be used with relation restrictions of individuals
+		MasterCache.individualsClassSet = new HashMap<OWLNamedIndividual, Integer>();
+		
+		for(OWLClass c : compSubs){
+			if(reasoner.getInstances(c, false).isEmpty()){
+				
+				//add to new individual's reference list				
+				String newAlias = GetShortIRI(c.getIRI()); //alias of new individual (=ClassShortIRI)
+				newAlias = GetAlias(aliases, newAlias.substring(0, 1).toLowerCase() + newAlias.substring(1)); //Alias -> alias
+				String newIRI = masterIRI+"#"+newAlias;
+				newiReferences.add(newAlias); //Alias of new individual
+				newiReferences.add(newIRI); //IRI of new individual
+				
+				//create and add new individual
+				OWLNamedIndividual ind = fac.getOWLNamedIndividual(IRI.create(newIRI)); //new individual
+				OWLAxiom axiom = fac.getOWLClassAssertionAxiom(c, ind); //create axiom with the OWL individual
+				newAxioms.add(axiom); //add axiom to master ontology	
+				
+				//store reference to remove new individual
+				MasterCache.freeIndividuals.add(ind);
+
+			//------------------------------------------------- Add individuals to arrays	
+				
+			}else{ for(OWLNamedIndividual i :  reasoner.getInstances(c, true).getFlattened()){ 
+				
+				boolean staticFlag = isStatic(i.getIRI(),master); 
+				int arraySize = getArraySize(i.getIRI(),master);
+				HashSet<OWLAnnotation> defaultAnn = new HashSet<OWLAnnotation>();
+			
+				if(arraySize > 1){ //If array (static or not)
+					
+					Pair<String,Integer> prefixIndex = getPrefixIndex(i.getIRI().toString()); //Get starting index and prefix
+					
+					//Get DefaultValue annotations, if any exists
+					for (OWLAnnotationAssertionAxiom a : master.getAnnotationAssertionAxioms(i.getIRI())) {
+						if(Ontologies.OWL_Ann_DefaultValue.equals(a.getProperty().getIRI().toString()))
+							defaultAnn.add(a.getAnnotation());
+					}
+					
+					for(int index=prefixIndex.getValue()+1; index<prefixIndex.getValue()+arraySize; index++ ){
+								
+						String newAlias = GetAlias(aliases, prefixIndex.getKey() + String.valueOf(index));
+						String newIRI = masterIRI+"#"+newAlias;
+						
+						//create and add new individual
+						OWLNamedIndividual ind = fac.getOWLNamedIndividual(IRI.create(newIRI)); //new individual
+						OWLAxiom axiom = fac.getOWLClassAssertionAxiom(c, ind); //create axiom with the OWL individual
+						newAxioms.add(axiom); //add axiom to master ontology	
+						
+						//Copy default values to new instances
+						defaultAnn.forEach(a -> newAxioms.add(fac.getOWLAnnotationAssertionAxiom(ind.getIRI(), a)));
+						
+						//add to temporary individual's reference list		
+						if(staticFlag){
+							staticiReferences.put(newIRI, newAlias);	
+							MasterCache.individualsClassSet.put(i, null); //Populating 1a/2 (rest in MasterCache.java)
+						}else{
+							newiReferences.add(newAlias); //alias of new individual
+							newiReferences.add(newIRI); //IRI of new individual
+							
+							//store reference to remove new individual
+							MasterCache.freeIndividuals.add(ind);
+						}
+					}
+				}
+				//------------------------------------------------- Register existing individuals
+				
+				if(isStatic(i.getIRI(),master)){ //Preserve static components
+					
+					//add to static individual's reference list
+					if(!staticiReferences.containsKey(i.getIRI().toString())){ //to avoid the creation of another alias
+						staticiReferences.put(i.getIRI().toString(), GetAlias(aliases, GetShortIRI(i.getIRI())));	
+						MasterCache.individualsClassSet.put(i, null); //Populating 1b/2 (rest in MasterCache.java)
+					}
+				}else{
+					
+					if(!oldiReferences.containsKey(i.getIRI().toString())){ //to avoid the creation of another alias
+						
+						//store reference to remove old individuals
+						MasterCache.freeIndividuals.add(i);
+						
+						//add to old individual's reference list
+						oldiReferences.put(i.getIRI().toString(), GetAlias(aliases, GetShortIRI(i.getIRI())));
+					}
+				}
+			}}
+		}
+		
+		//------------------------------------------------- Check if any static individual exists
+		 
+		if(staticiReferences.isEmpty()) throw new IOException("Error: Master Ontology contains 0 static individuals.");
+
+        //------------------------------------------------- Save Ontology with extra Individuals
+        
+		manager.addAxioms(master, newAxioms); 
+        File masterfile = new File(GENfolder + masterNAME);
+        try {
+			manager.saveOntology(master,IRI.create(masterfile.toURI())); //also creates folder, if needed
+		} catch (OWLOntologyStorageException e) {
+			throw new IOException("Error saving Master Ontology: " + e.getMessage());
+		}
+        
+        //========================================================================= Create Templates for SWRL Built-ins
+        //=============================================================================================================
+
 	    ExternalSWRLBuiltins.GenerateTemplates(reasoner);
 	    
 	    //====================================================================================== Generate keywords file
         //=============================================================================================================
 	    
-	    //------------------------------------------------- Create StringBuilder
+	    //------------------------------------------------- Create string builder
 	    
     	StringBuilder sb = new StringBuilder(10000); //set initial capacity to 10000 chars
     	sb.append(GENfirstline + imports.length + "\n"); //set initial line + no of imported files
     	for(int i=0; i<imports.length; i++){ //list all imported files
     		sb.append(imports[i] + "\n");
     	}
-    	sb.append("*/\n");
+    	sb.append("*/\n\n");
     	
-    	final OWLDataFactory fac = OWLManager.getOWLDataFactory();
+    	//------------------------------------------------- Populate string builder
+    	
+    	//Add static individual references
+    	sb.append("//Static individuals:\n\n");
+    	staticiReferences.forEach((i,a) -> {sb.append("StaticIndividual "); sb.append(a); sb.append(" \""); sb.append(i); sb.append("\"\n");});
     	
     	
-    	//------------------------------------------------- Parse master ontology with reasoner
-    	
-    	ArrayList<String> tripleIDlist = new ArrayList<String>();//Sentence: Prefix + ShortIRI + IRI
-    	Set<OWLClass> ComponentSubClasses = new HashSet<OWLClass>(); //List all Component subclasses to filter meta-individuals
-    	
-    	try {	
-    		reasoner.getSubClasses(fac.getOWLClass(IRI.create(OWL_Event)), false).getFlattened().forEach(c -> 	{if(isInstantiable(c.getIRI(),master)) {
- 	        	tripleIDlist.add("CompEvent ");      tripleIDlist.add(c.getIRI().getShortForm()); tripleIDlist.add( c.getIRI().toString() );} ComponentSubClasses.add(c);});
- 	        reasoner.getSubClasses(fac.getOWLClass(IRI.create(OWL_Entity)), false).getFlattened().forEach(c -> 	{if(isInstantiable(c.getIRI(),master)) {
- 	        	tripleIDlist.add("CompEntity ");     tripleIDlist.add(c.getIRI().getShortForm()); tripleIDlist.add( c.getIRI().toString() );} ComponentSubClasses.add(c);});
- 	        reasoner.getSubClasses(fac.getOWLClass(IRI.create(OWL_Process)), false).getFlattened().forEach(c -> {if(isInstantiable(c.getIRI(),master)) {
- 	        	tripleIDlist.add("CompProcess ");    tripleIDlist.add(c.getIRI().getShortForm()); tripleIDlist.add( c.getIRI().toString() );} ComponentSubClasses.add(c);});
- 	        reasoner.getSubClasses(fac.getOWLClass(IRI.create(OWL_Property)), false).getFlattened().forEach(c -> {if(isInstantiable(c.getIRI(),master)){ 
- 	        	tripleIDlist.add("CompProperty ");   tripleIDlist.add(c.getIRI().getShortForm()); tripleIDlist.add( c.getIRI().toString() );} ComponentSubClasses.add(c);});
- 	        
- 	        //check if imported ontology has any "Component" subclass declaration (if not, it is not valid)
- 	        if (tripleIDlist.isEmpty()) throw new IOException("Imported Ontologies don't have user-defined Component classes");
- 	        
- 	        reasoner.getSubClasses(fac.getOWLClass(IRI.create(OWL_Characteristic)), false).getFlattened().forEach(c -> {if(isInstantiable(c.getIRI(),master)){ 
- 	        	tripleIDlist.add("Characteristic "); tripleIDlist.add(c.getIRI().getShortForm()); tripleIDlist.add( c.getIRI().toString() );} });
- 	        reasoner.getSubObjectProperties(reasoner.getTopObjectPropertyNode().getRepresentativeElement(),false).getFlattened().forEach(o -> {if(isInstantiable(o.getNamedProperty().getIRI(),master)){ 
- 	        	tripleIDlist.add("ObjectProperty "); tripleIDlist.add(o.getNamedProperty().getIRI().getShortForm()); tripleIDlist.add( o.getNamedProperty().getIRI().toString() );} });
- 	        reasoner.getInstances(fac.getOWLClass(IRI.create(OWL_Component)), false).getFlattened().forEach(i -> {
- 	        	StringBuilder sb_aux = new StringBuilder(1000); //set initial capacity to 1000 chars
- 	        	
- 	        	Set<OWLClass> classes = reasoner.getTypes(i, true).getFlattened();
- 	        	if(!classes.isEmpty()) { //An individual might be a lost fragment, with no owner
- 		        	sb_aux.append("MetaIndividual "); 
- 		        	classes.forEach(o -> { if(o instanceof OWLClass) {
- 		        		OWLClass cl = o.asOWLClass();
- 		        		if(ComponentSubClasses.contains(cl)) sb_aux.append("\"" + cl.getIRI().toString() + "\" ");
- 		        	} });
- 		        		
- 		        	tripleIDlist.add(sb_aux.toString()); tripleIDlist.add(i.getIRI().getShortForm()); tripleIDlist.add( i.getIRI().toString() ); }
- 	        	});
-    	} 
-    	catch (IOException e) {throw new IOException(e.getMessage());}     	
-    	catch (Exception e) {throw new IOException("Error parsing Master Ontology: " + e.getMessage());}     		
-    	
-    	//------------------------------------------------- Eliminate the short-form for duplicates and build string
-    	
-    	String[] tripleIDarray = tripleIDlist.toArray(new String[0]);
-
-    	for (int j=1;j<tripleIDlist.size();j+=3){ //iterate all elements
-    		if(!tripleIDarray[j].equals(tripleIDarray[j+1])){ //check if element wasn't already fixed
-    			for (int k=j+3;k<tripleIDlist.size();k+=3) //find all duplicates of an element
-		    	    if (tripleIDarray[j].equals(tripleIDarray[k])){
-		    	    	tripleIDarray[j] = tripleIDarray[j+1]; //eliminate short-form (redundant in 2nd duplicate)
-		    	    	tripleIDarray[k] = tripleIDarray[k+1]; //eliminate short-form
-		    	    }
-    		}
-    		//After checking a certain element, insert it in the string builder
-    		sb.append(tripleIDarray[j-1] + tripleIDarray[j] + " \"" + tripleIDarray[j+1] + "\"\n");
+    	//Add generated individual references
+    	sb.append("\n//Automatically created individuals for arrays or empty instantiable subclasses of Component:\n\n");
+    	for(int i=0; i < newiReferences.size();){ 
+    		sb.append("FreeIndividual "); sb.append(newiReferences.get(i++)); 
+    		sb.append(" \""); sb.append(newiReferences.get(i++)); sb.append("\"\n");
     	}
     	
+    	//Add old individual references
+    	sb.append("\n//Individuals of subclasses of Component:\n\n");
+    	oldiReferences.forEach((i,a) -> {sb.append("FreeIndividual "); sb.append(a); sb.append(" \""); sb.append(i); sb.append("\"\n");});
+    	
+    	//Add Characteristics
+    	MasterCache.chrRestrictions = new HashMap<OWLClass,HashSet<OWLClassExpression>>();
+    	sb.append("\n//Characteristics:\n\n");
+        reasoner.getSubClasses(fac.getOWLClass(IRI.create(OWL_Characteristic)), false).getFlattened().forEach(c -> {if(isInstantiable(c.getIRI(),master)){ 
+        	sb.append("Characteristic " + GetAlias(aliases,GetShortIRI(c.getIRI())) + " \"" + c.getIRI().toString() + "\"\n");
+        	MasterCache.chrRestrictions.put(c, null); }});
+        
+        //Add Object Properties
+        sb.append("\n//Object Properties:\n\n");
+        reasoner.getSubObjectProperties(reasoner.getTopObjectPropertyNode().getRepresentativeElement(),false).getFlattened().forEach(o -> {if(isInstantiable(o.getNamedProperty().getIRI(),master)){ 
+        	sb.append("ObjectProperty " + GetAlias(aliases, GetShortIRI(o.getNamedProperty().getIRI())) + " \"" + o.getNamedProperty().getIRI().toString() + "\"\n");} });
+        
+		//------------------------------------------------- Save master ontology cache data
+		
+		startTime = System.currentTimeMillis(); //log execution time	
+		System.out.print(local_log + "Generating cache data...");
+		if(!MasterCache.CreateCache(GENfolder, reasoner)) throw new IOException("Error creating cache");
+		System.out.println("(" + (System.currentTimeMillis() - startTime) + "ms)");		
+		
     	//------------------------------------------------- Save generated file
     	
     	GENfile.createNewFile();
@@ -226,20 +316,48 @@ public class Ontologies {
 		writer.close();
 		System.out.println(local_log + "Successfully generated: " + GENfile.getAbsolutePath());
 		
-		//------------------------------------------------- Save master ontology cache data
+	}
+	
 		
-		startTime = System.currentTimeMillis(); //log execution time	
-		System.out.print(local_log + "Generating cache data...");
-		MasterCache.cacheReportClasses(GENfolder, reasoner);
-		System.out.println("(" + (System.currentTimeMillis() - startTime) + "ms)");
+	
+	/**
+	 * Method to replace org.semanticweb.owlapi.model.IRI.getShortForm()
+	 * The original method stops when it finds several symbols
+	 * This method stops when it finds '#' (has no effect if not found)
+	 * @param iri
+	 * @return
+	 */
+	public static String GetShortIRI(IRI iri){
+		return iri.toString().substring(iri.toString().lastIndexOf('#') + 1);
+	}
+	
+	private static String GetAlias(HashSet<String> aliases, String shortIRI){
 		
+		if(aliases.add(shortIRI)) return shortIRI; //If it is a new alias, add it and return it
+		
+		int counter = 1;
+    	while(!aliases.add(shortIRI + String.valueOf(counter))) counter++; //Create new alias (shortIRI + number)
+    	return shortIRI + String.valueOf(counter);
+	}
+	
+	public static HashSet<OWLClassExpression> GetAnonymousSuperClasses(OWLOntology o, OWLClass c){
+		
+		HashSet<OWLClassExpression> AnonSuperClss = new HashSet<OWLClassExpression>();
+		
+		for(OWLSubClassOfAxiom ax : o.getSubClassAxiomsForSubClass(c)){
+			if(!(ax.getSuperClass() instanceof OWLClass)){
+				AnonSuperClss.add(ax.getSuperClass());
+			}
+		}
+
+		return AnonSuperClss;
 	}
 	
 	
 	/**
 	 * Returns if a class,property,etc is instantiable or not. An object is not instantiable if there is a NonInstantiable annotation.
 	 * Class http://www.w3.org/2002/07/owl#Nothing is not instantiable.
-	 * The TopObjectProperty (http://www.w3.org/2002/07/owl#bottomObjectProperty) is not instantiable.
+	 * The BottomObjectProperty (http://www.w3.org/2002/07/owl#bottomObjectProperty) is not instantiable.
 	 * 
 	 * @param objID		the object to be tested
 	 * @param ontology	the most specific ontology which contains the object
@@ -249,18 +367,56 @@ public class Ontologies {
 	private static boolean isInstantiable(IRI objID, OWLOntology o) { 
     	
     	if (objID.toString().equals(OWL_Nothing)) return false; //test if object is class "Nothing"
-    	if (objID.toString().equals(OWL_TopObjProperty)) return false; //test if object is the TopObjectProperty
+    	if (objID.toString().equals(OWL_OP_Bottom)) return false; //test if object is the BottomObjectProperty
     	if (objID.toString().equals(OWL_Goal) || objID.toString().equals(OWL_Feature)) return false; //test if characteristic is not a category
     	
 		for (OWLAnnotationAssertionAxiom annotation : o.getAnnotationAssertionAxioms(objID)) { //gets annotations associated with the class
-        	for (OWLAnnotationProperty ap : annotation.getAnnotationPropertiesInSignature()) { //Iterates annotations (usually there is only 1 per signature)
-        		if(OWL_Annotation_NONInstantiable.compareTo(ap.getIRI().toString()) == 0) return false;
-        	}        	
+        	//for (OWLAnnotationProperty ap : annotation.getAnnotationPropertiesInSignature()) { //Iterates annotations (usually there is only 1 per signature)
+        		if(OWL_Ann_NonInstantiable.equals(annotation.getProperty().getIRI().toString())) return false;
+        	//}        	
         }
 
 	    return true;
 	}
     
+    private static boolean isStatic(IRI objID, OWLOntology o){
+    	for (OWLAnnotationAssertionAxiom annotation : o.getAnnotationAssertionAxioms(objID)) { //gets annotations associated with the class
+    		//for (OWLAnnotationProperty ap : annotation.getAnnotationPropertiesInSignature()) { //Iterates annotations (usually there is only 1 per signature)
+        		if(OWL_Ann_StaticIndividual.equals(annotation.getProperty().getIRI().toString())) return true;
+        	//}        	
+        }
+	    return false;
+    }
+    
+    private static int getArraySize(IRI objID, OWLOntology o){ //if array size <= 1 it's not an array
+    	
+    	for (OWLAnnotationAssertionAxiom a : o.getAnnotationAssertionAxioms(objID)) { //gets annotations associated with the class
+    		if(OWL_Ann_ArraySize.equals(a.getProperty().getIRI().toString())){
+    			if(a.getValue().asLiteral().get().isInteger()) 
+    				return a.getValue().asLiteral().get().parseInteger();
+    		}
+        }
+	    return 1;
+    }
+    
+    /**
+     * Get Prefix (short IRI) and last integer in string
+     * Returns integer=0 if:
+     * - string contains only digits
+     * - string doesn't end with a digit
+     * - string is empty 
+     * @param s string to be evaluated
+     * @return Prefix and (last integer or Zero)
+     */
+    private static Pair<String,Integer> getPrefixIndex(String s){
+    	for (int i = s.length() - 1; i >= 0; i--) {
+    	    if (!Character.isDigit(s.charAt(i))) {
+    	    	if(i==s.length()-1) break;
+    	    	return new Pair<String,Integer>(s.substring(s.lastIndexOf('#') + 1, i+1), Integer.parseInt(s.substring(i+1)));
+    	    }    
+    	}
+    	return new Pair<String,Integer>(s.substring(s.lastIndexOf('#') + 1), 0);
+    }
     
 
     private static OWLOntologyManager OntLibrary = OWLManager.createOWLOntologyManager();

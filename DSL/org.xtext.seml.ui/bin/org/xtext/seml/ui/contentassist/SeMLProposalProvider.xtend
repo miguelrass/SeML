@@ -7,7 +7,6 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor
 import org.eclipse.xtext.Assignment
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext
-import org.xtext.seml.seML.Individual
 import org.eclipse.xtext.RuleCall
 import org.xtext.seml.seML.Import
 import java.io.File

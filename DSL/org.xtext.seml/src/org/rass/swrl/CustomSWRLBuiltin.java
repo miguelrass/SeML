@@ -52,12 +52,15 @@ public class CustomSWRLBuiltin implements BuiltIn {
 		
 		//Add built-in declarations just once
 		if(reasoner == null){
-			BuiltInRegistry.instance.registerBuiltIn("esrg:ro#no", new CustomSWRLBuiltin( new SWRLbuiltins.no() ) );
-	    	BuiltInRegistry.instance.registerBuiltIn("esrg:ro#relEQ", new CustomSWRLBuiltin( new SWRLbuiltins.relEQ() ) );
-	    	BuiltInRegistry.instance.registerBuiltIn("esrg:ro#relGT", new CustomSWRLBuiltin( new SWRLbuiltins.relGT() ) );
-	    	BuiltInRegistry.instance.registerBuiltIn("esrg:ro#relGE", new CustomSWRLBuiltin( new SWRLbuiltins.relGE() ) );
-	    	BuiltInRegistry.instance.registerBuiltIn("esrg:ro#relLT", new CustomSWRLBuiltin( new SWRLbuiltins.relLT() ) );
-	    	BuiltInRegistry.instance.registerBuiltIn("esrg:ro#relLE", new CustomSWRLBuiltin( new SWRLbuiltins.relLE() ) );
+			BuiltInRegistry.instance.registerBuiltIn(ExternalSWRLBuiltins.OWL_Bi_no, new CustomSWRLBuiltin( new SWRLbuiltins.no() ) );
+	    	BuiltInRegistry.instance.registerBuiltIn(ExternalSWRLBuiltins.OWL_Bi_relEQ, new CustomSWRLBuiltin( new SWRLbuiltins.relEQ() ) );
+	    	BuiltInRegistry.instance.registerBuiltIn(ExternalSWRLBuiltins.OWL_Bi_relGT, new CustomSWRLBuiltin( new SWRLbuiltins.relGT() ) );
+	    	BuiltInRegistry.instance.registerBuiltIn(ExternalSWRLBuiltins.OWL_Bi_relGE, new CustomSWRLBuiltin( new SWRLbuiltins.relGE() ) );
+	    	BuiltInRegistry.instance.registerBuiltIn(ExternalSWRLBuiltins.OWL_Bi_relLT, new CustomSWRLBuiltin( new SWRLbuiltins.relLT() ) );
+	    	BuiltInRegistry.instance.registerBuiltIn(ExternalSWRLBuiltins.OWL_Bi_relLE, new CustomSWRLBuiltin( new SWRLbuiltins.relLE() ) );
+	    	BuiltInRegistry.instance.registerBuiltIn(ExternalSWRLBuiltins.OWL_Bi_notSame, new CustomSWRLBuiltin( new SWRLbuiltins.notSame() ) );
+	    	BuiltInRegistry.instance.registerBuiltIn(ExternalSWRLBuiltins.OWL_Bi_iListSum, new CustomSWRLBuiltin( new SWRLbuiltins.intListSum() ) );
+	    	BuiltInRegistry.instance.registerBuiltIn(ExternalSWRLBuiltins.OWL_Bi_fListSum, new CustomSWRLBuiltin( new SWRLbuiltins.floatListSum() ) );
 		}
 		
 		// Load external built-ins from SWRL folder
@@ -108,7 +111,6 @@ public class CustomSWRLBuiltin implements BuiltIn {
 			
 			//System.out.println(c);
 		} catch (ClassNotFoundException e1) {
-			// TODO Auto-generated catch block
 			System.out.println( e1.toString());
 		}catch (Throwable e) {
 			System.out.println( e.toString());
@@ -129,10 +131,8 @@ public class CustomSWRLBuiltin implements BuiltIn {
 			System.out.println(c);
 			Class.forName(Ontologies.SWRLPackage + "." + "lol", true, classLoader);
     	} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
     		System.out.println(e.getMessage());
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			System.out.println(e.getMessage());
 		}catch (Throwable e) {
 			System.out.println(e.getMessage());

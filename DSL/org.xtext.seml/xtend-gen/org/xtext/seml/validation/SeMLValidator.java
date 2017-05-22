@@ -11,9 +11,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import org.eclipse.emf.common.util.EList;
@@ -23,28 +27,36 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.CheckType;
+import org.eclipse.xtext.validation.ValidationMessageAcceptor;
 import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.IteratorExtensions;
 import org.rass.ontologies.Anomaly;
-import org.rass.ontologies.CharacteristicsSolver;
 import org.rass.ontologies.MasterOntology;
 import org.rass.ontologies.Ontologies;
-import org.xtext.seml.seML.Component;
+import org.rass.restrictions.CharacteristicsSolver;
+import org.rass.restrictions.Problem;
+import org.semanticweb.owlapi.model.OWLClass;
+import org.xtext.seml.Console;
+import org.xtext.seml.seML.Assignment;
+import org.xtext.seml.seML.Characteristic;
+import org.xtext.seml.seML.FreeIndividual;
 import org.xtext.seml.seML.Import;
 import org.xtext.seml.seML.ImportModel;
 import org.xtext.seml.seML.Individual;
 import org.xtext.seml.seML.MainModel;
-import org.xtext.seml.seML.MetaIndividual;
+import org.xtext.seml.seML.ObjectProperty;
 import org.xtext.seml.seML.Relation;
 import org.xtext.seml.seML.SeMLPackage;
-import org.xtext.seml.seML.UseCharacteristic;
+import org.xtext.seml.seML.StaticIndividual;
 import org.xtext.seml.validation.AbstractSeMLValidator;
+import org.xtext.seml.validation.FeaturePlace;
 
 /**
  * This class contains custom validation rules.
@@ -55,27 +67,37 @@ import org.xtext.seml.validation.AbstractSeMLValidator;
 public class SeMLValidator extends AbstractSeMLValidator {
   private static String local_log = "Validator Log: ";
   
-  public final static String INVALID_NAME = "invalidName";
+  public final static String FIX_PROBLEM = "FixProblem";
   
-  public final static String GET_AXIOMS = "GetAxioms";
+  public static HashMap<String, ArrayList<Problem>> problems;
   
-  public final static String FIX_GENERATED = "FixGeneratedName";
+  public static Problem nextProblem = null;
   
-  public final static String GENERATE_SOLUTION = "GenerateSolution";
+  public static MainModel globalMainModel;
   
-  public final static String USE_SOLUTION = "UseSolution";
+  public static ImportModel globalImportModel;
+  
+  public static int validationState = 0;
+  
+  private long importDate;
+  
+  private static HashMap<String, FeaturePlace> visibilityMap = null;
+  
+  private static HashSet<Individual> activeInds = null;
+  
+  public static HashMap<String, EObject> quickfixMap = null;
+  
+  private final static Color colorDefault = new Color(null, 255, 255, 255);
+  
+  private final static Color colorValidating = new Color(null, 237, 237, 237);
+  
+  private final static Color colorFailed = new Color(null, 255, 196, 196);
   
   @Check(CheckType.FAST)
-  public void checkIndividual(final Individual ind) {
-    boolean _contains = ind.getName().contains("#");
-    if (_contains) {
-      this.error("Individual name cannot contain \"#\"", SeMLPackage.Literals.ANY_INDIVIDUAL__NAME);
-    }
-  }
-  
-  @Check(CheckType.FAST)
-  public void checkModelVal(final MainModel m) {
-    final String local_log = (SeMLValidator.local_log + "[checkModelVal] ");
+  public void CheckModelVal(final MainModel m) {
+    final String local_log = (SeMLValidator.local_log + "[CheckModelVal] ");
+    SeMLValidator.validationState = 1;
+    Console.ChangeConsole(SeMLValidator.colorValidating, null);
     final EList<Resource.Diagnostic> er = m.eResource().getErrors();
     int _size = er.size();
     boolean _notEquals = (_size != 0);
@@ -85,13 +107,24 @@ public class SeMLValidator extends AbstractSeMLValidator {
         System.err.println((local_log + e));
       };
       er.forEach(_function);
+      SeMLValidator.validationState = 2;
+      Console.ChangeConsole(SeMLValidator.colorFailed, null);
       return;
     }
     try {
-      this.checkModel(m);
+      boolean _checkModel = this.checkModel(m);
+      if (_checkModel) {
+        SeMLValidator.validationState = 3;
+        Console.ChangeConsole(SeMLValidator.colorDefault, null);
+      } else {
+        SeMLValidator.validationState = 2;
+        Console.ChangeConsole(SeMLValidator.colorFailed, null);
+      }
     } catch (final Throwable _t) {
       if (_t instanceof Exception) {
         final Exception e = (Exception)_t;
+        SeMLValidator.validationState = 2;
+        Console.ChangeConsole(SeMLValidator.colorFailed, null);
         String _string = e.toString();
         String _plus = ((local_log + "Internal Error: ") + _string);
         System.err.println(_plus);
@@ -101,260 +134,363 @@ public class SeMLValidator extends AbstractSeMLValidator {
     }
   }
   
-  public void checkModel(final MainModel m) {
-    try {
-      final String local_log = (SeMLValidator.local_log + "[checkModel] ");
-      String[] inconsistencyReport = null;
-      boolean _CheckImports = this.CheckImports(m);
-      boolean _not = (!_CheckImports);
-      if (_not) {
-        return;
-      }
-      System.out.print((local_log + "Validating model..."));
-      final DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-      final Date date = new Date();
-      String _format = dateFormat.format(date);
-      String _plus = ("(" + _format);
-      String _plus_1 = (_plus + ")");
-      System.out.println(_plus_1);
-      final List<Individual> individualsList = EcoreUtil2.<Individual>getAllContentsOfType(m, Individual.class);
-      final List<Relation> relationsList = EcoreUtil2.<Relation>getAllContentsOfType(m, Relation.class);
-      final List<UseCharacteristic> useList = EcoreUtil2.<UseCharacteristic>getAllContentsOfType(m, UseCharacteristic.class);
-      try {
-        File _file = new File((Ontologies.GENfolder + Ontologies.masterNAME));
-        MasterOntology.loadMasterOntology(_file);
-      } catch (final Throwable _t) {
-        if (_t instanceof IOException) {
-          final IOException e = (IOException)_t;
-          String _message = e.getMessage();
-          String _plus_2 = ("Error loading master ontology file: " + _message);
-          this.error(_plus_2, IterableExtensions.<Import>last(m.getImports()), SeMLPackage.Literals.IMPORT__NAME);
-          return;
-        } else {
-          throw Exceptions.sneakyThrow(_t);
-        }
-      }
-      final Consumer<Individual> _function = (Individual i) -> {
-        MasterOntology.addIndividual(i);
-      };
-      individualsList.forEach(_function);
-      for (final Relation r : relationsList) {
-        boolean _addRelation = MasterOntology.addRelation(r);
-        boolean _not_1 = (!_addRelation);
-        if (_not_1) {
-          System.out.println((local_log + "Aborted. Model contains relation errors."));
-          return;
-        }
-      }
-      boolean _ReasonAndExplainMaster = MasterOntology.ReasonAndExplainMaster();
-      if (_ReasonAndExplainMaster) {
-        boolean _ReportAnomalies = this.ReportAnomalies(m, individualsList, relationsList);
-        boolean _not_2 = (!_ReportAnomalies);
-        if (_not_2) {
-          return;
-        }
-      }
-      final ImportModel importRoot = this.getImportModel(m.eResource(), Ontologies.GENfile_relpath);
-      if ((importRoot == null)) {
-        String _absolutePath = Ontologies.GENfile.getAbsolutePath();
-        String _plus_3 = ("Error loading keywords file: " + _absolutePath);
-        this.error(_plus_3, IterableExtensions.<Import>last(m.getImports()), SeMLPackage.Literals.IMPORT__NAME);
-        return;
-      }
-      final EList<Resource.Diagnostic> er = importRoot.eResource().getErrors();
-      int _size = er.size();
-      boolean _notEquals = (_size != 0);
-      if (_notEquals) {
-        System.err.println((local_log + "Keywords file contains errors:"));
-        final Consumer<Resource.Diagnostic> _function_1 = (Resource.Diagnostic e_1) -> {
-          System.err.println((local_log + e_1));
-        };
-        er.forEach(_function_1);
-        return;
-      }
-      final EList<MetaIndividual> MetaIndividualsList = importRoot.getMetaIndividuals();
-      MasterOntology.cacheIRIs(importRoot, individualsList);
-      System.out.print((local_log + "Checking individual restrictions"));
-      for (final MetaIndividual i : MetaIndividualsList) {
-        EList<String> _cls = i.getCls();
-        for (final String s : _cls) {
-          {
-            inconsistencyReport = MasterOntology.CheckRelationRestrictions(s, i.getIri());
-            if ((inconsistencyReport != null)) {
-              boolean _isEmpty = inconsistencyReport[1].isEmpty();
-              if (_isEmpty) {
-                String _iri = i.getIri();
-                String _plus_4 = ("Metamodel Individual: " + _iri);
-                String _plus_5 = (_plus_4 + "\n");
-                String _get = inconsistencyReport[0];
-                String _plus_6 = (_plus_5 + _get);
-                this.error(_plus_6, IterableExtensions.<Import>last(m.getImports()), SeMLPackage.Literals.IMPORT__NAME);
-              } else {
-                String _iri_1 = i.getIri();
-                String _plus_7 = ("Metamodel Individual: " + _iri_1);
-                String _plus_8 = (_plus_7 + "\n");
-                String _get_1 = inconsistencyReport[0];
-                String _plus_9 = (_plus_8 + _get_1);
-                this.error(_plus_9, IterableExtensions.<Import>last(m.getImports()), SeMLPackage.Literals.IMPORT__NAME, SeMLValidator.GENERATE_SOLUTION, inconsistencyReport[1]);
-              }
-              return;
-            }
-          }
-        }
-      }
-      for (final Individual i_1 : individualsList) {
-        EList<Component> _cls_1 = i_1.getCls();
-        for (final Component c : _cls_1) {
-          {
-            String _iri = c.getIri();
-            String _name = i_1.getName();
-            String _plus_4 = ((MasterOntology.OWL_Master + "#") + _name);
-            inconsistencyReport = MasterOntology.CheckRelationRestrictions(_iri, _plus_4);
-            if ((inconsistencyReport != null)) {
-              boolean _isEmpty = inconsistencyReport[1].isEmpty();
-              if (_isEmpty) {
-                this.error(inconsistencyReport[0], i_1, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME);
-              } else {
-                this.error(inconsistencyReport[0], i_1, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME, SeMLValidator.GENERATE_SOLUTION, inconsistencyReport[1]);
-              }
-              return;
-            }
-          }
-        }
-      }
-      System.out.print("\n");
-      EObject eo = null;
-      EStructuralFeature sf = null;
-      try {
-        boolean _isEmpty = useList.isEmpty();
-        if (_isEmpty) {
-          eo = IterableExtensions.<Import>last(m.getImports());
-          sf = SeMLPackage.Literals.IMPORT__NAME;
-        } else {
-          eo = IterableExtensions.<UseCharacteristic>last(useList);
-          sf = SeMLPackage.Literals.USE_CHARACTERISTIC__NAME;
-        }
-        boolean _BuildMastersCharacteristicsTree = MasterOntology.BuildMastersCharacteristicsTree(useList);
-        boolean _not_3 = (!_BuildMastersCharacteristicsTree);
-        if (_not_3) {
-          this.error(("There are unsolved Characteristics variabilites: \n" + CharacteristicsSolver.chrProblem), eo, sf, 
-            SeMLValidator.USE_SOLUTION, CharacteristicsSolver.chrSolution);
-          return;
-        }
-      } catch (final Throwable _t_1) {
-        if (_t_1 instanceof Exception) {
-          final Exception e_1 = (Exception)_t_1;
-          String _message_1 = e_1.getMessage();
-          String _plus_4 = ("Error related with Characteristics: \n" + _message_1);
-          this.error(_plus_4, eo, sf);
-          return;
-        } else {
-          throw Exceptions.sneakyThrow(_t_1);
-        }
-      }
-      System.out.print((local_log + "Checking characteristics restrictions"));
-      Set<String> _GetRequiredCharacteristics = CharacteristicsSolver.GetRequiredCharacteristics();
-      for (final String ch : _GetRequiredCharacteristics) {
-        {
-          inconsistencyReport = MasterOntology.CheckModelRestrictions(ch);
-          if ((inconsistencyReport != null)) {
-            final Function1<UseCharacteristic, Boolean> _function_2 = (UseCharacteristic c_1) -> {
-              String _iri = c_1.getName().getIri();
-              return Boolean.valueOf(Objects.equal(_iri, ch));
-            };
-            final UseCharacteristic uc = IterableExtensions.<UseCharacteristic>findFirst(useList, _function_2);
-            if ((uc == null)) {
-              eo = IterableExtensions.<Import>last(m.getImports());
-              sf = SeMLPackage.Literals.IMPORT__NAME;
-            } else {
-              eo = uc;
-              sf = SeMLPackage.Literals.USE_CHARACTERISTIC__NAME;
-            }
-            boolean _isEmpty_1 = inconsistencyReport[1].isEmpty();
-            if (_isEmpty_1) {
-              String _get = inconsistencyReport[0];
-              String _plus_5 = ((("Characteristic: " + ch) + "\n") + _get);
-              this.error(_plus_5, eo, sf);
-            } else {
-              String _get_1 = inconsistencyReport[0];
-              String _plus_6 = ((("Characteristic: " + ch) + "\n") + _get_1);
-              this.error(_plus_6, eo, sf, SeMLValidator.GENERATE_SOLUTION, inconsistencyReport[1]);
-            }
-            return;
-          }
-        }
-      }
-      System.out.println((("\n" + local_log) + "Done."));
-    } catch (Throwable _e) {
-      throw Exceptions.sneakyThrow(_e);
-    }
-  }
-  
-  /**
-   * Very basic function to dispatch the issue to its agent (only implemented for non-meta individuals)
-   */
-  public UseCharacteristic RouteCharacteristicToAgent(final List<UseCharacteristic> chrList, final String chIRI) {
-    final Function1<UseCharacteristic, Boolean> _function = (UseCharacteristic c) -> {
-      String _iri = c.getName().getIri();
-      return Boolean.valueOf(Objects.equal(_iri, chIRI));
-    };
-    return IterableExtensions.<UseCharacteristic>findFirst(chrList, _function);
-  }
-  
-  /**
-   * Auxiliary function to return anomalies for individual creation and relation instantiation
-   * @return returns false if the model is inconsistent
-   */
-  public boolean ReportAnomalies(final MainModel m, final List<Individual> individualsList, final List<Relation> relationsList) {
+  public boolean checkModel(final MainModel m) {
     final String local_log = (SeMLValidator.local_log + "[checkModel] ");
-    String issue = Anomaly.getAnomalies();
-    if ((issue != null)) {
-      this.RouteIssueToAgent(m, issue, individualsList, relationsList, 1);
+    boolean _CheckImports = this.CheckImports(m);
+    boolean _not = (!_CheckImports);
+    if (_not) {
       return false;
     }
-    issue = Anomaly.getErrors();
-    if ((issue != null)) {
-      this.RouteIssueToAgent(m, issue, individualsList, relationsList, 2);
+    final DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+    final Date date = new Date();
+    final List<Relation> relationsList = EcoreUtil2.<Relation>getAllContentsOfType(m, Relation.class);
+    final List<Assignment> assignmentsList = EcoreUtil2.<Assignment>getAllContentsOfType(m, Assignment.class);
+    final EList<Characteristic> useList = m.getUseCh();
+    boolean _GetImportModel = this.GetImportModel(m.eResource(), Ontologies.GENfile_relpath);
+    if (_GetImportModel) {
+      return false;
     }
-    issue = Anomaly.getWarnings();
-    if ((issue != null)) {
-      this.RouteIssueToAgent(m, issue, individualsList, relationsList, 3);
+    String _format = dateFormat.format(date);
+    String _plus = ("Validating model... (" + _format);
+    String _plus_1 = (_plus + ")");
+    Console.OutPairLn(local_log, _plus_1);
+    final EList<Resource.Diagnostic> er = SeMLValidator.globalImportModel.eResource().getErrors();
+    int _size = er.size();
+    boolean _notEquals = (_size != 0);
+    if (_notEquals) {
+      Console.ErrPairLn(local_log, "Aborted. Keywords file contains errors:");
+      final Consumer<Resource.Diagnostic> _function = (Resource.Diagnostic e) -> {
+        System.err.println((local_log + e));
+      };
+      er.forEach(_function);
+      return false;
     }
-    issue = Anomaly.getInfos();
-    if ((issue != null)) {
-      this.RouteIssueToAgent(m, issue, individualsList, relationsList, 4);
+    MasterOntology.CacheIRIs(SeMLValidator.globalImportModel);
+    HashSet<Individual> _hashSet = new HashSet<Individual>();
+    SeMLValidator.activeInds = _hashSet;
+    final Consumer<StaticIndividual> _function_1 = (StaticIndividual i) -> {
+      SeMLValidator.activeInds.add(i);
+    };
+    SeMLValidator.globalImportModel.getStaticIndividuals().forEach(_function_1);
+    final HashSet<String> freeRefIRIs = new HashSet<String>();
+    boolean chainingError = false;
+    for (final Relation r : relationsList) {
+      {
+        boolean _contains = SeMLValidator.activeInds.contains(r.getInd1());
+        boolean _not_1 = (!_contains);
+        if (_not_1) {
+          this.error("Individual is not static nor previously referenced.", r, SeMLPackage.Literals.RELATION__IND1);
+          chainingError = true;
+        }
+        SeMLValidator.activeInds.addAll(r.getInd2());
+        final Consumer<Individual> _function_2 = (Individual i) -> {
+          if ((i instanceof FreeIndividual)) {
+            freeRefIRIs.add(((FreeIndividual)i).getIri());
+          }
+        };
+        r.getInd2().forEach(_function_2);
+      }
     }
+    for (final Assignment a : assignmentsList) {
+      boolean _contains = SeMLValidator.activeInds.contains(a.getInd());
+      boolean _not_1 = (!_contains);
+      if (_not_1) {
+        this.error("Individual is not static nor referenced.", a, SeMLPackage.Literals.ASSIGNMENT__IND);
+        chainingError = true;
+      }
+    }
+    if (chainingError) {
+      Console.ErrPairLn(local_log, "Aborted. Chaining inconsistency detected.");
+      return false;
+    }
+    HashMap<String, FeaturePlace> _hashMap = new HashMap<String, FeaturePlace>();
+    SeMLValidator.visibilityMap = _hashMap;
+    if ((useList != null)) {
+      for (int i = 0; (i < ((Object[])Conversions.unwrapArray(useList, Object.class)).length); i++) {
+        String _name = useList.get(i).getName();
+        FeaturePlace _featurePlace = new FeaturePlace(m, SeMLPackage.Literals.MAIN_MODEL__USE_CH, i);
+        SeMLValidator.visibilityMap.put(_name, _featurePlace);
+      }
+    }
+    for (final Relation r_1 : relationsList) {
+      {
+        String _name = r_1.getInd1().getName();
+        FeaturePlace _featurePlace = new FeaturePlace(r_1, SeMLPackage.Literals.RELATION__IND1);
+        SeMLValidator.visibilityMap.put(_name, _featurePlace);
+        for (int i = 0; (i < r_1.getInd2().size()); i++) {
+          String _name_1 = r_1.getInd2().get(i).getName();
+          FeaturePlace _featurePlace_1 = new FeaturePlace(r_1, SeMLPackage.Literals.RELATION__IND2, i);
+          SeMLValidator.visibilityMap.put(_name_1, _featurePlace_1);
+        }
+      }
+    }
+    for (final Assignment a_1 : assignmentsList) {
+      String _name = a_1.getInd().getName();
+      FeaturePlace _featurePlace = new FeaturePlace(a_1, SeMLPackage.Literals.ASSIGNMENT__IND);
+      SeMLValidator.visibilityMap.put(_name, _featurePlace);
+    }
+    HashMap<String, EObject> _hashMap_1 = new HashMap<String, EObject>();
+    SeMLValidator.quickfixMap = _hashMap_1;
+    final Consumer<StaticIndividual> _function_2 = (StaticIndividual i) -> {
+      SeMLValidator.quickfixMap.put(i.getName(), i);
+    };
+    SeMLValidator.globalImportModel.getStaticIndividuals().forEach(_function_2);
+    final Consumer<FreeIndividual> _function_3 = (FreeIndividual i) -> {
+      SeMLValidator.quickfixMap.put(i.getName(), i);
+    };
+    SeMLValidator.globalImportModel.getIndividualOptions().forEach(_function_3);
+    final Consumer<ObjectProperty> _function_4 = (ObjectProperty o) -> {
+      SeMLValidator.quickfixMap.put(o.getName(), o);
+    };
+    SeMLValidator.globalImportModel.getObjectProperties().forEach(_function_4);
+    try {
+      File _file = new File((Ontologies.GENfolder + Ontologies.masterNAME));
+      MasterOntology.loadMasterOntology(_file, freeRefIRIs);
+    } catch (final Throwable _t) {
+      if (_t instanceof Exception) {
+        final Exception e = (Exception)_t;
+        String _message = e.getMessage();
+        String _plus_2 = ("Aborted. Error loading master ontology file: " + _message);
+        Console.ErrPairLn(local_log, _plus_2);
+        return false;
+      } else {
+        throw Exceptions.sneakyThrow(_t);
+      }
+    }
+    System.out.println((local_log + "Adding relations to ontology..."));
+    MasterOntology.AddOPRelations(relationsList);
+    MasterOntology.AddDPRelations(assignmentsList);
+    boolean _ReasonAndExplainMaster = MasterOntology.ReasonAndExplainMaster();
+    if (_ReasonAndExplainMaster) {
+      this.RouteIssueToAgent(m, Anomaly.getAnomalies(), 1);
+      Console.ErrPairLn(local_log, "Aborted. Ontology is inconsistent or has unsatisfiabilities.");
+      return false;
+    }
+    EObject eo = null;
+    EStructuralFeature sf = null;
+    try {
+      boolean _isEmpty = useList.isEmpty();
+      if (_isEmpty) {
+        eo = IterableExtensions.<Import>last(m.getImports());
+        sf = SeMLPackage.Literals.IMPORT__NAME;
+      } else {
+        eo = m;
+        sf = SeMLPackage.Literals.MAIN_MODEL__USE_CH;
+      }
+      boolean _BuildMastersCharacteristicsTree = MasterOntology.BuildMastersCharacteristicsTree(useList);
+      boolean _not_2 = (!_BuildMastersCharacteristicsTree);
+      if (_not_2) {
+        this.error(("There are unsolved Characteristics variabilites: \n" + CharacteristicsSolver.chrProblem), eo, sf);
+        Console.ErrPairLn(local_log, "Aborted. Unsolved Characteristics variabilites.");
+        return false;
+      }
+    } catch (final Throwable _t_1) {
+      if (_t_1 instanceof Exception) {
+        final Exception e_1 = (Exception)_t_1;
+        this.error(e_1.getMessage(), eo, sf);
+        Console.ErrPairLn(local_log, "Aborted. Characteristics inconsistency.");
+        return false;
+      } else {
+        throw Exceptions.sneakyThrow(_t_1);
+      }
+    }
+    MasterOntology.AddChIndividuals(CharacteristicsSolver.GetRequiredCharacteristics());
+    boolean _ReasonAndExplainMaster_1 = MasterOntology.ReasonAndExplainMaster();
+    if (_ReasonAndExplainMaster_1) {
+      this.RouteIssueToAgent(m, Anomaly.getAnomalies(), 1);
+      Console.ErrPairLn(local_log, "Aborted. Characteristics generated inconsistencies.");
+      return false;
+    }
+    SeMLValidator.globalMainModel = m;
+    final HashSet<List<String>> authorizatedRels = new HashSet<List<String>>();
+    System.out.println((local_log + "Checking characteristics and individuals\' restrictions"));
+    boolean _CheckModelRestrictions = SeMLValidator.CheckModelRestrictions(false, authorizatedRels);
+    boolean _not_3 = (!_CheckModelRestrictions);
+    if (_not_3) {
+      final String label = "The model does not require this relation: ";
+      boolean ok = true;
+      MasterOntology.ExtendAuthorizations(authorizatedRels);
+      for (final Relation r_2 : relationsList) {
+        EList<Individual> _ind2 = r_2.getInd2();
+        for (final Individual i : _ind2) {
+          {
+            final List<String> list = Arrays.<String>asList(r_2.getInd1().getName(), r_2.getObj().getName(), i.getName());
+            boolean _contains_1 = authorizatedRels.contains(list);
+            boolean _not_4 = (!_contains_1);
+            if (_not_4) {
+              this.error((label + list), r_2, SeMLPackage.Literals.RELATION__OBJ);
+              ok = false;
+            }
+          }
+        }
+      }
+      for (final Assignment a_2 : assignmentsList) {
+        {
+          final String i_1 = a_2.getInd().getName();
+          final List<String> list = Arrays.<String>asList(i_1);
+          boolean _contains_1 = authorizatedRels.contains(list);
+          boolean _not_4 = (!_contains_1);
+          if (_not_4) {
+            this.error(((label + i_1) + " = literal"), a_2, SeMLPackage.Literals.ASSIGNMENT__IND);
+            ok = false;
+          }
+        }
+      }
+      if ((!ok)) {
+        Console.ErrPairLn(local_log, "Aborted. Unauthorized relation(s).");
+        return false;
+      }
+    }
+    String fixAll = null;
+    HashSet<FeaturePlace> fixAllEOs = new HashSet<FeaturePlace>();
+    boolean hasErrors = false;
+    Set<Map.Entry<String, ArrayList<Problem>>> _entrySet = SeMLValidator.problems.entrySet();
+    for (final Map.Entry<String, ArrayList<Problem>> ps : _entrySet) {
+      {
+        Import _last = IterableExtensions.<Import>last(m.getImports());
+        final FeaturePlace DefaultFP = new FeaturePlace(_last, SeMLPackage.Literals.IMPORT__NAME);
+        final FeaturePlace f = SeMLValidator.visibilityMap.getOrDefault(ps.getKey(), DefaultFP);
+        int cnt = 0;
+        ArrayList<Problem> _value = ps.getValue();
+        for (final Problem p : _value) {
+          {
+            if ((Objects.equal(p.type, Problem.TypeE.SOLVED) && (!fixAllEOs.contains(f)))) {
+              fixAllEOs.add(f);
+              fixAll = "F";
+            } else {
+              fixAll = "";
+            }
+            final Problem.LevelE _switchValue = p.level;
+            if (_switchValue != null) {
+              switch (_switchValue) {
+                case ERROR:
+                  int _plusPlus = cnt++;
+                  this.error(p.GetLabel(), f.eo, f.sf, f.index, SeMLValidator.FIX_PROBLEM, ps.getKey(), String.valueOf(_plusPlus), fixAll);
+                  hasErrors = true;
+                  break;
+                case WARNING:
+                  int _plusPlus_1 = cnt++;
+                  this.warning(p.GetLabel(), f.eo, f.sf, f.index, SeMLValidator.FIX_PROBLEM, ps.getKey(), String.valueOf(_plusPlus_1), fixAll);
+                  break;
+                case INFO:
+                  int _plusPlus_2 = cnt++;
+                  this.info(p.GetLabel(), f.eo, f.sf, f.index, SeMLValidator.FIX_PROBLEM, ps.getKey(), String.valueOf(_plusPlus_2), fixAll);
+                  break;
+                default:
+                  break;
+              }
+            }
+          }
+        }
+      }
+    }
+    if (hasErrors) {
+      Console.OutPairLn(local_log, "Done. Model has errors.");
+      return false;
+    }
+    Console.OutPairLn(local_log, "Done. Model is valid.");
     return true;
   }
   
   /**
-   * Very basic function to dispatch the issue to its agent (only implemented for non-meta individuals)
+   * Check characteristic imposed restrictions, individual restrictions & Reports
+   * @return true if excess errors exist
    */
-  public void RouteIssueToAgent(final MainModel m, final String issue, final List<Individual> individualsList, final List<Relation> relationsList, final int type) {
-    for (final Individual i : individualsList) {
-      boolean _contains = issue.contains(i.getName());
+  public static boolean CheckModelRestrictions(final boolean skipFullTest, final HashSet<List<String>> authorizatedRels) {
+    SeMLValidator.nextProblem = null;
+    final MainModel m = SeMLValidator.globalMainModel;
+    HashMap<String, ArrayList<Problem>> _hashMap = new HashMap<String, ArrayList<Problem>>();
+    SeMLValidator.problems = _hashMap;
+    Set<OWLClass> _GetRequiredCharacteristics = CharacteristicsSolver.GetRequiredCharacteristics();
+    for (final OWLClass ch : _GetRequiredCharacteristics) {
+      {
+        final ArrayList<Problem> ps = MasterOntology.CheckModelRestrictions(ch);
+        boolean _isEmpty = ps.isEmpty();
+        boolean _not = (!_isEmpty);
+        if (_not) {
+          if (skipFullTest) {
+            boolean _FindNextProblem = SeMLValidator.FindNextProblem(ps);
+            if (_FindNextProblem) {
+              return false;
+            }
+          }
+          SeMLValidator.problems.put(MasterOntology.cachedIRIs.get(ch.getIRI().toString()), ps);
+        }
+      }
+    }
+    final Function1<Map.Entry<String, ArrayList<Problem>>, Boolean> _function = (Map.Entry<String, ArrayList<Problem>> e) -> {
+      final Function1<Problem, Boolean> _function_1 = (Problem p) -> {
+        return Boolean.valueOf(Objects.equal(p.type, Problem.TypeE.CHAR_EXCESS));
+      };
+      return Boolean.valueOf(IterableExtensions.<Problem>exists(e.getValue(), _function_1));
+    };
+    boolean _exists = IterableExtensions.<Map.Entry<String, ArrayList<Problem>>>exists(SeMLValidator.problems.entrySet(), _function);
+    if (_exists) {
+      return true;
+    }
+    for (final Individual i : SeMLValidator.activeInds) {
+      {
+        ArrayList<Problem> ps = MasterOntology.CheckRelationRestrictions(authorizatedRels, i.getIri());
+        if (skipFullTest) {
+          boolean _FindNextProblem = SeMLValidator.FindNextProblem(ps);
+          if (_FindNextProblem) {
+            return false;
+          }
+        }
+        MasterOntology.CheckReports(i.getIri(), ps);
+        boolean _isEmpty = ps.isEmpty();
+        boolean _not = (!_isEmpty);
+        if (_not) {
+          SeMLValidator.problems.put(i.getName(), ps);
+        }
+      }
+    }
+    return false;
+  }
+  
+  /**
+   * Searches for a SOLVED Problem
+   * @return true if it is found
+   */
+  public static boolean FindNextProblem(final ArrayList<Problem> ps) {
+    for (final Problem p : ps) {
+      boolean _equals = Objects.equal(p.type, Problem.TypeE.SOLVED);
+      if (_equals) {
+        SeMLValidator.nextProblem = p;
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  /**
+   * Very basic function to dispatch the issue to its agent (uses every visible individual)
+   */
+  public void RouteIssueToAgent(final MainModel m, final String issue, final int type) {
+    Set<Map.Entry<String, FeaturePlace>> _entrySet = SeMLValidator.visibilityMap.entrySet();
+    for (final Map.Entry<String, FeaturePlace> i : _entrySet) {
+      boolean _contains = issue.contains(i.getKey());
       if (_contains) {
-        this.DisplayAnomalies((" (related with this individual):\n" + issue), i, SeMLPackage.Literals.ANY_INDIVIDUAL__NAME, type);
+        this.DisplayAnomalies((" (related with this individual):\n" + issue), i.getValue().eo, i.getValue().sf, i.getValue().index, type);
         return;
       }
     }
-    this.DisplayAnomalies((":\n" + issue), IterableExtensions.<Import>last(m.getImports()), SeMLPackage.Literals.IMPORT__NAME, type);
+    this.DisplayAnomalies((":\n" + issue), IterableExtensions.<Import>last(m.getImports()), SeMLPackage.Literals.IMPORT__NAME, ValidationMessageAcceptor.INSIGNIFICANT_INDEX, type);
   }
   
-  public void DisplayAnomalies(final String s, final EObject eo, final EStructuralFeature eRef, final int type) {
-    final String local_log = (SeMLValidator.local_log + "[checkModel] ");
+  public void DisplayAnomalies(final String s, final EObject eo, final EStructuralFeature eRef, final int index, final int type) {
     switch (type) {
       case 1:
-        this.error(("Anomaly detected" + s), eo, eRef);
+        this.error(("Anomaly" + s), eo, eRef, index);
         break;
       case 2:
-        this.error(("Error inferred" + s), eo, eRef);
+        this.error(("Error" + s), eo, eRef, index);
         break;
       case 3:
-        this.warning(("Warning inferred" + s), eo, eRef);
+        this.warning(("Warning" + s), eo, eRef, index);
         break;
       case 4:
-        this.warning(("Information inferred" + s), eo, eRef);
+        this.info(("Information" + s), eo, eRef, index);
         break;
     }
   }
@@ -365,9 +501,15 @@ public class SeMLValidator extends AbstractSeMLValidator {
    * 
    * @param contextResource		Absolute file path of the ImportsModel
    * @param importURIAsString		Absolute file path of the ImportsModel
-   * @return	the ImportModel or null in case of failure
+   * @return	false if model was untouched
    */
-  public ImportModel getImportModel(final Resource contextResource, final String importURIAsString) {
+  public boolean GetImportModel(final Resource contextResource, final String importURIAsString) {
+    boolean modelChanged = false;
+    if ((SeMLValidator.globalImportModel == null)) {
+      modelChanged = true;
+    } else {
+      modelChanged = false;
+    }
     URI _createURI = null;
     if (URI.class!=null) {
       _createURI=URI.createURI(importURIAsString);
@@ -392,7 +534,24 @@ public class SeMLValidator extends AbstractSeMLValidator {
     if (contextResourceSet!=null) {
       _resource=contextResourceSet.getResource(resolvedURI, true);
     }
-    final Resource resource = _resource;
+    Resource resource = _resource;
+    if ((resource == null)) {
+      String _absolutePath = Ontologies.GENfile.getAbsolutePath();
+      String _plus = ("Error loading keywords file: " + _absolutePath);
+      this.error(_plus, IterableExtensions.<Import>last(SeMLValidator.globalMainModel.getImports()), SeMLPackage.Literals.IMPORT__NAME);
+      return true;
+    }
+    boolean _equals = Long.valueOf(resource.getTimeStamp()).equals(Long.valueOf(this.importDate));
+    boolean _not = (!_equals);
+    if (_not) {
+      resource.unload();
+      Resource _resource_1 = null;
+      if (contextResourceSet!=null) {
+        _resource_1=contextResourceSet.getResource(resolvedURI, true);
+      }
+      resource = _resource_1;
+      modelChanged = true;
+    }
     TreeIterator<EObject> _allContents = null;
     if (resource!=null) {
       _allContents=resource.getAllContents();
@@ -401,7 +560,8 @@ public class SeMLValidator extends AbstractSeMLValidator {
     if (_allContents!=null) {
       _head=IteratorExtensions.<EObject>head(_allContents);
     }
-    return ((ImportModel) _head);
+    SeMLValidator.globalImportModel = ((ImportModel) _head);
+    return modelChanged;
   }
   
   /**
@@ -440,7 +600,8 @@ public class SeMLValidator extends AbstractSeMLValidator {
     Arrays.sort(pathslist);
     Ontologies.populatePaths(m);
     if ((Ontologies.GENfile.exists() && Ontologies.GENfile.isFile())) {
-      int _compareTo = Long.valueOf(mostRecentFile).compareTo(Long.valueOf(Ontologies.GENfile.lastModified()));
+      this.importDate = Ontologies.GENfile.lastModified();
+      int _compareTo = Long.valueOf(mostRecentFile).compareTo(Long.valueOf(this.importDate));
       boolean _lessThan = (_compareTo < 0);
       if (_lessThan) {
         try {
@@ -449,7 +610,7 @@ public class SeMLValidator extends AbstractSeMLValidator {
           final BufferedReader br = new BufferedReader(_inputStreamReader);
           String line = br.readLine();
           cnt = 0;
-          int SourceFilesNo = (Integer.valueOf(line.substring(Ontologies.GENfirstline.length()))).intValue();
+          int SourceFilesNo = Integer.parseInt(line.substring(Ontologies.GENfirstline.length()));
           boolean different = false;
           int _size = ((List<String>)Conversions.doWrapArray(pathslist)).size();
           boolean _equals = (_size == SourceFilesNo);
@@ -468,34 +629,35 @@ public class SeMLValidator extends AbstractSeMLValidator {
                 br.close();
                 return true;
               } else {
-                System.out.println((local_log + "Master Ontology file was deleted. Creating a new one..."));
+                Console.OutPairLn(local_log, "Master Ontology file was deleted. Creating a new one...");
               }
             } else {
-              System.out.println((local_log + "Ontology sources have changed. Updating DSL keywords..."));
+              Console.OutPairLn(local_log, "Ontology sources have changed. Updating DSL keywords...");
             }
           } else {
-            System.out.println((local_log + "Number of ontology sources has changed. Updating DSL keywords..."));
+            Console.OutPairLn(local_log, "Number of ontology sources has changed. Updating DSL keywords...");
           }
           br.close();
         } catch (final Throwable _t) {
           if (_t instanceof Exception) {
             final Exception e = (Exception)_t;
             String _message = e.getMessage();
-            String _plus = ((local_log + "Error while reading generated file: ") + _message);
-            System.out.println(_plus);
-            System.out.println((local_log + "Repairing file..."));
+            String _plus = ("Error while reading generated file: " + _message);
+            Console.OutPairLn(local_log, _plus);
+            Console.OutPairLn(local_log, "Repairing file...");
           } else {
             throw Exceptions.sneakyThrow(_t);
           }
         }
       } else {
-        System.out.println((local_log + "Changes in ontologies detected. Updating DSL keywords..."));
+        Console.OutPairLn(local_log, "Changes in ontologies detected. Updating DSL keywords...");
       }
     } else {
-      System.out.println((local_log + "Importing DSL keywords for the first time..."));
+      Console.OutPairLn(local_log, "Importing DSL keywords for the first time...");
     }
     try {
       Ontologies.ParseOntologies(pathslist);
+      this.importDate = Ontologies.GENfile.lastModified();
     } catch (final Throwable _t_1) {
       if (_t_1 instanceof IOException) {
         final IOException e_1 = (IOException)_t_1;

@@ -16,7 +16,7 @@ import org.eclipse.xtext.resource.EObjectAtOffsetHelper;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultHighlightingConfiguration;
 import org.eclipse.xtext.util.CancelIndicator;
-import org.xtext.seml.seML.MetaIndividual;
+import org.xtext.seml.seML.StaticIndividual;
 import org.xtext.seml.services.SeMLGrammarAccess;
 
 @SuppressWarnings("all")
@@ -39,13 +39,11 @@ public class SeMLSemanticHighlightingCalculator extends DefaultSemanticHighlight
         if (_equals) {
           acceptor.addPosition(node.getOffset(), node.getLength(), DefaultHighlightingConfiguration.KEYWORD_ID);
         }
-        if ((Objects.equal(node.getGrammarElement(), this.ga.getIndividualAccess().getClsComponentCrossReference_1_0()) || Objects.equal(node.getGrammarElement(), this.ga.getIndividualAccess().getClsComponentCrossReference_2_1_0()))) {
-          acceptor.addPosition(node.getOffset(), node.getLength(), DefaultHighlightingConfiguration.NUMBER_ID);
-        }
-        if ((Objects.equal(node.getGrammarElement(), this.ga.getRelationAccess().getInstance1AnyIndividualCrossReference_0_0()) || Objects.equal(node.getGrammarElement(), this.ga.getRelationAccess().getInstance2AnyIndividualCrossReference_2_0()))) {
+        EObject _grammarElement_1 = node.getGrammarElement();
+        if ((_grammarElement_1 instanceof CrossReference)) {
           final EObject target = this.helper.resolveElementAt(resource, node.getOffset());
-          if ((target instanceof MetaIndividual)) {
-            acceptor.addPosition(node.getOffset(), node.getLength(), DefaultHighlightingConfiguration.TASK_ID);
+          if ((target instanceof StaticIndividual)) {
+            acceptor.addPosition(node.getOffset(), node.getLength(), DefaultHighlightingConfiguration.NUMBER_ID);
           }
         }
       }

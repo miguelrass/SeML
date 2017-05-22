@@ -3,24 +3,31 @@
  */
 package org.xtext.seml.ui.quickfix
 
-import org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider
-import org.xtext.seml.validation.SeMLValidator
-import org.eclipse.xtext.ui.editor.quickfix.Fix
-import org.eclipse.xtext.validation.Issue
-import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor
-import org.eclipse.xtext.ui.editor.model.edit.ISemanticModification
-import org.eclipse.xtext.ui.editor.model.edit.IModificationContext
+import java.util.ArrayList
 import org.eclipse.emf.ecore.EObject
-import org.xtext.seml.seML.Model
-import org.xtext.seml.seML.SeMLFactory
-import org.xtext.seml.seML.Import
-import org.eclipse.emf.common.util.EList
-import java.util.Iterator
 import org.eclipse.xtext.EcoreUtil2
-import org.xtext.seml.seML.MainModel
+import org.eclipse.xtext.ui.editor.model.IXtextDocument
+import org.eclipse.xtext.ui.editor.model.edit.IModificationContext
+import org.eclipse.xtext.ui.editor.model.edit.ISemanticModification
+import org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider
+import org.eclipse.xtext.ui.editor.quickfix.Fix
+import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor
+import org.eclipse.xtext.validation.Issue
+import org.rass.ontologies.Anomaly
+import org.rass.ontologies.MasterOntology
 import org.xtext.seml.seML.Relation
+import org.xtext.seml.seML.SeMLFactory
+import org.xtext.seml.seML.SeMLPackage
+import org.xtext.seml.validation.SeMLValidator
+import org.rass.restrictions.Problem.TypeE
+import java.util.List
 import org.xtext.seml.seML.Individual
 import org.xtext.seml.seML.ObjectProperty
+import java.util.Arrays
+import org.xtext.seml.seML.Assignment
+import org.xtext.seml.seML.Value
+import org.xtext.seml.seML.FloatVal
+import java.util.HashSet
 
 /**
  * Custom quickfixes.
@@ -28,71 +35,220 @@ import org.xtext.seml.seML.ObjectProperty
  * See https://www.eclipse.org/Xtext/documentation/310_eclipse_support.html#quick-fixes
  */
 class SeMLQuickfixProvider extends DefaultQuickfixProvider {
+	
+	private static final String local_log = "Quickfix Log: ";
 
-//	@Fix(SeMLValidator.INVALID_NAME)
-//	def capitalizeName(Issue issue, IssueResolutionAcceptor acceptor) {
-//		acceptor.accept(issue, 'Capitalize name', 'Capitalize the name.', 'upcase.png') [
-//			context |
-//			val xtextDocument = context.xtextDocument
-//			val firstLetter = xtextDocument.get(issue.offset, 1)
-//			xtextDocument.replace(issue.offset, 1, firstLetter.toUpperCase)
-//		]
-//	}
 
-//	@Fix(SeMLValidator.GET_AXIOMS)
-//	def get_Axioms(Issue issue, IssueResolutionAcceptor acceptor) {
-//		/*acceptor.accept(issue, 'Get Axioms', 'Get Classes and DataProperties of Ontology'+issue.data.get(0), '') [
-//			context |
-//			val xtextDocument = context.xtextDocument
-//			//val firstLetter = xtextDocument.get(issue.offset + issue.length, 1)
-//			xtextDocument.replace(issue.offset + issue.length, 0, '\n' + issue.data.get(1))
-//		]*/
-//		acceptor.accept(issue, 'Import Axioms', 'Import Classes and DataProperties from Ontology', null, new ISemanticModification() {
-//	        override apply(EObject element, IModificationContext context) {
-//	        	
-//	        	var Import currentImport = element as Import; 
-//	        	val MainModel model = EcoreUtil2.getContainerOfType(currentImport, MainModel);
-//	            val Imported newImported = SeMLFactory.eINSTANCE.createImported();
-//	            newImported.importURI = issue.data.get(0);
-//	            newImported.name = currentImport.name;
-//	            model.imports.remove(currentImport);
-//	            model.importeds.add(newImported);
-//	            //(element as Include).setSuperType(newInclude); Relacionar com o componente em causa a ser validado (=element)
+	
+	//Generate smart solution
+	def fixModel(Issue issue, IssueResolutionAcceptor acceptor) {
+		
+		val String local_log = "Smart Quickfix Log: ";
+	
+		acceptor.accept(issue, "Try to generate multiple solutions", 'no description', null, new ISemanticModification() {
+	        override apply(EObject element, IModificationContext context) { 
+
+				while(true){
+					//Find next error
+					SeMLValidator.CheckModelRestrictions(true, new HashSet<List<String>>());
+					if(SeMLValidator.nextProblem === null) {System.out.println(local_log + "Done. No more solutions."); return;}
+	
+					fixProblem(SeMLValidator.nextProblem.solutions.get(0)); //Fix next error
+					
+					//Each solution was already tested for consistency 
+				}
+	        }
+    	});
+	}
+	
+	//Auxiliary method to fix one problem
+	/*def fixProblem(ModelSolution mS, IXtextDocument xtextDocument, Issue issue) {
+	        	    
+    	//Create individuals
+    	for(i : mS.newIndividuals){
+    		
+    		val intersectionsList = i.getClassIntersections;
+    		val Individual newInd = SeMLFactory.eINSTANCE.createIndividual();
+    		newInd.name = i.name;
+    		newInd.cls.addAll(intersectionsList.get(0));
+    		//Add optional class unions
+    		for(var int j = 1; j<intersectionsList.size; j++){
+    			val newClsUnion = SeMLFactory.eINSTANCE.createAlterantiveClsUnion();
+    			newClsUnion.cls.addAll(intersectionsList.get(j));
+    			newInd.alternative.add(newClsUnion);
+    		}
+    		SeMLValidator.globalMainModel.sentences.add(newInd);
+			//Add individual to master ontology for forthcoming validations
+			MasterOntology.addIndividual(newInd);
+			MasterOntology.cacheFixedIRI(i.name);
+    	}*/
+    	
+    	//Create relations
+    	/*if(!mS.relationTriples.empty){
+    		
+    		// Create and populate list with all the imported object properties' IRIs from the keywords file
+			val ArrayList<String> shortObjPropIRIList = new ArrayList<String>();
+			val objProperties = SeMLValidator.globalImportModel.objectProperties;
+			objProperties.forEach(o | shortObjPropIRIList.add(o.getName()));
+
+			// Create and populate list with all the imported meta individual IRIs from the keywords file, and normal individual IRIs
+			val ArrayList<String> shortAnyIndividualIRIList = new ArrayList<String>();
+			val anyIndividuals = new ArrayList<AnyIndividual>();
+			anyIndividuals.addAll(EcoreUtil2.getAllContentsOfType(SeMLValidator.globalMainModel, Individual)); 
+			anyIndividuals.addAll(EcoreUtil2.getAllContentsOfType(SeMLValidator.globalImportModel, MetaIndividual)); 
+			anyIndividuals.forEach(i | shortAnyIndividualIRIList.add(i.name));
+
+			//Iterate every relation and create it
+        	for(var int i=0; i<mS.relationTriples.length; i+=3){
+        		
+        		val int index1 = shortAnyIndividualIRIList.indexOf(mS.relationTriples.get(i));
+        		val int index2 = shortObjPropIRIList.indexOf(mS.relationTriples.get(i+1));
+        		val int index3 = shortAnyIndividualIRIList.indexOf(mS.relationTriples.get(i+2));
+        		if(index1 == -1){ System.err.println(local_log + "Internal Error: First individual not found"); return;} //internal error
+        		if(index2 == -1){ System.err.println(local_log + "Internal Error: Obj. Property not found"); return;} //internal error
+        		if(index3 == -1){ System.err.println(local_log + "Internal Error: Second individual not found"); return;} //internal error
+        		
+        		val Relation newRel = SeMLFactory.eINSTANCE.createRelation(); 
+				///newRel.instance1 = anyIndividuals.get(index1);						
+				newRel.obj = objProperties.get(index2);
+				///newRel.instance2 = anyIndividuals.get(index3);
+				SeMLValidator.globalMainModel.sentences.add(newRel);
+				//Add relation to master ontology for forthcoming validations
+				MasterOntology.addRelation(newRel);
+    		}
+    	}
+		
+	}*/
+	
+	@Fix(SeMLValidator.FIX_PROBLEM)
+	def fixDispatcher(Issue issue, IssueResolutionAcceptor acceptor) {
+		
+		val int no = Integer.parseInt(issue.data.get(1));
+		val p = SeMLValidator.problems.get(issue.data.get(0)).get(no);
+			
+		//Create fix for each solution
+		for(s : p.solutions) throwFix(issue, acceptor, s);
+
+		//Fix entire model
+		if(issue.data.get(2).equals("F")) fixModel(issue, acceptor);
+		
+	}
+	
+	//Generate particular solution
+	def throwFix(Issue issue, IssueResolutionAcceptor acceptor, List<String> sol) {
+
+		acceptor.accept(issue, "Add: " + sol.toString , 'no description', null, new ISemanticModification() {
+	        override apply(EObject element, IModificationContext context) { 
+				fixProblem(sol);
+	        }
+    	});
+	}
+	
+	def void fixProblem(List<String> sol){
+		
+		//Decide whether to create an assignment or a relation
+		if(sol.length == 2){
+			val Assignment a = SeMLFactory.eINSTANCE.createAssignment();
+			a.ind = SeMLValidator.quickfixMap.get(sol.get(0)) as Individual;
+			val s1 = sol.get(1); val ss1 = s1.substring(1); val fac = SeMLFactory.eINSTANCE; //shortcuts
+			switch (sol.get(1).charAt(0).toString) { //converted back to string because of Xtend  
+				case 's': {val v = fac.createStringVal(); 	v.^val = ss1;							a.literal = v;}
+				case 'b': {val v = fac.createBoolVal(); 	v.^val = s1.charAt(1).toString == 't';	a.literal = v;}
+				case 'f': {val v = fac.createFloatVal(); 	v.^val = Double.parseDouble(ss1);		a.literal = v;}
+				case 'i': {val v = fac.createIntVal(); 		v.^val = Integer.parseInt(ss1);			a.literal = v;}
+			}
+			
+			SeMLValidator.globalMainModel.sentences.add(a); //add sentence
+			MasterOntology.AddDPRelations(Arrays.asList(a)); //Add relation to master ontology for forthcoming validations
+			
+		}else{
+			
+			val i1 = SeMLValidator.quickfixMap.get(sol.get(0)) as Individual;
+			val obj = SeMLValidator.quickfixMap.get(sol.get(1)) as ObjectProperty;
+			
+			for(s : SeMLValidator.globalMainModel.sentences){ //Add individuals to existing relation
+				if(s instanceof Relation){
+					val r = s as Relation;
+					if(r.ind1 === i1 && r.obj === obj){
+						for(var i=2; i<sol.length; i++) r.ind2.add(SeMLValidator.quickfixMap.get(sol.get(i)) as Individual);
+						MasterOntology.AddOPRelations(Arrays.asList(r)); //Add relation to master ontology for forthcoming validations
+						return;
+					}
+				} 
+			}
+			
+			//Create new relations sentence
+			val Relation r = SeMLFactory.eINSTANCE.createRelation();
+			r.ind1 = i1; r.obj  = obj;
+			for(var i=2; i<sol.length; i++) r.ind2.add(SeMLValidator.quickfixMap.get(sol.get(i)) as Individual);
+
+			SeMLValidator.globalMainModel.sentences.add(r); //add sentence
+			MasterOntology.AddOPRelations(Arrays.asList(r)); //Add relation to master ontology for forthcoming validations
+		}
+	}
+	
+
+	
+//	@Fix(SeMLValidator.FIX_CHARACTERISTICS)
+//	def fixCharacteristics(Issue issue, IssueResolutionAcceptor acceptor) {
+//		acceptor.accept(issue, 'Insert missing characteristic options', 'no description', null, new ISemanticModification() {
+//	        override apply(EObject element, IModificationContext context) {        	
+//	        	val xtextDocument = context.xtextDocument
+//	        	val String s = issue.data.get(0);
+//	        	xtextDocument.replace(issue.offset + issue.length, 0, s);
 //	        }
 //    	});
 //	}
+//	
+
 	
-/* 	@Fix(SeMLValidator.FIX_GENERATED)
-	def fix_GeneratedFileName(Issue issue, IssueResolutionAcceptor acceptor) {
-		acceptor.accept(issue, 'Fix generated filename', 'no description', null, new ISemanticModification() {
+	/*@Fix(SeMLValidator.FIX_ALTERNATIVE)
+	def fixAlternative(Issue issue, IssueResolutionAcceptor acceptor) {
+		acceptor.accept(issue, 'Use this class intersection instead', 'no description', null, new ISemanticModification() {
 	        override apply(EObject element, IModificationContext context) {        	
-	        	var Import currentImport = element as Import; 
-	        	currentImport.importURI = issue.data.get(0);
+
+	        	val Individual currentIndividual = element.eContainer as Individual; 
+	        	val AlterantiveClsUnion currentAlternative = element as AlterantiveClsUnion; 
+	        	
+	        	//Check if name of current individual was automatically generated
+	        	if(currentIndividual.name.indexOf(currentIndividual.cls.get(0).name)==0){
+	        		var boolean isGenerated = true;
+	        		
+	        		//Check if name starts with class name and ends with an ordinal number
+	        		val String ordinal = currentIndividual.name.substring(currentIndividual.cls.get(0).name.length);
+	        		if(ordinal.length != 0){
+	        			for(var int i=0;i<ordinal.length; i++){
+		        			if(!Character.isDigit(ordinal.charAt(i))) isGenerated = false;
+		        		}
+	        			
+	        			if(isGenerated){
+	        				//Replace old generated name with new generated name
+	        				currentIndividual.name = getNextIndIRI(currentAlternative.cls.get(0).name);
+	        				
+				        	//Force reference update when translating the AST
+							for(r :EcoreUtil2.getAllContentsOfType(SeMLValidator.globalMainModel, Relation)){
+								if(r.instance1 == currentIndividual){r.instance1=null; r.instance1=currentIndividual;}
+								if(r.instance2 == currentIndividual){r.instance2=null; r.instance2=currentIndividual;}
+							}
+	        			}
+	        		} 
+	        	}
+
+	        	//Replace current Class union (clear old and insert new classes)
+	        	currentIndividual.eSet(SeMLPackage.Literals.INDIVIDUAL__CLS, currentAlternative.cls)
+	        	currentIndividual.alternative.clear; //Clear alternatives
+	        }
+    	});
+    	
+    	acceptor.accept(issue, 'Remove all alternatives', 'no description', null, new ISemanticModification() {
+	        override apply(EObject element, IModificationContext context) {        	
+	        	
+	        	//val Individual currentIndividual = element.eContainer as Individual; 
+	        	//currentIndividual.alternative.clear; //Clear alternatives
+
 	        }
     	});
 	}*/
-	
-	@Fix(SeMLValidator.GENERATE_SOLUTION)
-	def fix_GeneratedFileName(Issue issue, IssueResolutionAcceptor acceptor) {
-		acceptor.accept(issue, 'Try to generate solution', 'no description', null, new ISemanticModification() {
-	        override apply(EObject element, IModificationContext context) {        	
-	        	val xtextDocument = context.xtextDocument
-	        	val String s = issue.data.get(0);
-	        	xtextDocument.replace(issue.offset + issue.length, 0, "\n" + s.substring(0,s.length()-1));
-	        }
-    	});
-	}
-	
-	@Fix(SeMLValidator.USE_SOLUTION)
-	def GenerateUseSolution(Issue issue, IssueResolutionAcceptor acceptor) {
-		acceptor.accept(issue, 'Insert missing characteristic options', 'no description', null, new ISemanticModification() {
-	        override apply(EObject element, IModificationContext context) {        	
-	        	val xtextDocument = context.xtextDocument
-	        	val String s = issue.data.get(0);
-	        	xtextDocument.replace(issue.offset + issue.length, 0, s);
-	        }
-    	});
-	}
 	
 
 }

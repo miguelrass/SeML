@@ -1,0 +1,769 @@
+<?xml version="1.0"?>
+<Ontology xmlns="http://www.w3.org/2002/07/owl#"
+     xml:base="esrg:basis"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     ontologyIRI="esrg:basis">
+    <Prefix name="" IRI="esrg:basis"/>
+    <Prefix name="owl" IRI="http://www.w3.org/2002/07/owl#"/>
+    <Prefix name="rdf" IRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+    <Prefix name="xml" IRI="http://www.w3.org/XML/1998/namespace"/>
+    <Prefix name="xsd" IRI="http://www.w3.org/2001/XMLSchema#"/>
+    <Prefix name="rdfs" IRI="http://www.w3.org/2000/01/rdf-schema#"/>
+    <Import>esrg:c</Import>
+    <Declaration>
+        <Class IRI="#B1"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#p1"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#P"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#example"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#D1"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#c1.3"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ChA3"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#X"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#R1"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#P1"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#x3.1"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#O3"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#z1"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#D"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#C2"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#O"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#p2"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ChA4"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#a1.1"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#O2.2"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#z2"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#O2"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#C"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#A1"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#R"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#D3"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#B3"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#C1"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Z2"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Z"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#X2"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#c1.1"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ChA1"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#O2.1"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#B"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#O1"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#X3"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#x3.3"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#O3.2"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#B2"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#isConnectedTo"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#D2"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Z1"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#X1"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#c1.2"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ChA2"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#R2"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Example"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#A"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#P2"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#x3.2"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#O3.1"/>
+    </Declaration>
+    <EquivalentClasses>
+        <Class IRI="#Z1"/>
+        <ObjectIntersectionOf>
+            <Class IRI="#Z2"/>
+            <DataSomeValuesFrom>
+                <DataProperty IRI="esrg:upper#hasValue"/>
+                <DataOneOf>
+                    <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#integer">5</Literal>
+                </DataOneOf>
+            </DataSomeValuesFrom>
+        </ObjectIntersectionOf>
+    </EquivalentClasses>
+    <SubClassOf>
+        <Class IRI="#A"/>
+        <Class IRI="esrg:upper#Property"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#A1"/>
+        <Class IRI="#A"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#A1"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="esrg:upper#hasValue"/>
+            <DataOneOf>
+                <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">A</Literal>
+                <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">B</Literal>
+                <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">C</Literal>
+            </DataOneOf>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#B"/>
+        <Class IRI="esrg:upper#Property"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#B1"/>
+        <Class IRI="#B"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#B1"/>
+        <DataAllValuesFrom>
+            <DataProperty IRI="esrg:upper#hasValue"/>
+            <DatatypeRestriction>
+                <Datatype abbreviatedIRI="xsd:double"/>
+                <FacetRestriction facet="http://www.w3.org/2001/XMLSchema#minInclusive">
+                    <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#double">1.0</Literal>
+                </FacetRestriction>
+                <FacetRestriction facet="http://www.w3.org/2001/XMLSchema#maxInclusive">
+                    <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#double">10.0</Literal>
+                </FacetRestriction>
+            </DatatypeRestriction>
+        </DataAllValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#B2"/>
+        <Class IRI="#B"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#B2"/>
+        <DataAllValuesFrom>
+            <DataProperty IRI="esrg:upper#hasValue"/>
+            <DataIntersectionOf>
+                <Datatype abbreviatedIRI="xsd:negativeInteger"/>
+                <DataComplementOf>
+                    <DataOneOf>
+                        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#integer">-5</Literal>
+                    </DataOneOf>
+                </DataComplementOf>
+            </DataIntersectionOf>
+        </DataAllValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#B3"/>
+        <Class IRI="#B"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#B3"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="esrg:upper#hasValue"/>
+            <DataUnionOf>
+                <Datatype abbreviatedIRI="xsd:positiveInteger"/>
+                <DataOneOf>
+                    <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">word</Literal>
+                </DataOneOf>
+            </DataUnionOf>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#C"/>
+        <Class IRI="esrg:upper#Process"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#C1"/>
+        <Class IRI="#C"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#C2"/>
+        <Class IRI="#C"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#C2"/>
+        <ObjectIntersectionOf>
+            <ObjectMinCardinality cardinality="2">
+                <ObjectProperty IRI="esrg:upper#uses"/>
+                <Class IRI="#C1"/>
+            </ObjectMinCardinality>
+            <ObjectMaxCardinality cardinality="4">
+                <ObjectProperty IRI="esrg:upper#uses"/>
+                <Class IRI="#C1"/>
+            </ObjectMaxCardinality>
+        </ObjectIntersectionOf>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ChA1"/>
+        <Class IRI="esrg:upper#Goal"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ChA1"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="esrg:upper#requires"/>
+            <ObjectUnionOf>
+                <Class IRI="#ChA2"/>
+                <Class IRI="#ChA3"/>
+            </ObjectUnionOf>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ChA1"/>
+        <ObjectExactCardinality cardinality="1">
+            <ObjectProperty IRI="esrg:upper#requires"/>
+            <ObjectUnionOf>
+                <Class IRI="#ChA3"/>
+                <Class IRI="#ChA4"/>
+            </ObjectUnionOf>
+        </ObjectExactCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ChA2"/>
+        <Class IRI="esrg:upper#Feature"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ChA2"/>
+        <ObjectMaxCardinality cardinality="0">
+            <ObjectProperty IRI="esrg:upper#demands"/>
+            <ObjectSomeValuesFrom>
+                <ObjectProperty IRI="esrg:upper#uses"/>
+                <Class IRI="#O2"/>
+            </ObjectSomeValuesFrom>
+        </ObjectMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ChA3"/>
+        <Class IRI="esrg:upper#Feature"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ChA4"/>
+        <Class IRI="esrg:upper#Feature"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#D"/>
+        <Class IRI="esrg:upper#Process"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#D1"/>
+        <Class IRI="#D"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#D1"/>
+        <ObjectMinCardinality cardinality="0">
+            <ObjectProperty IRI="esrg:upper#uses"/>
+            <Class IRI="#D2"/>
+        </ObjectMinCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#D2"/>
+        <Class IRI="#D"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#D3"/>
+        <Class IRI="#D"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#D3"/>
+        <ObjectExactCardinality cardinality="1">
+            <ObjectProperty IRI="esrg:upper#uses"/>
+            <ObjectIntersectionOf>
+                <Class IRI="#D1"/>
+                <ObjectSomeValuesFrom>
+                    <ObjectProperty IRI="esrg:upper#uses"/>
+                    <Class IRI="#D2"/>
+                </ObjectSomeValuesFrom>
+            </ObjectIntersectionOf>
+        </ObjectExactCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Example"/>
+        <Class IRI="esrg:upper#Entity"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Example"/>
+        <ObjectUnionOf>
+            <ObjectExactCardinality cardinality="0">
+                <ObjectProperty IRI="esrg:upper#uses"/>
+                <Class IRI="#A1"/>
+            </ObjectExactCardinality>
+            <ObjectExactCardinality cardinality="3">
+                <ObjectProperty IRI="esrg:upper#uses"/>
+                <Class IRI="#A1"/>
+            </ObjectExactCardinality>
+        </ObjectUnionOf>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Example"/>
+        <ObjectMinCardinality cardinality="1">
+            <ObjectProperty IRI="esrg:upper#uses"/>
+            <ObjectUnionOf>
+                <Class IRI="#A1"/>
+                <Class IRI="#B"/>
+                <Class IRI="#C2"/>
+                <Class IRI="#D"/>
+                <Class IRI="#O1"/>
+                <Class IRI="#P1"/>
+                <Class IRI="#R1"/>
+                <Class IRI="#R2"/>
+                <Class IRI="#X1"/>
+                <Class IRI="#Z2"/>
+            </ObjectUnionOf>
+        </ObjectMinCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#O"/>
+        <Class IRI="esrg:upper#Entity"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#O1"/>
+        <Class IRI="#O"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#O1"/>
+        <ObjectUnionOf>
+            <ObjectExactCardinality cardinality="2">
+                <ObjectProperty IRI="esrg:upper#uses"/>
+                <Class IRI="#O2"/>
+            </ObjectExactCardinality>
+            <ObjectExactCardinality cardinality="2">
+                <ObjectProperty IRI="esrg:upper#uses"/>
+                <Class IRI="#O3"/>
+            </ObjectExactCardinality>
+        </ObjectUnionOf>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#O2"/>
+        <Class IRI="#O"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#O3"/>
+        <Class IRI="#O"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#P"/>
+        <Class IRI="esrg:upper#Property"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#P1"/>
+        <Class IRI="#P"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#P1"/>
+        <ObjectMinCardinality cardinality="0">
+            <ObjectProperty IRI="#isConnectedTo"/>
+            <Class IRI="#P2"/>
+        </ObjectMinCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#P1"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="esrg:upper#hasValue"/>
+            <Datatype abbreviatedIRI="xsd:integer"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#P2"/>
+        <Class IRI="#P"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#R"/>
+        <Class IRI="esrg:upper#Property"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#R"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="esrg:upper#hasValue"/>
+            <Datatype abbreviatedIRI="xsd:integer"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#R1"/>
+        <Class IRI="#R"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#R2"/>
+        <Class IRI="#R"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#X"/>
+        <Class IRI="esrg:upper#Process"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#X1"/>
+        <Class IRI="#X"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#X1"/>
+        <ObjectUnionOf>
+            <ObjectExactCardinality cardinality="1">
+                <ObjectProperty IRI="esrg:upper#uses"/>
+                <Class IRI="#X2"/>
+            </ObjectExactCardinality>
+            <ObjectExactCardinality cardinality="3">
+                <ObjectProperty IRI="esrg:upper#uses"/>
+                <Class IRI="#X3"/>
+            </ObjectExactCardinality>
+        </ObjectUnionOf>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#X1"/>
+        <ObjectMaxCardinality cardinality="3">
+            <ObjectProperty IRI="esrg:upper#uses"/>
+            <ObjectUnionOf>
+                <Class IRI="#X2"/>
+                <Class IRI="#X3"/>
+            </ObjectUnionOf>
+        </ObjectMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#X2"/>
+        <Class IRI="#X"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#X3"/>
+        <Class IRI="#X"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Z"/>
+        <Class IRI="esrg:upper#Property"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Z1"/>
+        <Class IRI="#Z"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Z1"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="esrg:upper#uses"/>
+            <Class IRI="#Z2"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Z2"/>
+        <Class IRI="#Z"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Z2"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="esrg:upper#hasValue"/>
+            <Datatype abbreviatedIRI="xsd:integer"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <ClassAssertion>
+        <Class IRI="#O2"/>
+        <NamedIndividual IRI="#O2.1"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#O2"/>
+        <NamedIndividual IRI="#O2.2"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#O3"/>
+        <NamedIndividual IRI="#O3.1"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#O3"/>
+        <NamedIndividual IRI="#O3.2"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#A1"/>
+        <NamedIndividual IRI="#a1.1"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#C1"/>
+        <NamedIndividual IRI="#c1.1"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#C1"/>
+        <NamedIndividual IRI="#c1.2"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#C1"/>
+        <NamedIndividual IRI="#c1.3"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Example"/>
+        <NamedIndividual IRI="#example"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#P1"/>
+        <NamedIndividual IRI="#p1"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#P2"/>
+        <NamedIndividual IRI="#p2"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#X3"/>
+        <NamedIndividual IRI="#x3.1"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#X3"/>
+        <NamedIndividual IRI="#x3.2"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#X3"/>
+        <NamedIndividual IRI="#x3.3"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Z2"/>
+        <NamedIndividual IRI="#z2"/>
+    </ClassAssertion>
+    <DLSafeRule>
+        <Annotation>
+            <AnnotationProperty IRI="http://swrl.stanford.edu/ontologies/3.3/swrla.owl#isRuleEnabled"/>
+            <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#boolean">true</Literal>
+        </Annotation>
+        <Annotation>
+            <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+            <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#string"></Literal>
+        </Annotation>
+        <Annotation>
+            <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+            <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#string">S2</Literal>
+        </Annotation>
+        <Body>
+            <ClassAtom>
+                <Class IRI="#ChA3"/>
+                <Variable IRI="#c"/>
+            </ClassAtom>
+            <ClassAtom>
+                <Class IRI="#A1"/>
+                <Variable IRI="#a"/>
+            </ClassAtom>
+        </Body>
+        <Head>
+            <DataPropertyAtom>
+                <DataProperty IRI="esrg:upper#hasValue"/>
+                <Variable IRI="#a"/>
+                <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#string">B</Literal>
+            </DataPropertyAtom>
+        </Head>
+    </DLSafeRule>
+    <DLSafeRule>
+        <Annotation>
+            <AnnotationProperty IRI="http://swrl.stanford.edu/ontologies/3.3/swrla.owl#isRuleEnabled"/>
+            <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#boolean">true</Literal>
+        </Annotation>
+        <Annotation>
+            <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+            <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#string"></Literal>
+        </Annotation>
+        <Annotation>
+            <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+            <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#string">S1</Literal>
+        </Annotation>
+        <Body>
+            <ClassAtom>
+                <Class IRI="#P1"/>
+                <Variable IRI="#a"/>
+            </ClassAtom>
+            <ClassAtom>
+                <Class IRI="#P2"/>
+                <Variable IRI="#b"/>
+            </ClassAtom>
+            <ObjectPropertyAtom>
+                <ObjectProperty IRI="#isConnectedTo"/>
+                <Variable IRI="#a"/>
+                <Variable IRI="#b"/>
+            </ObjectPropertyAtom>
+        </Body>
+        <Head>
+            <DataPropertyAtom>
+                <DataProperty IRI="esrg:upper#hasValue"/>
+                <Variable IRI="#a"/>
+                <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#int">30</Literal>
+            </DataPropertyAtom>
+        </Head>
+    </DLSafeRule>
+    <DLSafeRule>
+        <Annotation>
+            <AnnotationProperty IRI="http://swrl.stanford.edu/ontologies/3.3/swrla.owl#isRuleEnabled"/>
+            <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#boolean">true</Literal>
+        </Annotation>
+        <Annotation>
+            <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+            <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#string"></Literal>
+        </Annotation>
+        <Annotation>
+            <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+            <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#string">S3</Literal>
+        </Annotation>
+        <Body>
+            <ClassAtom>
+                <Class IRI="#R1"/>
+                <Variable IRI="#r1"/>
+            </ClassAtom>
+            <ClassAtom>
+                <Class IRI="#R2"/>
+                <Variable IRI="#r2"/>
+            </ClassAtom>
+            <DataPropertyAtom>
+                <DataProperty IRI="esrg:upper#hasValue"/>
+                <Variable IRI="#r1"/>
+                <Variable IRI="#v1"/>
+            </DataPropertyAtom>
+            <DataPropertyAtom>
+                <DataProperty IRI="esrg:upper#hasValue"/>
+                <Variable IRI="#r2"/>
+                <Variable IRI="#v2"/>
+            </DataPropertyAtom>
+            <BuiltInAtom IRI="http://www.w3.org/2003/11/swrlb#add">
+                <Variable IRI="#v3"/>
+                <Variable IRI="#v1"/>
+                <Variable IRI="#v2"/>
+            </BuiltInAtom>
+            <BuiltInAtom IRI="http://www.w3.org/2003/11/swrlb#stringConcat">
+                <Variable IRI="#s"/>
+                <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#string">r1 + r2 = </Literal>
+                <Variable IRI="#v3"/>
+            </BuiltInAtom>
+        </Body>
+        <Head>
+            <DataPropertyAtom>
+                <DataProperty IRI="esrg:upper#hasInfo"/>
+                <Variable IRI="#r1"/>
+                <Variable IRI="#s"/>
+            </DataPropertyAtom>
+        </Head>
+    </DLSafeRule>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="esrg:upper#NonInstantiable"/>
+        <IRI>#B</IRI>
+        <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"></Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="esrg:upper#NonInstantiable"/>
+        <IRI>#D</IRI>
+        <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"></Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="esrg:upper#NonInstantiable"/>
+        <IRI>#Z1</IRI>
+        <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"></Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="esrg:upper#ArraySize"/>
+        <IRI>#a1.1</IRI>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#integer">3</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="esrg:upper#DefaultValue"/>
+        <IRI>#a1.1</IRI>
+        <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">A</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="esrg:upper#ImplArg"/>
+        <IRI>#c1.1</IRI>
+        <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">main.c,var_c_1_1</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="esrg:upper#ImplInd"/>
+        <IRI>#c1.1</IRI>
+        <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">ReplaceTool,CheckExistence</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="esrg:upper#StaticIndividual"/>
+        <IRI>#example</IRI>
+        <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"></Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="esrg:upper#DefaultValue"/>
+        <IRI>#p1</IRI>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#integer">50</Literal>
+    </AnnotationAssertion>
+</Ontology>
+
+
+
+<!-- Generated by the OWL API (version 4.2.6.20160910-2108) https://github.com/owlcs/owlapi -->
+

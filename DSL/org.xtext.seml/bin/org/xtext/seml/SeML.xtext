@@ -11,14 +11,15 @@ Model:
 
 MainModel:
 	imports+=Import+ 
+	('use' useCh+=[Characteristic|ALIAS] (',' useCh+=[Characteristic|ALIAS])*)?
 	sentences+=Sentence*
 ;
 
 ImportModel:
-	components+=Component+
+	staticIndividuals+=StaticIndividual+
+	individualOptions+=FreeIndividual*
 	characteristics+=Characteristic*
 	objectProperties+=ObjectProperty*
-	metaIndividuals+=MetaIndividual*
 ;
 
 Import:
@@ -26,54 +27,44 @@ Import:
 ;
 	
 Sentence:
-	Individual | Relation | UseCharacteristic
-;
-
-Individual:
-	'new' cls+=[Component|IRI] (',' cls+=[Component|IRI])* name=IRI //However, an individual cannot have #
-;
-
-UseCharacteristic:
-	'use' name=[Characteristic|IRI]
+	Relation | Assignment
 ;
 
 Relation:
-	instance1=[AnyIndividual|IRI] obj=[ObjectProperty|IRI] instance2=[AnyIndividual|IRI]
+	ind1=[Individual|ALIAS] obj=[ObjectProperty|ALIAS] ind2+=[Individual|ALIAS] (',' ind2+=[Individual|ALIAS])*
 ;
 
-Component:
-	Component_Process | Component_Event | Component_Property | Component_Entity
+//Only for individuals of type Property
+Assignment:
+	ind=[Individual|ALIAS] '=' literal=Value
 ;
 
-AnyIndividual:
-	Individual | MetaIndividual
+Value:
+	{FloatVal} 		val=FLOAT 
+	| {BoolVal} 	val=BOOL 
+	| {IntVal} 		val=INT 
+	| {StringVal} 	val=STRING
 ;
 
-Component_Process:  'CompProcess' name=IRI iri=STRING;
-Component_Event:    'CompEvent' name=IRI iri=STRING;
-Component_Property: 'CompProperty' name=IRI iri=STRING;
-Component_Entity:	'CompEntity' name=IRI iri=STRING;
-ObjectProperty:    'ObjectProperty' name=IRI iri=STRING;
-Characteristic:		'Characteristic' name=IRI iri=STRING;
-MetaIndividual:    'MetaIndividual' cls+=STRING+ name=IRI iri=STRING;
-
+Individual:			FreeIndividual | StaticIndividual;
+FreeIndividual: 	'FreeIndividual' 	name=ALIAS iri=STRING; //Optional Individual references
+ObjectProperty:		'ObjectProperty' 	name=ALIAS iri=STRING;
+Characteristic:		'Characteristic' 	name=ALIAS iri=STRING;
+StaticIndividual:	'StaticIndividual' 	name=ALIAS iri=STRING; //Model Properties and other initial components
 
 
 /*
  * Terminal rules
  */
 	
-terminal FLOAT returns ecore::EFloat:
-/* 	('-'|'+')?*/ (INT '.' INT) (('e' | 'E') INT)?;
+terminal FLOAT returns ecore::EDouble:
+ 	INT '.' ('0'..'9')+ (('e' | 'E') INT)?;
 
 terminal BOOL returns ecore::EBoolean:
 	'true' | 'false';
 
-//terminal ID:
-//	'^'? ('a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
-
 terminal INT returns ecore::EInt:
-	/*('-' | '+')?*/ ('0'..'9')+;
+	'-'? ('0'..'9')+;
 
 terminal STRING:
 	'"' ('\\' . /* 'b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\' */ | !('\\' | '"'))* '"' | "'" ('\\' .
@@ -81,13 +72,13 @@ terminal STRING:
 
 terminal ML_COMMENT:
 	'/*'->'*/';
-
-terminal SL_COMMENT:
-	'//' !('\n' | '\r')* ('\r'? '\n')?;
 	
-terminal IRI:
-	('#' | '&'..'+' | '-'..'.'  | '0'..';' | '?'..'Z' | 'a'..'z' | '_')+;
-	//#  &'()*+  -.  0-9:; ?@A-Z  a-z  _
+terminal SL_COMMENT:
+	"//" !('\n' | '\r')* ('\r'? '\n')?;
+	
+//Begins with a non-number. Contains letters, numbers and (-*._)
+terminal ALIAS:
+	'-'? ('A'..'Z' | 'a'..'z' | '*' | '_' | '.') ('A'..'Z' | 'a'..'z' | '0'..'9' | '-' | '*' | '_' | '.')*;
 
 terminal WS:
 	(' ' | '\t' | '\r' | '\n')+;
