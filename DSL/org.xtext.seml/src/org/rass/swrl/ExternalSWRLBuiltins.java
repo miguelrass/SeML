@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -23,6 +24,7 @@ import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 
 import org.apache.commons.io.FilenameUtils;
+import org.rass.implementation.ToolDispatcher;
 import org.rass.ontologies.Ontologies;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
@@ -61,121 +63,11 @@ public class ExternalSWRLBuiltins {
 	private static final List<String> IgnoreBis = Arrays.asList(OWL_Bi_no, OWL_Bi_relEQ, OWL_Bi_relGT, OWL_Bi_relGE,OWL_Bi_relLT,OWL_Bi_relLE,OWL_Bi_notSame,OWL_Bi_iListSum,OWL_Bi_fListSum);
 
 	public static void LoadBuiltins(){
-		final String local_log = ExternalSWRLBuiltins.local_log + "[LoadBuiltins] ";
 		
-		File root = new File(Ontologies.PROJfolder); 
         File folder = new File(Ontologies.SWRLfolder);
         if(!folder.exists() || folder.isFile()) return;
-        
-        //------------------------------------------------- Get names of Built-ins, check compilable sources and loadable classes
-        
-        File[] listOfFiles = folder.listFiles(); //List of all files/folders
-        Map<String,Long> javaPaths = new HashMap<String,Long>(); //Files to be compiled
-        Map<String,Long> classPaths = new HashMap<String,Long>();
-        Set<String> builtinIDs = new HashSet<String>(); //Classes to be loaded
-        
-        for (int i = 0; i < listOfFiles.length; i++) {
-        	if(listOfFiles[i].isFile()){
-        		String path = listOfFiles[i].getAbsolutePath();
-        		Long lastMod = listOfFiles[i].lastModified();
-        		if(path.endsWith(".java")){
-        			javaPaths.put(path, lastMod);
-        			
-        			//Will load if it is not loaded yet or it is outdated (1/2)
-        			if(loadedClasses.getOrDefault(path, new Long(0)).compareTo(lastMod) < 0)
-        				builtinIDs.add(path);
-        		}
-        		else if(path.endsWith(".class")) 	classPaths.put(FilenameUtils.removeExtension(path), lastMod);
-        	}
-        }
-        
-        //------------------------------------------------- Excludes up-to-date Built-ins from compilation stage
-        
-        javaPaths.entrySet().removeIf(path-> {
-        	Long compilationDate = classPaths.get(FilenameUtils.removeExtension(path.getKey()));
-        	if(compilationDate != null) {
-        		if(compilationDate.compareTo(path.getValue()) < 0) return false; // outdated
-        	}else return false; //Was never compiled
-        	return true; //up-to-date 
-        });
-        
-        String[] javaNamesArray = javaPaths.keySet().toArray(new String[javaPaths.size()+2]);
-        
-        //------------------------------------------------- Adds soon to be compiled classes to load list (2/2)
-        
-        for (int i = 0; i < javaPaths.size(); i++) {
-			builtinIDs.add(javaNamesArray[i]);
-        } 
-        if(builtinIDs.isEmpty()) return; //nothing to compile/load
-        
-        //------------------------------------------------- Compile if needed
-        
-        javaNamesArray[javaPaths.size()]   = "-classpath";
-        javaNamesArray[javaPaths.size()+1] = Ontologies.SWRLfolder + "/builtins.jar";
-        
-        if(javaPaths.size() != 0){
-        	
-        	//------------------------------------------------- Copy built-in dependencies 
-        	
-        	File jarfile = new File(Ontologies.SWRLfolder + "/builtins.jar");
-        	
-        	if(!jarfile.exists()){
-        		InputStream in = ExternalSWRLBuiltins.class.getResourceAsStream("/resources/builtins.jar"); 
-	        	System.out.print(local_log + "Creating SWRL dependencies JAR...");
-	        	final long startTime = System.currentTimeMillis(); //log execution time	
-	        	
-	        	try {
-					Files.copy(in, jarfile.toPath(),StandardCopyOption.REPLACE_EXISTING );
-				} catch (IOException e) {System.out.println("\n" + local_log + "Error creating JAR");}
-	        	
-	        	System.out.println("(" + (System.currentTimeMillis() - startTime) + "ms)");
-        	}
-        	
 
-        	//------------------------------------------------- Compile uncompiled/outdated Built-ins
-        	
-        	System.out.print(local_log + "Compiling " + javaPaths.size() + " external Built-in(s)...");
-        	final long startTime = System.currentTimeMillis(); //log execution time	
-        	JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        	
-        	if(compiler.run(null, null, null, javaNamesArray)!=0) 
-        		System.out.println(local_log + "Some files could not be compiled. If possible, previous classes will be used instead.");
-        	
-        	System.out.println("(" + (System.currentTimeMillis() - startTime) + "ms)");
-        }       
-        
-        //------------------------------------------------- Create class loader
-
-        URLClassLoader classLoader;
-        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader(); //To access bundle classes
-		try {
-			classLoader = URLClassLoader.newInstance(new URL[] { root.toURI().toURL() },contextClassLoader);
-		} catch (MalformedURLException e) {
-			System.err.println(local_log + "MalformedURLException: " + e.getMessage());
-			return;
-		}
-		//Thread.currentThread().setContextClassLoader(classLoader);
-		
-		//------------------------------------------------- Load all classes and initialize them
-		
-		for(String IDpath: builtinIDs){
-			String ID = FilenameUtils.getBaseName(IDpath);
-			try {
-	        	System.out.print(local_log + "[" + classLoader.getResource(Ontologies.SWRLPackage + "/" + ID + ".java") + "] ");
-	        	
-	        	//the static initialization block should register the Built-in
-	        	Class<?> a = Class.forName(Ontologies.SWRLPackage + "." + ID, true, classLoader);
-	        	CustomSWRLBuiltin.CustomSWRLFunction instance = (CustomSWRLBuiltin.CustomSWRLFunction)a.newInstance();
-	        	BuiltInRegistry.instance.registerBuiltIn("esrg:calculator#lol", new CustomSWRLBuiltin( instance ) );
-	        	//add to loaded classes list
-	        	loadedClasses.put(IDpath, new File(IDpath).lastModified());
-	        	
-			} catch (ClassNotFoundException e) { //loading error only affects the current built-in
-				System.err.println(local_log + "Error loading class: " + e.getMessage());
-			} catch (Throwable t){
-				System.err.println(local_log + "Error loading class: " + t.getMessage());
-			}
-        }
+        ToolDispatcher.ScanCompileLoadFolder(folder, Ontologies.SWRLPackage);
 	}
 	
 	public static void GenerateTemplates(PelletReasoner reasoner) throws IOException{

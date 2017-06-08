@@ -1,4 +1,4 @@
-package hello_swrl;
+package ex_swrl;
 
 import java.util.Set;
 import org.mindswap.pellet.ABox;
@@ -6,25 +6,26 @@ import org.mindswap.pellet.Node;
 import org.mindswap.pellet.utils.ATermUtils;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.rass.swrl.CustomSWRLBuiltin;
 import com.clarkparsia.pellet.owlapiv3.PelletReasoner;
 import com.clarkparsia.pellet.rules.builtins.BuiltInRegistry;
-import org.semanticweb.owlapi.model.OWLClass;
 
 /**
-* This class checks if... (write description)
+* This class checks if there are two instances of the same subclass of class "S"
+* e.g. if S1 is a subclass of S and S1 has two referenced individuals in the DSL, this atom returns true
 *
-* @param arguments  example:(value, individual, objectproperty, [targetClass])
-* @return true if...
+* @param arguments ClassIRI
+* @return true if condition was verified
 */
 public class twoInst implements CustomSWRLBuiltin.CustomSWRLFunction {
 	private static final String ARGerr = "SWRL Built-in <twoInst> Error: wrong arguments!";
 	
 	static{
-		BuiltInRegistry.instance.registerBuiltIn("esrg:calculator#twoInst", new CustomSWRLBuiltin(new twoInst()));
+		BuiltInRegistry.instance.registerBuiltIn("esrg:basis#twoInst", new CustomSWRLBuiltin(new twoInst()));
 		System.out.println("\"twoInst\" built-in was registered!");
 	}
 	

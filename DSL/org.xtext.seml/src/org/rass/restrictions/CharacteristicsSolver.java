@@ -40,6 +40,10 @@ public class CharacteristicsSolver {
 	
 	public static String chrProblem = null;
 	
+	public static int GetCharacteristicsSize(){
+		return chrListRequired.size();
+	}
+	
 	public static Set<OWLClass> GetRequiredCharacteristics(){
 		return chrListRequired;
 	}

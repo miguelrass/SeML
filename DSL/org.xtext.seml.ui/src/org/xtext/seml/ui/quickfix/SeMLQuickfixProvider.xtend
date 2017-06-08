@@ -18,6 +18,7 @@ import org.rass.ontologies.MasterOntology
 import org.xtext.seml.seML.Relation
 import org.xtext.seml.seML.SeMLFactory
 import org.xtext.seml.seML.SeMLPackage
+import org.xtext.seml.seML.MainModel
 import org.xtext.seml.validation.SeMLValidator
 import org.rass.restrictions.Problem.TypeE
 import java.util.List
@@ -28,6 +29,7 @@ import org.xtext.seml.seML.Assignment
 import org.xtext.seml.seML.Value
 import org.xtext.seml.seML.FloatVal
 import java.util.HashSet
+import org.xtext.seml.Console
 
 /**
  * Custom quickfixes.
@@ -43,17 +45,20 @@ class SeMLQuickfixProvider extends DefaultQuickfixProvider {
 	//Generate smart solution
 	def fixModel(Issue issue, IssueResolutionAcceptor acceptor) {
 		
-		val String local_log = "Smart Quickfix Log: ";
+		val String local_log = local_log + "[fixModel] ";
 	
 		acceptor.accept(issue, "Try to generate multiple solutions", 'no description', null, new ISemanticModification() {
 	        override apply(EObject element, IModificationContext context) { 
 
+				val m = EcoreUtil2.getRootContainer(element) as MainModel;
+				System.out.println(local_log + "Fixing model...");
 				while(true){
 					//Find next error
 					SeMLValidator.CheckModelRestrictions(true, new HashSet<List<String>>());
 					if(SeMLValidator.nextProblem === null) {System.out.println(local_log + "Done. No more solutions."); return;}
 	
-					fixProblem(SeMLValidator.nextProblem.solutions.get(0)); //Fix next error
+					fixProblem(SeMLValidator.nextProblem.solutions.get(0), m); //Fix next error
+					System.out.println(local_log + "Added: " + SeMLValidator.nextProblem.solutions.get(0));
 					
 					//Each solution was already tested for consistency 
 				}
@@ -122,29 +127,30 @@ class SeMLQuickfixProvider extends DefaultQuickfixProvider {
 	
 	@Fix(SeMLValidator.FIX_PROBLEM)
 	def fixDispatcher(Issue issue, IssueResolutionAcceptor acceptor) {
-		
-		val int no = Integer.parseInt(issue.data.get(1));
-		val p = SeMLValidator.problems.get(issue.data.get(0)).get(no);
 			
 		//Create fix for each solution
-		for(s : p.solutions) throwFix(issue, acceptor, s);
+		for(var i=1; i<issue.data.size; i++)
+			throwFix(issue, acceptor, issue.data.get(i).split(","));
 
-		//Fix entire model
-		if(issue.data.get(2).equals("F")) fixModel(issue, acceptor);
+		//Fix entire model (if validation was performed)
+		if(issue.data.get(0).equals("F") && SeMLValidator.validationState != 0) fixModel(issue, acceptor);
 		
 	}
 	
 	//Generate particular solution
 	def throwFix(Issue issue, IssueResolutionAcceptor acceptor, List<String> sol) {
-
+		
 		acceptor.accept(issue, "Add: " + sol.toString , 'no description', null, new ISemanticModification() {
 	        override apply(EObject element, IModificationContext context) { 
-				fixProblem(sol);
+				fixProblem(sol, EcoreUtil2.getRootContainer(element) as MainModel);
 	        }
     	});
 	}
 	
-	def void fixProblem(List<String> sol){
+	def void fixProblem(List<String> sol, MainModel m){
+		
+		//populate quickfixMap if empty
+		if(SeMLValidator.quickfixMap === null) SeMLValidator.PopulateQuickFixMap(m); 
 		
 		//Decide whether to create an assignment or a relation
 		if(sol.length == 2){
@@ -158,7 +164,7 @@ class SeMLQuickfixProvider extends DefaultQuickfixProvider {
 				case 'i': {val v = fac.createIntVal(); 		v.^val = Integer.parseInt(ss1);			a.literal = v;}
 			}
 			
-			SeMLValidator.globalMainModel.sentences.add(a); //add sentence
+			m.sentences.add(a); //add sentence
 			MasterOntology.AddDPRelations(Arrays.asList(a)); //Add relation to master ontology for forthcoming validations
 			
 		}else{
@@ -166,7 +172,7 @@ class SeMLQuickfixProvider extends DefaultQuickfixProvider {
 			val i1 = SeMLValidator.quickfixMap.get(sol.get(0)) as Individual;
 			val obj = SeMLValidator.quickfixMap.get(sol.get(1)) as ObjectProperty;
 			
-			for(s : SeMLValidator.globalMainModel.sentences){ //Add individuals to existing relation
+			for(s : m.sentences){ //Add individuals to existing relation
 				if(s instanceof Relation){
 					val r = s as Relation;
 					if(r.ind1 === i1 && r.obj === obj){
@@ -182,8 +188,8 @@ class SeMLQuickfixProvider extends DefaultQuickfixProvider {
 			r.ind1 = i1; r.obj  = obj;
 			for(var i=2; i<sol.length; i++) r.ind2.add(SeMLValidator.quickfixMap.get(sol.get(i)) as Individual);
 
-			SeMLValidator.globalMainModel.sentences.add(r); //add sentence
-			MasterOntology.AddOPRelations(Arrays.asList(r)); //Add relation to master ontology for forthcoming validations
+			m.sentences.add(r); //add sentence
+			if(SeMLValidator.validationState != 0) MasterOntology.AddOPRelations(Arrays.asList(r)); //Add relation to master ontology for forthcoming validations
 		}
 	}
 	

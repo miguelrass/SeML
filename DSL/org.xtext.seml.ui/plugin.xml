@@ -143,6 +143,36 @@
        id="org.xtext.seml.SeML.implement"
        name="Implement">
  </command>
+ <command
+       defaultHandler="org.rass.restrictions.OptionsHandler"
+       description="All quickfixes are generated but none is tested"
+       id="org.xtext.seml.SeML.QuickfixFast"
+       name="Fast">
+ </command>
+ <command
+       defaultHandler="org.rass.restrictions.OptionsHandler"
+       description="All quickfixes are generated and tested"
+       id="org.xtext.seml.SeML.QuickfixSmart"
+       name="Smart">
+ </command>
+ <command
+       defaultHandler="org.rass.restrictions.OptionsHandler"
+       description="Check is executed on editing, save/build and on request."
+       id="org.xtext.seml.SeML.ValidationFast"
+       name="FastVal">
+ </command>
+ <command
+       defaultHandler="org.rass.restrictions.OptionsHandler"
+       description="Check is executed on save/build and request only."
+       id="org.xtext.seml.SeML.ValidationNormal"
+       name="NormalVal">
+ </command>
+ <command
+       defaultHandler="org.rass.restrictions.OptionsHandler"
+       description="Check is executed on request only."
+       id="org.xtext.seml.SeML.ValidationExpensive"
+       name="ExpensiveVal">
+ </command>
 	</extension>
 	<extension point="org.eclipse.ui.menus">
 		<menuContribution
@@ -195,11 +225,45 @@
 		</menuContribution>
   <menuContribution
         locationURI="menu:org.eclipse.ui.main.menu">
-     <command
-           commandId="org.xtext.seml.SeML.implement"
-           style="push"
-           tooltip="Run external implementation tools">
-     </command>
+     <menu
+           label="SeML">
+        <command
+              commandId="org.xtext.seml.SeML.implement"
+              style="push"
+              tooltip="Run external implementation tools">
+        </command>
+        <menu
+              label="QuickFix Mode">
+           <command
+                 commandId="org.xtext.seml.SeML.QuickfixFast"
+                 style="radio"
+                 tooltip="All quickfixes are generated but none is tested">
+           </command>
+           <command
+                 commandId="org.xtext.seml.SeML.QuickfixSmart"
+                 style="radio"
+                 tooltip="All quickfixes are generated and tested">
+           </command>
+        </menu>
+        <menu
+              label="Validation Mode">
+           <command
+                 commandId="org.xtext.seml.SeML.ValidationFast"
+                 style="radio"
+                 tooltip="Check is executed on editing, save/build and on request.">
+           </command>
+           <command
+                 commandId="org.xtext.seml.SeML.ValidationNormal"
+                 style="radio"
+                 tooltip="Check is executed on save/build and request only.">
+           </command>
+           <command
+                 commandId="org.xtext.seml.SeML.ValidationExpensive"
+                 style="radio"
+                 tooltip="Check is executed on request only.">
+           </command>
+        </menu>
+     </menu>
   </menuContribution>
 	</extension>
 	<extension point="org.eclipse.ui.menus">

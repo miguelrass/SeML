@@ -1,32 +1,18 @@
 package org.rass.ontologies; 
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import org.osgi.framework.FrameworkUtil;
-import org.rass.swrl.ExternalSWRLBuiltins;
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
-import org.semanticweb.owlapi.model.OWLClassExpression;
-import org.semanticweb.owlapi.model.OWLDataFactory;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
-import org.semanticweb.owlapi.model.OWLOntologyStorageException;
-import org.semanticweb.owlapi.model.SWRLRule;
 import org.semanticweb.owlapi.reasoner.Node;
-import org.semanticweb.owlapi.reasoner.NodeSet;
 
 import com.clarkparsia.owlapi.explanation.PelletExplanation;
 import com.clarkparsia.owlapi.explanation.io.manchester.ManchesterSyntaxExplanationRenderer;
@@ -82,30 +68,7 @@ public class Anomaly {
         return false; //no problem was detected
 	}
 	
-	/**
-	 * Find individuals in any of the main subclasses of Report (Error, Warning, Information)
-	 * 
-	 * @param reasoner
-	 * @return true if reports were found
-	 */
-	/*public static void FindReports(PelletReasoner reasoner){
-		
-		IndividualReports = new HashMap<String, HashSet<OWLClass>>();		
-		
-        for(OWLClass c : MasterCache.reportClasses){
-        	Set<OWLNamedIndividual> agents = reasoner.getInstances(c, true).getFlattened(); //get only direct individuals
-        	if(!agents.isEmpty()){
-        		for(OWLNamedIndividual a : agents){
-        			HashSet<OWLClass> set = IndividualReports.get(a);
-        			if(set==null) {
-        				set = new HashSet<OWLClass>();
-        				IndividualReports.put(a.getIRI().toString(), set);
-        			}
-        			set.add(c); //the object is changed inside the Set
-        		}
-        	}
-        }
-	}*/
+
 	
     private static void ExplainInconsistencies(OWLOntology ontology){
 		final String local_log = Anomaly.local_log + "[ExplainInconsistencies] ";

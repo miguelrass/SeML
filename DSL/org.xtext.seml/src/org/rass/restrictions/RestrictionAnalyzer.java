@@ -47,6 +47,7 @@ public class RestrictionAnalyzer implements OWLClassExpressionVisitor {
 	private PelletReasoner fullReasoner;				//Reasoner to get individuals from full master
 	private HashSet<List<String>> authorizatedRels;			//Relations which are authorized by restrictions (except max/only)
 	private static final OWLDataFactory factory = OWLManager.getOWLDataFactory();
+	public HashSet<OWLClass> upperProblems;				//Upper-Ontology Problem classes
 	
 	//=================================================== Ignore certain restrictions
 	private static final String OWL_OP_isCharacterizedBy = Ontologies.OWL_Upper + "isCharacterizedBy";
@@ -56,7 +57,7 @@ public class RestrictionAnalyzer implements OWLClassExpressionVisitor {
 	//=================================================== Expressions which are not supported
 	@Override public void visit(OWLClass arg0) {System.err.println(local_log + "Internal Error: no class can exist at this point!");}
 	@Override public void visit(@Nonnull OWLObjectOneOf exp){System.err.println(local_log + "Internal Error -> "+exp);} //this should never happen (its just a list of individuals)
-	@Override public void visit(OWLObjectComplementOf exp) {System.err.println(local_log + "\"Not\" is not allowed here -> "+exp);}
+	@Override public void visit(OWLObjectComplementOf exp) {System.out.println(local_log + "Warning: Logical negation is only evaluated if nested inside a primary.");}
 	
 	//=================================================== Data Property which are not supported
     @Override public void visit(@Nonnull OWLDataHasValue exp) 			{UnsupportedDP(exp.getProperty(), exp.toString());}
@@ -72,6 +73,7 @@ public class RestrictionAnalyzer implements OWLClassExpressionVisitor {
     	problems = ps; individual = i; reasoner = r; fullReasoner = fr; 
     	individualAlias = MasterOntology.cachedIRIs.get(individual.getIRI().toString());
     	authorizatedRels = ar;
+    	upperProblems = new HashSet<OWLClass>();
     }
     
     //=============================================================================================
@@ -86,11 +88,11 @@ public class RestrictionAnalyzer implements OWLClassExpressionVisitor {
      * @return related individuals and relatable individuals
      */
 	private Pair<Set<OWLNamedIndividual>,Set<OWLNamedIndividual>> getRelations(OWLNamedIndividual i, OWLObjectPropertyExpression p, OWLClassExpression e){ 	
-    	
+		long startTime = System.currentTimeMillis(); //log validation time	
     	Set<OWLNamedIndividual> relatives = reasoner.getObjectPropertyValues(i, p).getFlattened(); //Individuals that are related to "i" via "p"
     	Set<OWLNamedIndividual> targets; // (In)direct individuals of the provided Class Expression
     	
-    	try { targets = fullReasoner.getInstances(e, false).getFlattened();} 
+    	try { targets = MasterOntology.GetFullIntances(e);} 
     	catch (Exception ex) {
     		System.err.println("Internal Error: remove this print line only"); //this exception might be outdated
 			return null; // The getInstances() procedure fails when no individuals are found (when using complex Class Expressions)
@@ -99,7 +101,8 @@ public class RestrictionAnalyzer implements OWLClassExpressionVisitor {
     	targets.retainAll(MasterCache.allIndividuals); //Remove targets which are not Component Individuals
     	relatives.retainAll(targets); // Intersect both groups to obtain real relatives
     	targets.removeAll(relatives); // Obtain relatable individuals (could be itself)
-
+    	
+    	SeMLValidator.searchRuntime += System.currentTimeMillis() - startTime; //Sum runtime 
     	return new Pair<Set<OWLNamedIndividual>,Set<OWLNamedIndividual>>(relatives, targets);
     }
     
@@ -112,11 +115,9 @@ public class RestrictionAnalyzer implements OWLClassExpressionVisitor {
      */
     private void MaxCardinality(int max, OWLObjectPropertyExpression obj, OWLClassExpression target, String restrictionStr){
     	
-    	String objIRI = obj.getNamedProperty().getIRI().toString(); //object property IRI
     	String objAlias = MasterOntology.cachedIRIs.get(obj.getNamedProperty().getIRI().toString());
     	String targetStr = target.toString();
     	
-    	if(IgnoreOPs.contains(objIRI)) return; //ignore these ObjProperties
     	int cardinality = getRelations(individual, obj, target).getKey().size();
     	
     	if(max < cardinality){
@@ -134,13 +135,11 @@ public class RestrictionAnalyzer implements OWLClassExpressionVisitor {
      * @param restrictionStr
      */
     private void Requirement(int min, OWLObjectPropertyExpression obj, OWLClassExpression target, String restrictionStr){
-    	
-    	String objIRI = obj.getNamedProperty().getIRI().toString(); //object property IRI
+
     	String objAlias = MasterOntology.cachedIRIs.get(obj.getNamedProperty().getIRI().toString());
     	String targetStr = target.toString();
     	int cardinality, defect;
     	
-    	if(IgnoreOPs.contains(objIRI)) return; //ignore these ObjProperties
     	Pair<Set<OWLNamedIndividual>, Set<OWLNamedIndividual>> relatives;
     	relatives =	getRelations(individual, obj, target); //get related individuals
     	cardinality = relatives.getKey().size(); //get real cardinality
@@ -155,13 +154,15 @@ public class RestrictionAnalyzer implements OWLClassExpressionVisitor {
     	//================================================================================== Analyze possible solutions
     	//=============================================================================================================
         if(defect>0){
+        	long startTime = System.currentTimeMillis(); //log validation time	
+        	
         	
         	//---------------------------------------------- Impossible restriction (but may become possible)
         	if(defect > relatives.getValue().size()){
         		problems.add(new Problem("Restriction: " + objAlias + restrictionStr + targetStr
         				+ "\nISSUE: " + cardinality + " relation(s) found" + "\nSOLUTION: None. "+ 
-						"There aren't enough individuals left: " + relatives.getValue() + "\n"));	
-        	
+						"There aren't enough individuals left: " + relatives.getValue() + "\n"));
+            	
         	//---------------------------------------------- Solution may be possible
         	}else{
 
@@ -174,6 +175,10 @@ public class RestrictionAnalyzer implements OWLClassExpressionVisitor {
     			//- - - - - - - - - - - - - Test all combinations
         		
         		List<int[]> okCombs = new ArrayList<int[]>(); //List of combinations which passed the test
+        		
+        		if(OptionsHandler.quickfixMode == 0){// Skip combinations tests if mode="fast"
+        			okCombs = combs;
+        		} else //if mode="smart" execute the following for cycle
 
 				for(int[] comb : combs){
 					
@@ -289,6 +294,7 @@ public class RestrictionAnalyzer implements OWLClassExpressionVisitor {
         		}
         		
         		problems.add(p);
+        		SeMLValidator.solutionsRuntime += System.currentTimeMillis() - startTime; //Sum runtime 
         	}
         }	
     }
@@ -309,7 +315,7 @@ public class RestrictionAnalyzer implements OWLClassExpressionVisitor {
 			return; 
 		}
 
-		//Create Problem
+		//Create Problem (this solution is never disabled, since it's fast enough)
 		problems.add(new Problem("Restriction: " + objAlias + " " + targetAlias + "\nISSUE: relation not found\n",
 				Arrays.asList(individualAlias, objAlias, targetAlias) ));
 
@@ -325,7 +331,8 @@ public class RestrictionAnalyzer implements OWLClassExpressionVisitor {
      */
 	@Override public void visit(OWLObjectIntersectionOf exp) {
 		
-		for(OWLClassExpression ce : exp.getOperands()){   		
+		for(OWLClassExpression ce : exp.getOperands()){
+			if(ce instanceof OWLClass) continue;
     		RestrictionAnalyzer RA = new RestrictionAnalyzer(problems, authorizatedRels, individual, reasoner, fullReasoner);
     		ce.accept(RA);
     	}
@@ -347,6 +354,7 @@ public class RestrictionAnalyzer implements OWLClassExpressionVisitor {
     			
     	for(OWLClassExpression ce : exp.getOperands()){
     		
+    		if(ce instanceof OWLClass) {System.out.println(local_log + "Warning: Union Expression containing classIRI is not further evaluated"); return;}
     		RestrictionAnalyzer RA = new RestrictionAnalyzer(problemsTemp, authorizatedRels, individual, reasoner, fullReasoner);
     		ce.accept(RA);
     		
@@ -355,7 +363,8 @@ public class RestrictionAnalyzer implements OWLClassExpressionVisitor {
     	}
     	
     	if(faultyOperands == exp.getOperands().size()){ // All OR operands generated optional solutions
-    		//TODO: era preciso diferenciar unsolvable de impossible, pq so devia ser manual se houvesse >1 solucao !impossible
+    		//Maybe it should be manual only if >1 !impossible problems
+    		//however, it is a design choice
     		problemsTemp.forEach(p -> {p.type = TypeE.OrPROBLEM; p.problemLabel += "\n(The solution is optional)";}); 
     		problems.addAll(problemsTemp); //update real solutions list
     	}
@@ -397,6 +406,16 @@ public class RestrictionAnalyzer implements OWLClassExpressionVisitor {
 		
     	OWLObjectPropertyExpression obj = exp.getProperty(); 	//object property
     	OWLClassExpression target = exp.getFiller(); 			//target Class Expression  	
+    	String op = obj.getNamedProperty().getIRI().toString();
+    	
+    	if(op.equals(Ontologies.OWL_OP_hasProblem)){ //has a Problem
+    		if(target.getClassExpressionType() != ClassExpressionType.OWL_CLASS){
+    			System.err.println(local_log + "Error: hasProblem must be used with a ClassIRI -> " + exp); return;
+    		}
+    		upperProblems.add(target.asOWLClass()); return;
+    	}
+    	
+    	if(IgnoreOPs.contains(op)) return; //ignore these ObjProperties
     	Requirement(1, obj, target, " some ");
 		
 	}
@@ -407,6 +426,7 @@ public class RestrictionAnalyzer implements OWLClassExpressionVisitor {
     	OWLObjectPropertyExpression obj = exp.getProperty(); 	//object property
     	OWLClassExpression target = exp.getFiller(); 			//target Class Expression  	
     	int min = exp.getCardinality(); 						//get desired cardinality
+    	if(IgnoreOPs.contains(obj.getNamedProperty().getIRI().toString())) return; //ignore these ObjProperties
     	Requirement(min, obj, target, " min " + min + " ");
     	
 	}
@@ -417,6 +437,7 @@ public class RestrictionAnalyzer implements OWLClassExpressionVisitor {
     	OWLObjectPropertyExpression obj = exp.getProperty(); 			//object property
     	OWLClassExpression target = exp.getFiller(); 					//target Class Expression  	
     	int exact = exp.getCardinality(); 								//get desired cardinality
+    	if(IgnoreOPs.contains(obj.getNamedProperty().getIRI().toString())) return; //ignore these ObjProperties
     	Requirement(exact, obj, target, " exactly " + exact + " "); 	//Requirement
     	MaxCardinality(exact, obj, target, " exactly " + exact + " "); 	//Restriction
 		
@@ -465,6 +486,7 @@ public class RestrictionAnalyzer implements OWLClassExpressionVisitor {
 		OWLObjectPropertyExpression obj = exp.getProperty(); 	//object property
     	OWLClassExpression target = exp.getFiller();			//target Class Expression  	
     	int max = exp.getCardinality();							//get desired cardinality
+    	if(IgnoreOPs.contains(obj.getNamedProperty().getIRI().toString())) return; //ignore these ObjProperties
 		MaxCardinality(max, obj, target, " max " + max + " ");	//Restriction
 
 	}

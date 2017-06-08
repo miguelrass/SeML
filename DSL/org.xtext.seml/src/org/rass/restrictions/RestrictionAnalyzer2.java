@@ -60,6 +60,7 @@ public class RestrictionAnalyzer2 implements OWLClassExpressionVisitor {
 	@Override public void visit(OWLClass exp) {System.err.println(local_log + "Internal Error: no class can exist at this point!");}
 	@Override public void visit(OWLObjectHasSelf exp) {System.err.println(local_log + "ObjectHasSelf is not supported!");}
 	@Override public void visit(@Nonnull OWLObjectOneOf exp){System.err.println(local_log + "Internal Error -> "+exp);} //this should never happen (its just a list of individuals)
+	@Override public void visit(OWLObjectComplementOf exp) {System.out.println(local_log + "Warning: Logical negation is only evaluated if nested inside a primary.");}
 	
     //=================================================== Data Property restrictions are currently not being evaluated
     private static final String dataProp_err = local_log + "Charactertics Data Property restrictions are not supported! -> ";
@@ -113,30 +114,6 @@ public class RestrictionAnalyzer2 implements OWLClassExpressionVisitor {
     	}
     	
     	problems.addAll(problemsTemp); //update real solutions list
-	}
-
-	/**
-	 * Evaluates logical expression: not(Restriction OR Restriction AND ...)
-     * Tries to normalize expression with DeMorgan laws
-	 */
-	@Override public void visit(OWLObjectComplementOf exp) {
-		
-//		//Complement of "has self" is not simplifiable and also not supported
-//		if(exp.getOperand().getClassExpressionType() == ClassExpressionType.OBJECT_HAS_SELF){
-//			System.err.println(local_log + "ObjectHasSelf is not supported!"); return;
-//		}
-//			
-//		OWLClassExpression ce = exp.getNNF();
-//		
-//		//If the normalized version is still an OWLObjectComplementOf
-//		if(ce.getClassExpressionType() == ClassExpressionType.OBJECT_COMPLEMENT_OF){
-//			System.err.println(local_log + "Unexpected expression!"); return;
-//		}
-//		
-//		//Analyze normalized expression instead
-//		RestrictionAnalyzer2 RA = new RestrictionAnalyzer2(problems, reasoner);
-//		ce.accept(RA);
-
 	}
 
 	//=============================================================================================

@@ -19,6 +19,7 @@ import org.rass.restrictions.RestrictionAnalyzer2;
 import org.rass.restrictions.RestrictionVisitor;
 import org.rass.swrl.CustomSWRLBuiltin;
 import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.model.ClassExpressionType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAxiom;
@@ -32,6 +33,7 @@ import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
+import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
@@ -47,6 +49,7 @@ import org.xtext.seml.seML.IntVal;
 import org.xtext.seml.seML.Relation;
 import org.xtext.seml.seML.StringVal;
 import org.xtext.seml.seML.Value;
+import org.xtext.seml.validation.SeMLValidator;
 
 import com.clarkparsia.pellet.owlapiv3.PelletReasoner;
 import com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory;
@@ -72,6 +75,26 @@ public class MasterOntology {
 		return fullMaster.getAxioms();
 	}
 	
+	/**
+	 * Returns instances from the FullMaster Ontology (uses cached data)
+	 */
+	private static HashMap<OWLClassExpression, Set<OWLNamedIndividual>> fullInstancesCache = null;
+	private static Set<OWLAxiom> lastAxiomsSet = null;
+	public static Set<OWLNamedIndividual> GetFullIntances(OWLClassExpression e){
+		Set<OWLNamedIndividual> inds;
+		
+		if(fullMaster.getAxioms().equals(lastAxiomsSet)){ //Same as last time, use cached data
+			inds = fullInstancesCache.get(e);
+			if(inds!=null) return new HashSet<OWLNamedIndividual>(inds); //Return copy of cached individuals Set
+		}else{ //Different, create new cache
+			fullInstancesCache = new HashMap<OWLClassExpression, Set<OWLNamedIndividual>>();
+			lastAxiomsSet = fullMaster.getAxioms(); //This returns a copy, not the object
+		}
+
+		inds = fullReasoner.getInstances(e, false).getFlattened();
+		fullInstancesCache.put(e, inds);
+		return new HashSet<OWLNamedIndividual>(inds); //Return copy of cached individuals Set
+	}
 
 	
 	
@@ -214,11 +237,48 @@ public class MasterOntology {
 		    HashSet<OWLClassExpression> cRestrList = Ontologies.GetAnonymousSuperClasses(master, c);
 		    cRestrList.forEach(r -> r.accept(RA)); 		//Evaluate each restriction with the visitor pattern
 		    cProblems.forEach(p -> {p.restrictor = c;}); //Insert restrictor reference in each problem
+		    
+		    CheckUpperProblems(RA.upperProblems, cProblems);
 
 		    iProblems.addAll(cProblems);
 		}
-	
+		
 		return iProblems;
+	}
+	
+	private static void CheckUpperProblems(HashSet<OWLClass> uPs, ArrayList<Problem> ps){
+		Set<OWLClass> chs = CharacteristicsSolver.GetRequiredCharacteristics();
+		
+		for(OWLClass uP : uPs){ //Analyze each UpperProblem
+			Set<OWLClass> superUPs = reasoner.getSuperClasses(uP, false).getFlattened();
+			superUPs.add(uP);
+			superUPs.remove(Ontologies.OWLC_Thing);
+			superUPs.remove(Ontologies.OWLC_Problem);
+			System.out.println(superUPs);
+			
+			//Get all isSolvedBy relations for this UpperProblem (UpperProblem solvers)
+			HashSet<OWLClassExpression> restrictions = new HashSet<OWLClassExpression>();
+			for(OWLClass sUP : superUPs){
+				restrictions.addAll(Ontologies.GetAnonymousSuperClasses(master, sUP)) ;
+			}
+			
+			//Check if any solver Characteristic was instantiated
+			boolean foundFlag = false;
+			
+			for( OWLClassExpression ce : restrictions){
+				if(ce.getClassExpressionType() == ClassExpressionType.OBJECT_SOME_VALUES_FROM){
+					OWLObjectSomeValuesFrom someRestr = (OWLObjectSomeValuesFrom) ce;
+					if(someRestr.getProperty().getNamedProperty().getIRI().toString().equals(Ontologies.OWL_OP_isSolvedBy)){
+						if(someRestr.getFiller().getClassExpressionType() == ClassExpressionType.OWL_CLASS){
+							if(chs.contains(someRestr.getFiller().asOWLClass())){ foundFlag=true; break;}
+						}
+					}
+				}
+			}
+			
+			if(!foundFlag) ps.add(new Problem(true, "Existing Problem: " + Ontologies.GetShortIRI(uP.getIRI())
+    				+ "\nISSUE: no Characteristic is solving this Problem"));
+		}
 	}
 	
 	public static void CheckReports(String indIRI, ArrayList<Problem> ps){
@@ -290,9 +350,9 @@ public class MasterOntology {
 	}
 	
 	
-	public static Set<OWLClass> GetSubclassesOf(OWLClassExpression c, boolean getOnlyDirectSubclasses){
+	/*public static Set<OWLClass> GetSubclassesOf(OWLClassExpression c, boolean getOnlyDirectSubclasses){
 		return reasoner.getSubClasses(c, getOnlyDirectSubclasses).getFlattened();
-	}
+	}*/
 
 	/**
 	 * Authorize relations with sub-properties of the existent Object Properties

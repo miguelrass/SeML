@@ -51,6 +51,8 @@ import org.semanticweb.owlapi.model.OWLNamedIndividual
 import org.rass.ontologies.MasterCache
 import java.beans.FeatureDescriptor
 import org.eclipse.swt.graphics.Color
+import org.xtext.seml.Progress
+import org.rass.restrictions.OptionsHandler
 
 /**
  * This class contains custom validation rules. 
@@ -80,31 +82,35 @@ class SeMLValidator extends AbstractSeMLValidator {
 	//Create map of imported individuals and object properties by alias for Quickfix
 	public static var HashMap<String,EObject> quickfixMap = null;
 	
-	private static val Color colorDefault = new Color(null, 255, 255, 255);
+	//private static val Color colorDefault = new Color(null, 255, 255, 255);
 	private static val Color colorValidating = new Color(null, 237, 237, 237);
 	private static val Color colorFailed = new Color(null, 255, 196, 196);
-	//private static val Color colorPassed = new Color(null, 200, 255, 196);
+	private static val Color colorPassed = new Color(null, 221, 255, 219);
 	
-//	@Check(CheckType.NORMAL) 
-//	def ImplementationStage(MainModel m){
-//		val String local_log = local_log + "[ImplementationStage] ";
-//		System.err.println(local_log + "I ran!");
-//		val EList<Diagnostic> er = m.eResource.errors
-//		if(er.size != 0){
-//			System.err.println(local_log + "Model contains errors:")
-//			er.forEach[e | System.err.println(local_log + e)]
-//			return
-//		}
-//	}
+	//Runtimes of different SeML features
+	public static var long solutionsRuntime = 0;
+	public static var long searchRuntime = 0;
 	
+	//Flag to check whether it is the first time a validator is executed
+	private boolean init = false;
+	
+	@Check(CheckType.FAST) 	
+	def CheckModelValFast(MainModel m){ 
+		
+		if(init==false) {init=true; 			
+			Ontologies.populatePaths(m);//Generate paths for current SEML file and generated SEML file
+			OptionsHandler.LoadSettings();
+		}
+		if(OptionsHandler.validationMode == 0) CheckModelVal(m);
+	}
+	@Check(CheckType.NORMAL) 	def CheckModelValNorm(MainModel m){ if(OptionsHandler.validationMode == 1) CheckModelVal(m); }
+	@Check(CheckType.EXPENSIVE) def CheckModelValExpe(MainModel m){ if(OptionsHandler.validationMode == 2) CheckModelVal(m); }
 
-	
-	@Check(CheckType.FAST) 
 	def CheckModelVal(MainModel m){
 		val String local_log = local_log + "[CheckModelVal] ";
 		validationState = 1;
 		Console.ChangeConsole(colorValidating, null);
-		
+
 		val EList<Diagnostic> er = m.eResource.errors
 		if(er.size != 0){
 			System.err.println(local_log + "Model contains errors:")
@@ -115,7 +121,7 @@ class SeMLValidator extends AbstractSeMLValidator {
 		}
 		
 		try {
-			if(checkModel(m)) {validationState = 3; Console.ChangeConsole(colorDefault, null);} 
+			if(checkModel(m)) {validationState = 3; Console.ChangeConsole(colorPassed, null);} 
 				else {validationState = 2; Console.ChangeConsole(colorFailed, null);}
 		} catch (Exception e) {
 			validationState = 2;
@@ -123,6 +129,7 @@ class SeMLValidator extends AbstractSeMLValidator {
 			System.err.println(local_log + "Internal Error: " + e.toString)
 		}
 	}
+	
 	
 	def boolean checkModel(MainModel m){
 		val String local_log = local_log + "[checkModel] ";
@@ -141,17 +148,27 @@ class SeMLValidator extends AbstractSeMLValidator {
 		val useList = 		m.useCh;		
 		
 		//Import keywords file
-		if(GetImportModel(m.eResource, Ontologies.GENfile_relpath)) return false;
+		GetImportModel(m.eResource, Ontologies.GENfile_relpath);
 		Console.OutPairLn(local_log, "Validating model... ("+dateFormat.format(date)+")");
+		val long startTime = System.currentTimeMillis(); //log validation time	
 		
 		//Check import file for errors
 		val EList<Diagnostic> er = globalImportModel.eResource.errors
-		if(er.size != 0){
+		if(!er.empty){
 			Console.ErrPairLn(local_log, "Aborted. Keywords file contains errors:")
 			er.forEach[e | System.err.println(local_log + e)]
 			return false
 		}
 		MasterOntology.CacheIRIs(globalImportModel); 
+		
+		//============================================================================= Create objects map for Quickfix
+        //=============================================================================================================
+        
+		quickfixMap = new HashMap<String,EObject>();
+		
+		globalImportModel.staticIndividuals.forEach[i| quickfixMap.put(i.name, i)];
+		globalImportModel.individualOptions.forEach[i| quickfixMap.put(i.name, i)];
+		globalImportModel.objectProperties.forEach[o | quickfixMap.put(o.name, o)];
 
 		//================================================================================ Check non-ontological errors
         //=============================================================================================================
@@ -212,17 +229,7 @@ class SeMLValidator extends AbstractSeMLValidator {
 		for(a : assignmentsList){//reason: some static individuals may never be referenced in OP relations
 			visibilityMap.put(a.ind.name, new FeaturePlace(a, SeMLPackage.Literals.ASSIGNMENT__IND));
 		}
-		
-		
-		//============================================================================= Create objects map for Quickfix
-        //=============================================================================================================
-        
-		quickfixMap = new HashMap<String,EObject>();
-		
-		globalImportModel.staticIndividuals.forEach[i| quickfixMap.put(i.name, i)];
-		globalImportModel.individualOptions.forEach[i| quickfixMap.put(i.name, i)];
-		globalImportModel.objectProperties.forEach[o | quickfixMap.put(o.name, o)];
-		
+
 		//==================================================================================== Check ontological errors
         //=============================================================================================================
         
@@ -278,7 +285,7 @@ class SeMLValidator extends AbstractSeMLValidator {
 		}
 		
 		//------------------------------------------------- Check restrictions and gather authorizations
-		
+
 		//Save pointer to main model for Quickfix
 		globalMainModel = m;
 		
@@ -286,6 +293,10 @@ class SeMLValidator extends AbstractSeMLValidator {
 	    val HashSet<List<String>> authorizatedRels = new HashSet<List<String>>(); //Aliases: Ind1,Obj,Ind2 or Ind1 (assignment)
 		
 		System.out.println(local_log + "Checking characteristics and individuals' restrictions");
+		solutionsRuntime = 0; //reset solutions runtime
+		searchRuntime = 0;
+		val elapsedLoadingTime = System.currentTimeMillis() - startTime;
+		
 		if(!CheckModelRestrictions(false, authorizatedRels)){
 	
 			//------------------------------------------------- Check authorizations (if there are no characteristic excess errors)
@@ -307,7 +318,7 @@ class SeMLValidator extends AbstractSeMLValidator {
 			
 			if(!ok) {Console.ErrPairLn(local_log, "Aborted. Unauthorized relation(s)."); return false;}
 	
-		}
+		}	
 
 		//================================================================= Throw all errors, warnings and informations
         //=============================================================================================================
@@ -323,46 +334,37 @@ class SeMLValidator extends AbstractSeMLValidator {
 			for(p : ps.value){
 				//avoid repeated fix all for the DefaultFP, and for every FP inside this loop
 				if(p.type == TypeE.SOLVED && !fixAllEOs.contains(f)){fixAllEOs.add(f); fixAll = "F";} else fixAll = "";
+				
+				//Arguments for Quickfix: SmartFlag, SolutionsArray
+				val String[] args = newArrayOfSize(p.solutions.size+1);
+				args.set(0, fixAll);
+				for(var i=1; i<args.size; i++){
+					args.set(i,p.solutions.get(i-1).join(",")); //Join unique solution with ","
+				}
+				
 				switch (p.level) {
-					case ERROR:  {error  (p.GetLabel,f.eo,f.sf,f.index,FIX_PROBLEM, ps.key, String.valueOf(cnt++), fixAll);hasErrors=true;}
-					case WARNING:{warning(p.GetLabel,f.eo,f.sf,f.index,FIX_PROBLEM, ps.key, String.valueOf(cnt++), fixAll);}
-					case INFO:	 {info   (p.GetLabel,f.eo,f.sf,f.index,FIX_PROBLEM, ps.key, String.valueOf(cnt++), fixAll);}
+					case ERROR:  {error  (p.GetLabel,f.eo,f.sf,f.index,FIX_PROBLEM, args);hasErrors=true;}
+					case WARNING:{warning(p.GetLabel,f.eo,f.sf,f.index,FIX_PROBLEM, args);}
+					case INFO:	 {info   (p.GetLabel,f.eo,f.sf,f.index,FIX_PROBLEM, args);}
 				}
 			}
 		}
 		
-		//Throw all restriction related errors
-		/*for(a : problems.entrySet){ //Iterate all EObjects
-			eo = a.key;
-			
-			//Find the appropriate feature for the EObject
-			switch (eo.class) {
-				//case IndividualImpl: 		{ sf = SeMLPackage.Literals.ANY_INDIVIDUAL__NAME;}
-				case CharacteristicImpl:	{ sf = SeMLPackage.Literals.USE_CHARACTERISTIC__NAME;}
-				case ImportImpl: 			{ sf = SeMLPackage.Literals.IMPORT__NAME;} //Meta individuals
-				default: 					{ System.err.println(local_log + "Internal error: Unexpected agent") }
-			}
-			
-			//Iterate all problems of an EObject
-			var anyFix = false;
-			var String option = ""; //Quickfix's desired behavior (""-No_quickfix "x"-single_fix "xx"-general_fix "xxx"-both)
-			for(var int i=0; i<a.value.length; i++){
-				val ModelSolution mS = a.value.get(i);
-				if(!mS.fix.empty) {anyFix = true; option = "x";} //This solution contains a Fix
-				if(i==a.value.length-1 && anyFix) {option += "xx";}
-				if(mS.isWarning){
-					warning(mS.problem, eo, sf, FIX_ALL_AND_ERROR, option, String.valueOf(i), String.join("\n",mS.fix));
-				}else{
-					error(mS.problem, eo, sf, FIX_ALL_AND_ERROR, option, String.valueOf(i), String.join("\n",mS.fix));
-				}
-			}
-		}*/
+		//========================================================================================== Display Statistics
+        //=============================================================================================================
 		
+		val elapsedTime = System.currentTimeMillis() - startTime;
+		val solutionsTime = (solutionsRuntime as float/elapsedTime * 100f) as int
+		val searchTime = (searchRuntime as float/elapsedTime * 100f) as int
+		val loadingTime = (elapsedLoadingTime as float/elapsedTime * 100f) as int
+		val relativeTime = elapsedTime/1000 + "s (" + loadingTime + "% loading, " + searchTime + "% search, " + solutionsTime + "% solutions)";
 		if(hasErrors){
-			Console.OutPairLn(local_log, "Done. Model has errors."); return false;	
+			Console.OutPair(local_log, "Done. Model has errors.  "); Console.DebLn(relativeTime); 
+			return false;	
 		}
 		
-		Console.OutPairLn(local_log, "Done. Model is valid."); return true;
+		Console.OutPair(local_log, "Done. Model is valid.  "); Console.DebLn(relativeTime); 
+		return true;
 	}
 	
 
@@ -373,117 +375,46 @@ class SeMLValidator extends AbstractSeMLValidator {
 	def public static boolean CheckModelRestrictions(boolean skipFullTest, HashSet<List<String>> authorizatedRels){
 		
 		nextProblem = null; //Reset next problem (used by smart Quickfix)
-		val MainModel m = globalMainModel;
-		//val individualsList = EcoreUtil2.getAllContentsOfType(m, Individual);		
-		//val useList = EcoreUtil2.getAllContentsOfType(m, UseCharacteristic); //is this not needed
 		
 		//Create database with the problems caused by individual class restrictions or model characteristics
 		//Each entry has a key which represents the agent's Alias
 		problems = new HashMap<String, ArrayList<Problem>>;
 		
+		//Start progress monitor
+		val int workload = CharacteristicsSolver.GetCharacteristicsSize + activeInds.size;
+		val pm = new Progress(workload, "Validating Model", "Checking consistency");
+		
 		//------------------------------------------------- Check characteristic imposed restrictions
 
 		for(OWLClass ch: CharacteristicsSolver.GetRequiredCharacteristics){
+			pm.subTask = "Checking \"" + Ontologies.GetShortIRI(ch.IRI) + "\" imposed restrictions";
 			val ArrayList<Problem> ps = MasterOntology.CheckModelRestrictions(ch); 
 			if(!ps.empty) { //Problems exist
-				if(skipFullTest) {if(FindNextProblem(ps)) return false;} //Irrelevant return value
+				if(skipFullTest) {if(FindNextProblem(ps)){ pm.stop(); return false;}} //Irrelevant return value
 				problems.put(MasterOntology.cachedIRIs.get(ch.IRI.toString), ps); //no old entry is overwritten because ch is unique every time
 			}
+			pm.state++; //Thread.sleep(200); //yield
 		}
 		
 		//If excess errors exist, skip further checks
-		if(problems.entrySet.exists[e | e.value.exists[p | p.type==TypeE.CHAR_EXCESS]]) return true;
+		if(problems.entrySet.exists[e | e.value.exists[p | p.type==TypeE.CHAR_EXCESS]]) { pm.stop(); return true;}
 		
-		//------------------------------------------------- Check individual restrictions & Reports
+		//------------------------------------------------- Check individual restrictions & Reports & unsolved upperProblems
 
 		//Check if individuals that were created in Protégé meet their class's restrictions
 		//Note: these defect errors are not detected before due to the Open World Assumption 
 		
 		for(Individual i: activeInds){
+			pm.subTask = "Checking \"" + i.name + "\" restrictions and reports";
 			var ArrayList<Problem> ps = MasterOntology.CheckRelationRestrictions(authorizatedRels, i.iri);
-			if(skipFullTest) {if(FindNextProblem(ps)) return false;}//Irrelevant return value
+			if(skipFullTest) {if(FindNextProblem(ps)) { pm.stop(); return false;}}//Irrelevant return value
 			MasterOntology.CheckReports(i.iri,ps); //add Reports
 			
 			if(!ps.empty) problems.put(i.name, ps); //no old entry is overwritten because i is unique every time
+			pm.state++; //Thread.sleep(200); //yield
 		}
 		
 		return false;
-		
-			/*for(Component c: i.cls){ //Check individual for multiple classes
-				val ArrayList<ModelSolution> mS = MasterOntology.CheckRelationRestrictions(c.iri, indIRI);
-				if(mS.size != 0) {
-					if(skipFullTest) {if(FindNextProblem(mS)) return;}
-					indProblems.addAll(mS);
-				}
-			}*/
-		
-		
-		
-		/*for(MetaIndividual i: globalImportModel.metaIndividuals){ 
-			for(String s: i.cls){ //Iterate each class of an individual and check the restrictions of each class
-				val ArrayList<ModelSolution> mS = MasterOntology.CheckRelationRestrictions(s, i.iri);
-				if(mS.size != 0) {
-					if(skipFullTest) {if(FindNextProblem(mS)) return;}
-					anonymousProblems.addAll(mS);
-				}
-			}
-			// Check if this meta-individual is referenced in any report
-			var rClasses = Anomaly.IndividualReports.get(i.iri);
-			if(rClasses !== null){
-				for(OWLClass c: rClasses){
-					val ArrayList<ModelSolution> mS = MasterOntology.CheckRelationRestrictions(c.IRI.toString, i.iri);
-					if(mS.size != 0) { //The Report contains restrictions which must be stamped
-						if(skipFullTest) {if(FindNextProblem(mS)) return;}
-						mS.forEach[sol | sol.AddReportStamp(c, MasterOntology.cachedIRIs.get(i.iri))];
-						anonymousProblems.addAll(mS);
-					}else{ //The Report does not contain any restriction
-						val ModelSolution reportMS = new ModelSolution();
-						reportMS.AddReportStamp(c, MasterOntology.cachedIRIs.get(i.iri));
-						anonymousProblems.add(reportMS);
-					}
-				}
-			}
-		}*/
-		
-		//Perform the same Check for individuals created in the DSL
-		/*for(Individual i: individualsList){
-			
-			//Individual IRI 
-			val String indIRI = MasterOntology.OWL_Master + "#" + i.getName();
-			//Individual Problems (to avoid overwriting old entries)
-			val ArrayList<ModelSolution> indProblems = new ArrayList<ModelSolution>();
-			
-			for(Component c: i.cls){ //Check individual for multiple classes
-				val ArrayList<ModelSolution> mS = MasterOntology.CheckRelationRestrictions(c.iri, indIRI);
-				if(mS.size != 0) {
-					if(skipFullTest) {if(FindNextProblem(mS)) return;}
-					indProblems.addAll(mS);
-				}
-			}
-			// Check if this individual is referenced in any report
-			var rClasses = Anomaly.IndividualReports.get(indIRI);
-			if(rClasses !== null){
-				for(OWLClass c: rClasses){
-					val ArrayList<ModelSolution> mS = MasterOntology.CheckRelationRestrictions(c.IRI.toString, indIRI);
-					if(mS.size != 0) { //The Report contains restrictions which must be stamped
-						if(skipFullTest) {if(FindNextProblem(mS)) return;}
-						mS.forEach[sol | sol.AddReportStamp(c, null)];
-						indProblems.addAll(mS);
-					}else{ //The Report does not contain any restriction
-						val ModelSolution reportMS = new ModelSolution();
-						reportMS.AddReportStamp(c, null);
-						indProblems.add(reportMS);
-					}
-				}
-			}
-			
-			//Finally add this individual's problems to the general list
-			if(!indProblems.isEmpty) problems.put(i, indProblems);
-		}
-		
-		//Finally add anonymous problems to the general list
-		if(!anonymousProblems.isEmpty) problems.put(m.imports.last, anonymousProblems);*/
-
 	}
 	
 
@@ -543,29 +474,34 @@ class SeMLValidator extends AbstractSeMLValidator {
 	 * 
 	 * @param contextResource		Absolute file path of the ImportsModel
 	 * @param importURIAsString		Absolute file path of the ImportsModel
-	 * @return	false if model was untouched
 	 */
 
-	def boolean GetImportModel(Resource contextResource, String importURIAsString) {
-		var boolean modelChanged;
-		if(globalImportModel === null) {modelChanged=true;} else modelChanged=false;
+	def void GetImportModel(Resource contextResource, String importURIAsString) {
+		
+		var Resource resource = ImportResource(contextResource, importURIAsString);
+		
+		if(resource === null) {error("Error loading keywords file: " + Ontologies.GENfile.absolutePath, globalMainModel.imports.last, SeMLPackage.Literals.IMPORT__NAME);return;}
+		
+		if(!resource.timeStamp.equals(importDate)){ //Reload resource if modified
+			resource.unload; //Unload
+			resource = ImportResource(contextResource, importURIAsString); //Reload
+		}
+		
+		globalImportModel = resource?.allContents?.head as ImportModel	
+	}
+	
+	/**
+	 *  Load Resource
+	 */
+	def static Resource ImportResource(Resource contextResource, String importURIAsString){
 		
 		val URI importURI = URI?.createURI(importURIAsString)
 		val URI contextURI = contextResource?.getURI
 		val URI resolvedURI = importURI?.resolve(contextURI)
 		val ResourceSet contextResourceSet = contextResource?.resourceSet
 		var Resource resource = contextResourceSet?.getResource(resolvedURI, true)
+		return resource;
 		
-		if(resource === null) {error("Error loading keywords file: " + Ontologies.GENfile.absolutePath, globalMainModel.imports.last, SeMLPackage.Literals.IMPORT__NAME);return true;}
-		
-		if(!resource.timeStamp.equals(importDate)){ //Reload resource if modified
-			resource.unload; //Unload
-			resource = contextResourceSet?.getResource(resolvedURI, true); //Reload
-			modelChanged = true;
-		}
-		
-		globalImportModel = resource?.allContents?.head as ImportModel	
-		return modelChanged;
 	}
 	
 	
@@ -578,9 +514,6 @@ class SeMLValidator extends AbstractSeMLValidator {
 	def boolean CheckImports(MainModel m){ //detects changes in Imported ontologies
 		val String local_log = local_log + "[checkModelImports] ";
 		var long mostRecentFile = 0;
-
-    	
-    	//CustomSWRLBuiltin.debug_wow;
     	
     	//Check if there are any imports
 		if(m.imports.empty) return false;
@@ -596,9 +529,6 @@ class SeMLValidator extends AbstractSeMLValidator {
 			pathslist.set(cnt++,i.getName());
 		}
 		Arrays.sort(pathslist); //Sort ontologies paths to compare them with the generated file's list
-				
-		//Generate paths for current SEML file and generated SEML file, for a given ontology
-		Ontologies.populatePaths(m);
 		
 		//Check if generated file is up-to-date
 		if(Ontologies.GENfile.exists && Ontologies.GENfile.file){ //Check if file exists
@@ -610,7 +540,7 @@ class SeMLValidator extends AbstractSeMLValidator {
 				try {
 					//Check if every imported file matches exactly with the generated file summary
 					val FileInputStream fis = new FileInputStream(Ontologies.GENfile); //Open generated file
-					val BufferedReader br = new BufferedReader(new InputStreamReader(fis)); //Construct BufferedReader from InputStreamReader			 
+					val BufferedReader br = new BufferedReader(new InputStreamReader(fis,"UTF-8")); //Construct BufferedReader from InputStreamReader			 
 					
 					var String line = br.readLine(); cnt = 0;
 					var int SourceFilesNo = Integer.parseInt(line.substring(Ontologies.GENfirstline.length));
@@ -647,6 +577,27 @@ class SeMLValidator extends AbstractSeMLValidator {
 			return false;
 		}   	
 		return true;
+	}
+	
+	
+	def public static boolean PopulateQuickFixMap(MainModel m){
+	
+		//Generate paths for current SEML file and generated SEML file
+		Ontologies.populatePaths(m);
+		
+		//Import keywords file
+		val resource = ImportResource(m.eResource, Ontologies.GENfile_relpath);
+
+		if(resource === null || !resource.errors.empty) return false;
+		
+		quickfixMap = new HashMap<String,EObject>();
+		
+		val impModel = resource?.allContents?.head as ImportModel;	
+		impModel.staticIndividuals.forEach[i| quickfixMap.put(i.name, i)];
+		impModel.individualOptions.forEach[i| quickfixMap.put(i.name, i)];
+		impModel.objectProperties.forEach[o | quickfixMap.put(o.name, o)];
+		
+		return true; //Return after populating quickfixMap
 	}
 	
 }

@@ -93,7 +93,7 @@ public class MasterCache {
 			//get all restriction for the given characteristic class
 			HashSet<OWLClassExpression> restrictions = new HashSet<OWLClassExpression>();
 			
-			Set<OWLClass> clss = reasoner.getSubClasses(ch.getKey(), false).getFlattened();
+			Set<OWLClass> clss = reasoner.getSuperClasses(ch.getKey(), false).getFlattened();
 			clss.add(ch.getKey());
 			
 			clss.forEach(c -> restrictions.addAll(Ontologies.GetAnonymousSuperClasses(ontology, c)));

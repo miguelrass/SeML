@@ -16,6 +16,9 @@
         <AnnotationProperty IRI="#ArraySize"/>
     </Declaration>
     <Declaration>
+        <ObjectProperty IRI="#isSolvedBy"/>
+    </Declaration>
+    <Declaration>
         <AnnotationProperty IRI="#NonInstantiable"/>
     </Declaration>
     <Declaration>
@@ -32,9 +35,6 @@
     </Declaration>
     <Declaration>
         <DataProperty IRI="#hasError"/>
-    </Declaration>
-    <Declaration>
-        <ObjectProperty IRI="#solves"/>
     </Declaration>
     <Declaration>
         <DataProperty IRI="#hasReport"/>
@@ -98,6 +98,9 @@
     </Declaration>
     <Declaration>
         <ObjectProperty IRI="#uses"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasProblem"/>
     </Declaration>
     <Declaration>
         <DataProperty IRI="#hasWarning"/>
@@ -180,10 +183,6 @@
         <Class IRI="#Characteristic"/>
     </ObjectPropertyDomain>
     <ObjectPropertyDomain>
-        <ObjectProperty IRI="#solves"/>
-        <Class IRI="#Characteristic"/>
-    </ObjectPropertyDomain>
-    <ObjectPropertyDomain>
         <ObjectProperty IRI="#uses"/>
         <Class IRI="#Component"/>
     </ObjectPropertyDomain>
@@ -206,10 +205,6 @@
     <ObjectPropertyRange>
         <ObjectProperty IRI="#requires"/>
         <Class IRI="#Characteristic"/>
-    </ObjectPropertyRange>
-    <ObjectPropertyRange>
-        <ObjectProperty IRI="#solves"/>
-        <Class IRI="#Problem"/>
     </ObjectPropertyRange>
     <ObjectPropertyRange>
         <ObjectProperty IRI="#uses"/>

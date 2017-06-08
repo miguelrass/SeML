@@ -55,6 +55,7 @@ public class RestrictionAnalyzer3 implements OWLClassExpressionVisitor {
 	@Override public void visit(OWLClass exp) {System.err.println(local_log + "Internal Error: no class can exist at this point!");}
 	@Override public void visit(OWLObjectHasSelf exp) {}
 	@Override public void visit(@Nonnull OWLObjectOneOf exp){System.err.println(local_log + "Internal Error -> "+exp);} //this should never happen (its just a list of individuals)
+	@Override public void visit(OWLObjectComplementOf exp) {System.out.println(local_log + "Warning: Logical negation is only evaluated if nested inside a primary.");}
 	
     //=================================================== Data Property restrictions are currently not being evaluated
     @Override public void visit(@Nonnull OWLDataSomeValuesFrom exp) 	{}
@@ -103,26 +104,6 @@ public class RestrictionAnalyzer3 implements OWLClassExpressionVisitor {
     		if(!RA.hasFailed) return;
     	}
     	hasFailed = true;
-	}
-
-	/**
-	 * Evaluates logical expression: not(Restriction OR Restriction AND ...)
-     * Tries to normalize expression with DeMorgan laws
-	 */
-	@Override public void visit(OWLObjectComplementOf exp) {
-		//TODO: tirar este e o outro equivalente e meter msg de erro nao supportado
-//		//Complement of "has self" is not simplifiable and also not supported
-//		if(exp.getOperand().getClassExpressionType() == ClassExpressionType.OBJECT_HAS_SELF) return;
-//		
-//		OWLClassExpression ce = exp.getNNF();
-//		
-//		//If the normalized version is still an OWLObjectComplementOf
-//		if(ce.getClassExpressionType() == ClassExpressionType.OBJECT_COMPLEMENT_OF) return;
-//		
-//		//Analyze normalized expression instead
-//		RestrictionAnalyzer3 RA = new RestrictionAnalyzer3(reasoner);
-//		ce.accept(RA);
-
 	}
 
 	//=============================================================================================

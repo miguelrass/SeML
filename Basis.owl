@@ -7,11 +7,13 @@
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      ontologyIRI="esrg:basis">
     <Prefix name="" IRI="esrg:basis"/>
+    <Prefix name="c" IRI="esrg:c"/>
     <Prefix name="owl" IRI="http://www.w3.org/2002/07/owl#"/>
     <Prefix name="rdf" IRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
     <Prefix name="xml" IRI="http://www.w3.org/XML/1998/namespace"/>
     <Prefix name="xsd" IRI="http://www.w3.org/2001/XMLSchema#"/>
     <Prefix name="rdfs" IRI="http://www.w3.org/2000/01/rdf-schema#"/>
+    <Prefix name="basis" IRI="esrg:basis"/>
     <Import>esrg:c</Import>
     <Declaration>
         <Class IRI="#B1"/>
@@ -38,6 +40,15 @@
         <Class IRI="#X"/>
     </Declaration>
     <Declaration>
+        <NamedIndividual IRI="#twoInst"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ChB1"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#S3"/>
+    </Declaration>
+    <Declaration>
         <Class IRI="#R1"/>
     </Declaration>
     <Declaration>
@@ -45,6 +56,15 @@
     </Declaration>
     <Declaration>
         <NamedIndividual IRI="#x3.1"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#s1.1"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#s2.2"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#H"/>
     </Declaration>
     <Declaration>
         <Class IRI="#O3"/>
@@ -65,13 +85,28 @@
         <NamedIndividual IRI="#p2"/>
     </Declaration>
     <Declaration>
+        <Class IRI="#ExampleHead"/>
+    </Declaration>
+    <Declaration>
         <Class IRI="#ChA4"/>
     </Declaration>
     <Declaration>
         <NamedIndividual IRI="#a1.1"/>
     </Declaration>
     <Declaration>
+        <Class IRI="#S"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#S2"/>
+    </Declaration>
+    <Declaration>
         <NamedIndividual IRI="#O2.2"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#s2.1"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#s3.2"/>
     </Declaration>
     <Declaration>
         <NamedIndividual IRI="#z2"/>
@@ -104,19 +139,22 @@
         <Class IRI="#Z"/>
     </Declaration>
     <Declaration>
-        <Class IRI="#X2"/>
+        <NamedIndividual IRI="#c1.1"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual IRI="#c1.1"/>
+        <Class IRI="#X2"/>
     </Declaration>
     <Declaration>
         <Class IRI="#ChA1"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual IRI="#O2.1"/>
+        <Class IRI="#PrA1"/>
     </Declaration>
     <Declaration>
         <Class IRI="#B"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#O2.1"/>
     </Declaration>
     <Declaration>
         <Class IRI="#O1"/>
@@ -128,7 +166,16 @@
         <NamedIndividual IRI="#x3.3"/>
     </Declaration>
     <Declaration>
+        <Class IRI="#S1"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#s3.1"/>
+    </Declaration>
+    <Declaration>
         <NamedIndividual IRI="#O3.2"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#oneLiteral"/>
     </Declaration>
     <Declaration>
         <Class IRI="#B2"/>
@@ -152,22 +199,31 @@
         <Class IRI="#ChA2"/>
     </Declaration>
     <Declaration>
-        <Class IRI="#R2"/>
-    </Declaration>
-    <Declaration>
         <Class IRI="#Example"/>
     </Declaration>
     <Declaration>
         <Class IRI="#A"/>
     </Declaration>
     <Declaration>
+        <Class IRI="#R2"/>
+    </Declaration>
+    <Declaration>
         <Class IRI="#P2"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ChB"/>
     </Declaration>
     <Declaration>
         <NamedIndividual IRI="#x3.2"/>
     </Declaration>
     <Declaration>
+        <NamedIndividual IRI="#s1.2"/>
+    </Declaration>
+    <Declaration>
         <NamedIndividual IRI="#O3.1"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#O4"/>
     </Declaration>
     <EquivalentClasses>
         <Class IRI="#Z1"/>
@@ -191,6 +247,10 @@
     </SubClassOf>
     <SubClassOf>
         <Class IRI="#A1"/>
+        <Class IRI="#ExampleHead"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#A1"/>
         <DataSomeValuesFrom>
             <DataProperty IRI="esrg:upper#hasValue"/>
             <DataOneOf>
@@ -199,6 +259,10 @@
                 <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">C</Literal>
             </DataOneOf>
         </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#B"/>
+        <Class IRI="#ExampleHead"/>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="#B"/>
@@ -271,6 +335,10 @@
     </SubClassOf>
     <SubClassOf>
         <Class IRI="#C2"/>
+        <Class IRI="#ExampleHead"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#C2"/>
         <ObjectIntersectionOf>
             <ObjectMinCardinality cardinality="2">
                 <ObjectProperty IRI="esrg:upper#uses"/>
@@ -329,6 +397,18 @@
         <Class IRI="esrg:upper#Feature"/>
     </SubClassOf>
     <SubClassOf>
+        <Class IRI="#ChB"/>
+        <Class IRI="esrg:upper#Feature"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ChB1"/>
+        <Class IRI="#ChB"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#D"/>
+        <Class IRI="#ExampleHead"/>
+    </SubClassOf>
+    <SubClassOf>
         <Class IRI="#D"/>
         <Class IRI="esrg:upper#Process"/>
     </SubClassOf>
@@ -385,19 +465,27 @@
         <Class IRI="#Example"/>
         <ObjectMinCardinality cardinality="1">
             <ObjectProperty IRI="esrg:upper#uses"/>
-            <ObjectUnionOf>
-                <Class IRI="#A1"/>
-                <Class IRI="#B"/>
-                <Class IRI="#C2"/>
-                <Class IRI="#D"/>
-                <Class IRI="#O1"/>
-                <Class IRI="#P1"/>
-                <Class IRI="#R1"/>
-                <Class IRI="#R2"/>
-                <Class IRI="#X1"/>
-                <Class IRI="#Z2"/>
-            </ObjectUnionOf>
+            <Class IRI="#ExampleHead"/>
         </ObjectMinCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ExampleHead"/>
+        <Class IRI="esrg:upper#Component"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#H"/>
+        <Class IRI="#ExampleHead"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#H"/>
+        <Class IRI="esrg:upper#Entity"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#H"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="esrg:upper#hasProblem"/>
+            <Class IRI="#PrA1"/>
+        </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="#O"/>
@@ -405,20 +493,21 @@
     </SubClassOf>
     <SubClassOf>
         <Class IRI="#O1"/>
+        <Class IRI="#ExampleHead"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#O1"/>
         <Class IRI="#O"/>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="#O1"/>
-        <ObjectUnionOf>
-            <ObjectExactCardinality cardinality="2">
-                <ObjectProperty IRI="esrg:upper#uses"/>
+        <ObjectExactCardinality cardinality="2">
+            <ObjectProperty IRI="esrg:upper#uses"/>
+            <ObjectUnionOf>
                 <Class IRI="#O2"/>
-            </ObjectExactCardinality>
-            <ObjectExactCardinality cardinality="2">
-                <ObjectProperty IRI="esrg:upper#uses"/>
                 <Class IRI="#O3"/>
-            </ObjectExactCardinality>
-        </ObjectUnionOf>
+            </ObjectUnionOf>
+        </ObjectExactCardinality>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="#O2"/>
@@ -429,8 +518,30 @@
         <Class IRI="#O"/>
     </SubClassOf>
     <SubClassOf>
+        <Class IRI="#O4"/>
+        <Class IRI="#ExampleHead"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#O4"/>
+        <Class IRI="#O"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#O4"/>
+        <ObjectExactCardinality cardinality="1">
+            <ObjectProperty IRI="esrg:upper#uses"/>
+            <ObjectUnionOf>
+                <Class IRI="#O2"/>
+                <Class IRI="#O3"/>
+            </ObjectUnionOf>
+        </ObjectExactCardinality>
+    </SubClassOf>
+    <SubClassOf>
         <Class IRI="#P"/>
         <Class IRI="esrg:upper#Property"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#P1"/>
+        <Class IRI="#ExampleHead"/>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="#P1"/>
@@ -455,6 +566,17 @@
         <Class IRI="#P"/>
     </SubClassOf>
     <SubClassOf>
+        <Class IRI="#PrA1"/>
+        <Class IRI="esrg:upper#Problem"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#PrA1"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="esrg:upper#isSolvedBy"/>
+            <Class IRI="#ChB"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
         <Class IRI="#R"/>
         <Class IRI="esrg:upper#Property"/>
     </SubClassOf>
@@ -467,15 +589,54 @@
     </SubClassOf>
     <SubClassOf>
         <Class IRI="#R1"/>
+        <Class IRI="#ExampleHead"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#R1"/>
         <Class IRI="#R"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#R2"/>
+        <Class IRI="#ExampleHead"/>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="#R2"/>
         <Class IRI="#R"/>
     </SubClassOf>
     <SubClassOf>
+        <Class IRI="#S"/>
+        <Class IRI="#ExampleHead"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#S"/>
+        <Class IRI="esrg:upper#Entity"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#S"/>
+        <ObjectMinCardinality cardinality="0">
+            <ObjectProperty IRI="esrg:upper#uses"/>
+            <Class IRI="#S"/>
+        </ObjectMinCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#S1"/>
+        <Class IRI="#S"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#S2"/>
+        <Class IRI="#S"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#S3"/>
+        <Class IRI="#S"/>
+    </SubClassOf>
+    <SubClassOf>
         <Class IRI="#X"/>
         <Class IRI="esrg:upper#Process"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#X1"/>
+        <Class IRI="#ExampleHead"/>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="#X1"/>
@@ -529,6 +690,10 @@
     </SubClassOf>
     <SubClassOf>
         <Class IRI="#Z2"/>
+        <Class IRI="#ExampleHead"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Z2"/>
         <Class IRI="#Z"/>
     </SubClassOf>
     <SubClassOf>
@@ -575,12 +740,44 @@
         <NamedIndividual IRI="#example"/>
     </ClassAssertion>
     <ClassAssertion>
+        <Class IRI="esrg:c#swrlArguments"/>
+        <NamedIndividual IRI="#oneLiteral"/>
+    </ClassAssertion>
+    <ClassAssertion>
         <Class IRI="#P1"/>
         <NamedIndividual IRI="#p1"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="#P2"/>
         <NamedIndividual IRI="#p2"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#S1"/>
+        <NamedIndividual IRI="#s1.1"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#S1"/>
+        <NamedIndividual IRI="#s1.2"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#S2"/>
+        <NamedIndividual IRI="#s2.1"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#S2"/>
+        <NamedIndividual IRI="#s2.2"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#S3"/>
+        <NamedIndividual IRI="#s3.1"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#S3"/>
+        <NamedIndividual IRI="#s3.2"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="http://www.w3.org/2003/11/swrl#Builtin"/>
+        <NamedIndividual IRI="#twoInst"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="#X3"/>
@@ -598,6 +795,11 @@
         <Class IRI="#Z2"/>
         <NamedIndividual IRI="#z2"/>
     </ClassAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="esrg:c#hasArguments"/>
+        <NamedIndividual IRI="#twoInst"/>
+        <NamedIndividual IRI="#oneLiteral"/>
+    </ObjectPropertyAssertion>
     <DLSafeRule>
         <Annotation>
             <AnnotationProperty IRI="http://swrl.stanford.edu/ontologies/3.3/swrla.owl#isRuleEnabled"/>
@@ -716,6 +918,36 @@
             </DataPropertyAtom>
         </Head>
     </DLSafeRule>
+    <DLSafeRule>
+        <Annotation>
+            <AnnotationProperty IRI="http://swrl.stanford.edu/ontologies/3.3/swrla.owl#isRuleEnabled"/>
+            <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#boolean">true</Literal>
+        </Annotation>
+        <Annotation>
+            <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+            <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#string"></Literal>
+        </Annotation>
+        <Annotation>
+            <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+            <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#string">S4</Literal>
+        </Annotation>
+        <Body>
+            <BuiltInAtom IRI="#twoInst">
+                <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#string">esrg:basis#S</Literal>
+            </BuiltInAtom>
+            <ClassAtom>
+                <Class IRI="#S"/>
+                <Variable IRI="#s"/>
+            </ClassAtom>
+        </Body>
+        <Head>
+            <DataPropertyAtom>
+                <DataProperty IRI="esrg:upper#hasWarning"/>
+                <Variable IRI="#s"/>
+                <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#string">There are two instances of the same subclass of S!</Literal>
+            </DataPropertyAtom>
+        </Head>
+    </DLSafeRule>
     <AnnotationAssertion>
         <AnnotationProperty IRI="esrg:upper#NonInstantiable"/>
         <IRI>#B</IRI>
@@ -755,6 +987,11 @@
         <AnnotationProperty IRI="esrg:upper#StaticIndividual"/>
         <IRI>#example</IRI>
         <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"></Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="esrg:c#Argument_1"/>
+        <IRI>#oneLiteral</IRI>
+        <IRI>esrg:c#literal</IRI>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty IRI="esrg:upper#DefaultValue"/>

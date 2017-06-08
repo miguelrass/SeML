@@ -1,11 +1,15 @@
 package org.rass.implementation;
 
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -36,6 +40,7 @@ public class ImplementationHandler implements IHandler {
 	
 	private static final String local_log = "Implementation Log: ";
 	private static OWLDataFactory factory = OWLManager.getOWLDataFactory();
+	private TreeMap<Integer, ArrayList<Pair<String[],ArrayList<List<String>>>>> commands = null;
 	
 	private static PelletReasoner reasoner = null;
 	private static OWLOntology ontology = null;
@@ -51,10 +56,11 @@ public class ImplementationHandler implements IHandler {
 
 		Console.ImpPairLn(local_log, "Running Implementation...");
 		
-		// (Tool,Function) -> List of Commands
-		// Command = List of Argument Packs by Source
-		// Argument Pack = List of Arguments
-		HashMap<Pair<String,String>, ArrayList<ArrayList<List<String>>>> commands = new HashMap<Pair<String,String>, ArrayList<ArrayList<List<String>>>>();
+		//commands:
+		//Priority -> Commands
+		//Command = ([Tool, Function, ..], Argument Packs)
+		//Argument Pack = List of Arguments
+		commands = new TreeMap<Integer, ArrayList<Pair<String[],ArrayList<List<String>>>>>();
 		
 		Set<OWLNamedIndividual> inds = reasoner.getInstances(Ontologies.OWLC_Component, false).getFlattened(); //get instances of Component
 
@@ -63,43 +69,32 @@ public class ImplementationHandler implements IHandler {
 	    	for (OWLAnnotationAssertionAxiom annotation : annotations) { //gets annotations associated with the individual
 	    		if(Ontologies.OWL_Ann_ImplInd.equals(annotation.getProperty().getIRI().toString())){
 	    			
-	    			String annotationP = Ontologies.OWL_Ann_ImplArg; //arguments annotation property
+	        		//Parse input command
+	    			Pair<String[], ArrayList<Pair<String[], ArrayList<List<String>>>>> args_cmdList = CmdParse(annotation, 2);
+
+	    			//Check if user defined a specific annotation property for the arguments
+	        		String annotationP = Ontologies.OWL_Ann_ImplArg; //arguments annotation property
+	        		if(args_cmdList.getKey().length > 3) annotationP = args_cmdList.getKey()[3]; //get user-defined Annotation Property
 	    			
-	    			//Get comma separated parameters from annotation
-	        		String[] params = annotation.getValue().asLiteral().get().getLiteral().split(",");
-	        		
-	        		//Search (Tool,Function) entry or create a new one
-	        		Pair<String,String> key = new Pair<String,String>(params[0],params[1]);
-	        		ArrayList<ArrayList<List<String>>> toolFunc = commands.get(key);
-	        		if(toolFunc==null){toolFunc = new ArrayList<ArrayList<List<String>>>(); commands.put(key, toolFunc);}
-	        		
-	        		//Check if user defined a specific annotation property for the arguments
-	        		if(params.length == 3) annotationP = params[2];
-	        		
-	        		//Build command with all arguments
+	        		//Create new command object and insert arguments
 	        		ArrayList<List<String>> command = new ArrayList<List<String>>();
-	        		command.add(insertAnnPack(annotations, annotationP)); //Add arguments pack (from individual)   		
+	        		command.add(insertAnnPack(annotations, annotationP)); //Add arguments pack (from individual)   	
 	        		
-	        		toolFunc.add(command); //add command to (Tool,Function) entry
+	        		//Insert command object 
+	        		args_cmdList.getValue().add(new Pair<>(args_cmdList.getKey(),command));
 	        		
 	        	}else if(Ontologies.OWL_Ann_ImplOP.equals(annotation.getProperty().getIRI().toString())){
 	        		
-	    			String annotationP = Ontologies.OWL_Ann_ImplArg; //arguments annotation property
-	    			
-	    			//Get comma separated parameters from annotation
-	        		String[] params = annotation.getValue().asLiteral().get().getLiteral().split(",");
-	        		
-	        		//Search (Tool,Function) entry or create a new one
-	        		Pair<String,String> key = new Pair<String,String>(params[0],params[1]);
-	        		ArrayList<ArrayList<List<String>>> toolFunc = commands.get(key);
-	        		if(toolFunc==null){toolFunc = new ArrayList<ArrayList<List<String>>>(); commands.put(key, toolFunc);}
+	        		//Parse input command
+	    			Pair<String[], ArrayList<Pair<String[], ArrayList<List<String>>>>> args_cmdList = CmdParse(annotation, 3);
 	        		
 	        		//Get object property
-	        		IRI objectIRI = IRI.create(params[2]);
+	        		IRI objectIRI = IRI.create(args_cmdList.getKey()[2]);
 	        		OWLObjectProperty objectP = factory.getOWLObjectProperty(objectIRI);
 	        		
 	        		//Check if user defined a specific annotation property for the arguments
-	        		if(params.length == 4) annotationP = params[3];
+	        		String annotationP = Ontologies.OWL_Ann_ImplArg; //arguments annotation property
+	        		if(args_cmdList.getKey().length > 4) annotationP = args_cmdList.getKey()[4];
 	        		
 	        		//Get all individuals that are linked via the provided OP
 	        		Set<OWLNamedIndividual> ind2s = reasoner.getObjectPropertyValues(i, objectP).getFlattened();
@@ -112,27 +107,22 @@ public class ImplementationHandler implements IHandler {
 	        			//command.add(insertAnnPack(ontology.getAnnotationAssertionAxioms(objectIRI), annotationP)); //Add arguments pack (from OP)
 	        			command.add(insertAnnPack(ontology.getAnnotationAssertionAxioms(i2.getIRI()), annotationP)); //Add arguments pack (from individual2)
 	        		
-	        			toolFunc.add(command); //add command to (Tool,Function) entry
+	        			//Insert command object 
+	        			args_cmdList.getValue().add(new Pair<>(args_cmdList.getKey(),command));
 	        		}
 
 	        	}else if(Ontologies.OWL_Ann_ImplDP.equals(annotation.getProperty().getIRI().toString())){
 	        		
-	        		String annotationP = Ontologies.OWL_Ann_ImplArg; //arguments annotation property
-	    			
-	    			//Get comma separated parameters from annotation
-	        		String[] params = annotation.getValue().asLiteral().get().getLiteral().split(",");
-	        		
-	        		//Search (Tool,Function) entry or create a new one
-	        		Pair<String,String> key = new Pair<String,String>(params[0],params[1]);
-	        		ArrayList<ArrayList<List<String>>> toolFunc = commands.get(key);
-	        		if(toolFunc==null){toolFunc = new ArrayList<ArrayList<List<String>>>(); commands.put(key, toolFunc);}
+	        		//Parse input command
+	    			Pair<String[], ArrayList<Pair<String[], ArrayList<List<String>>>>> args_cmdList = CmdParse(annotation, 3);
 	        		
 	        		//Get data property
-	        		IRI dataIRI = IRI.create(params[2]);
+	        		IRI dataIRI = IRI.create(args_cmdList.getKey()[2]);
 	        		OWLDataProperty dataP = factory.getOWLDataProperty(dataIRI);
 	        		
 	        		//Check if user defined a specific annotation property for the arguments
-	        		if(params.length == 4) annotationP = params[3];
+	        		String annotationP = Ontologies.OWL_Ann_ImplArg; //arguments annotation property
+	        		if(args_cmdList.getKey().length > 4) annotationP = args_cmdList.getKey()[4];
 	        		
 	        		//Get all individuals that are linked via the provided DP
 	        		Set<OWLLiteral> literals = reasoner.getDataPropertyValues(i, dataP);
@@ -145,23 +135,75 @@ public class ImplementationHandler implements IHandler {
 	        			//command.add(insertAnnPack(ontology.getAnnotationAssertionAxioms(dataIRI), annotationP)); //Add arguments pack (from DP)
 	        			command.add(Arrays.asList(l.getLiteral())); //Add arguments pack (one literal)
 
-	        			toolFunc.add(command); //add command to (Tool,Function) entry
+	        			//Insert command object 
+	        			args_cmdList.getValue().add(new Pair<>(args_cmdList.getKey(),command));
 	        		}
 	        	}
 	        }
 		}
 		
+		ToolDispatcher.LoadToolClasses();
 		
-		for(Entry<Pair<String, String>, ArrayList<ArrayList<List<String>>>> cmds: commands.entrySet()){
-			Console.ImpPairLn(local_log, "Commands for tool: " + cmds.getKey().getKey() + "  Function: " + cmds.getKey().getValue());
+		for(ArrayList<Pair<String[], ArrayList<List<String>>>> parallelCmds: commands.values()){ //Commands with same priority
+			for(Pair<String[], ArrayList<List<String>>> cmd: parallelCmds){ //Single command
 
-			for(ArrayList<List<String>> cmd : cmds.getValue())
-				Console.ImpPairLn(local_log, "\t" + cmd.toString());
+				String toolSt = cmd.getKey()[0];
+				String funcSt = cmd.getKey()[1];
+				
+				//If class is not loaded, display call in console
+				if(!ToolDispatcher.loadedClasses.containsKey(toolSt)){
+					Console.ImpPairLn(local_log, "Tool: " + toolSt + "  Function: " + funcSt + "  Arguments: " + cmd.getValue());
+					continue;
+				}
+				
+				Class<?> cls = ToolDispatcher.loadedClasses.get(toolSt);			
+	
+				try {
+					Method m = cls.getMethod(funcSt, ArrayList.class);
+					
+					String ret = (String) m.invoke(null,cmd.getValue());
+					if(ret != null) Console.ImpPairLn(local_log, ret);
+				} 
+				catch (NoSuchMethodException e) 	{Console.ErrPairLn(local_log, "Method not found: " + funcSt);} 
+				catch (SecurityException e)	 		{e.printStackTrace();} 
+				catch (IllegalAccessException e) 	{e.printStackTrace();} 
+				catch (IllegalArgumentException e) 	{e.printStackTrace();}
+				catch (InvocationTargetException e) {e.printStackTrace();}
+        
+			}
 		}
 
 		//HandlerUtil.getActiveWorkbenchWindow(event).close();
 		Console.ImpPairLn(local_log, "Done.");
 		return null;
+	}
+	
+	/**
+	 * Parses command
+	 * @param annotation
+	 * @param priorityArgNo
+	 * @return Parameters list and Command list for that priority
+	 * 
+	 */
+	private Pair<String[],ArrayList<Pair<String[], ArrayList<List<String>>>>> CmdParse(OWLAnnotationAssertionAxiom annotation, int priorityIndex){
+			
+		//Get comma separated parameters from annotation
+		String[] params = annotation.getValue().asLiteral().get().getLiteral().split(",");
+		
+		//Get command's priority
+		int priority = 10; //default priority
+		if(params.length > priorityIndex) priority = Integer.parseInt(params[priorityIndex]);
+		
+		//Get command list for the given priority
+		ArrayList<Pair<String[], ArrayList<List<String>>>> cmdList = commands.get(priority);
+		
+		//If command list was not found, create it and add it to commands
+		if(cmdList == null){ 
+			cmdList = new ArrayList<Pair<String[], ArrayList<List<String>>>>();
+			commands.put(priority, cmdList);
+		}
+
+		return new Pair<>(params,cmdList);
 	}
 	
 	private ArrayList<String> insertAnnPack(Set<OWLAnnotationAssertionAxiom> annotations, String annP){

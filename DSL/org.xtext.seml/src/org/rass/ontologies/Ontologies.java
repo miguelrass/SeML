@@ -41,14 +41,18 @@ public class Ontologies {
 	public static final String OWL_Goal = OWL_Upper + "Goal";
 	public static final String OWL_Feature = OWL_Upper + "Feature";
 	public static final String OWL_DefaultCh = OWL_Upper + "Default";
+	public static final String OWL_Problem = OWL_Upper + "Problem";
 	public static final String OWL_Requires = OWL_Upper + "requires";
 	
 	public static final OWLClass OWLC_Thing = fac.getOWLClass(IRI.create("http://www.w3.org/2002/07/owl#Thing"));
 	public static final OWLClass OWLC_Component = fac.getOWLClass(IRI.create(OWL_Component));
 	public static final OWLClass OWLC_DefaultCh = fac.getOWLClass(IRI.create(OWL_DefaultCh));
+	public static final OWLClass OWLC_Problem = fac.getOWLClass(IRI.create(OWL_Problem));
 	
 	public static final String OWL_OP_Bottom = "http://www.w3.org/2002/07/owl#bottomObjectProperty";
 	public static final String OWL_OP_demands = OWL_Upper + "demands";
+	public static final String OWL_OP_hasProblem = OWL_Upper + "hasProblem";
+	public static final String OWL_OP_isSolvedBy = OWL_Upper + "isSolvedBy";
 	public static final String OWL_DP_hasValue = OWL_Upper + "hasValue";
 	public static final String OWL_DP_hasReport = OWL_Upper + "hasReport";
 	public static final String OWL_DP_hasError = OWL_Upper + "hasError";
@@ -77,9 +81,11 @@ public class Ontologies {
 	public static String GENfile_relpath = null; //relative path from workspace (to get imported model)
 	public static String GENfolder = null; //generated folder (absolute path)
 	public static String SWRLfolder = null; //swrl folder (absolute path)
+	public static String Toolsfolder = null; //Tools folder (absolute path)
 	public static String TEMPLfolder = null; //swrl templates folder (absolute path)
 	public static String PROJfolder = null; //project folder (absolute path)
 	public static String SWRLPackage = null; //swrl java package (semlbasename+ ".swrl")
+	public static String ToolsPackage = null; //Tools java package (semlbasename+ ".tools")
 	public static final String GENfirstline = "/* Automatically generated file. Source files: ";
 	public static final String masterNAME = "master.owl";
 	public static final String masterIRI = "Se:ML";
@@ -488,7 +494,7 @@ public class Ontologies {
     }
     
     
-    public static void populatePaths(EObject E){    	
+    public static void populatePaths(EObject E) throws IOException{    	
     	//Find current SEML file
 		String SEMLfile_relpath = E.eResource().getURI().toPlatformString(true);// 		"rPath/____.seml"
 		IFile SEMLfile_object = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(SEMLfile_relpath));
@@ -506,12 +512,21 @@ public class Ontologies {
 		//GENfolder_relpath = SEMLfile_basename + "_gen/"; 				// 	"----_gen/"		
 		
 		SWRLfolder =  SEMLfile_abspath_noExt + "_swrl/";				// 	".../path/----_swrl/"
+		Toolsfolder = SEMLfile_abspath_noExt + "_tools/";				// 	".../path/----_tools/"
 		TEMPLfolder = SEMLfile_abspath_noExt + "_template/";			// 	".../path/----_template/"
 		SWRLPackage = SEMLfile_basename + "_swrl";						// 	"----_swrl"
+		ToolsPackage =SEMLfile_basename + "_tools";						// 	"----_tools"
 		
 		//Get generated file path (relative + absolute)
 		GENfile = new File(GENfolder + GENfile_NAME);					// ".../path/----_gen/imports.seml"
 		GENfile_relpath = SEMLfile_basename + "_gen/" + GENfile_NAME;	// "----_gen/imports.seml"				
+		
+		//Create tools folder 
+		File toolsFolderFile = new File(Toolsfolder);
+		if(!toolsFolderFile.exists()){ //Check if folder exists, create it otherwise
+			if(!toolsFolderFile.mkdir())
+				throw new IOException("Error creating directory: " + Toolsfolder); //Error occurred while creating folder
+	    }
     }
 	
 }

@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext;
 import org.eclipse.xtext.ui.editor.model.edit.ISemanticModification;
 import org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider;
@@ -17,12 +18,12 @@ import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor;
 import org.eclipse.xtext.validation.Issue;
 import org.eclipse.xtext.xbase.lib.Conversions;
 import org.rass.ontologies.MasterOntology;
-import org.rass.restrictions.Problem;
 import org.xtext.seml.seML.Assignment;
 import org.xtext.seml.seML.BoolVal;
 import org.xtext.seml.seML.FloatVal;
 import org.xtext.seml.seML.Individual;
 import org.xtext.seml.seML.IntVal;
+import org.xtext.seml.seML.MainModel;
 import org.xtext.seml.seML.ObjectProperty;
 import org.xtext.seml.seML.Relation;
 import org.xtext.seml.seML.SeMLFactory;
@@ -40,10 +41,13 @@ public class SeMLQuickfixProvider extends DefaultQuickfixProvider {
   private final static String local_log = "Quickfix Log: ";
   
   public void fixModel(final Issue issue, final IssueResolutionAcceptor acceptor) {
-    final String local_log = "Smart Quickfix Log: ";
+    final String local_log = (SeMLQuickfixProvider.local_log + "[fixModel] ");
     acceptor.accept(issue, "Try to generate multiple solutions", "no description", null, new ISemanticModification() {
       @Override
       public void apply(final EObject element, final IModificationContext context) {
+        EObject _rootContainer = EcoreUtil2.getRootContainer(element);
+        final MainModel m = ((MainModel) _rootContainer);
+        System.out.println((local_log + "Fixing model..."));
         while (true) {
           {
             HashSet<List<String>> _hashSet = new HashSet<List<String>>();
@@ -52,7 +56,10 @@ public class SeMLQuickfixProvider extends DefaultQuickfixProvider {
               System.out.println((local_log + "Done. No more solutions."));
               return;
             }
-            SeMLQuickfixProvider.this.fixProblem(SeMLValidator.nextProblem.solutions.get(0));
+            SeMLQuickfixProvider.this.fixProblem(SeMLValidator.nextProblem.solutions.get(0), m);
+            List<String> _get = SeMLValidator.nextProblem.solutions.get(0);
+            String _plus = ((local_log + "Added: ") + _get);
+            System.out.println(_plus);
           }
         }
       }
@@ -98,13 +105,10 @@ public class SeMLQuickfixProvider extends DefaultQuickfixProvider {
    */
   @Fix(SeMLValidator.FIX_PROBLEM)
   public void fixDispatcher(final Issue issue, final IssueResolutionAcceptor acceptor) {
-    final int no = Integer.parseInt(issue.getData()[1]);
-    final Problem p = SeMLValidator.problems.get(issue.getData()[0]).get(no);
-    for (final List<String> s : p.solutions) {
-      this.throwFix(issue, acceptor, s);
+    for (int i = 1; (i < ((List<String>)Conversions.doWrapArray(issue.getData())).size()); i++) {
+      this.throwFix(issue, acceptor, ((List<String>)Conversions.doWrapArray(issue.getData()[i].split(","))));
     }
-    boolean _equals = issue.getData()[2].equals("F");
-    if (_equals) {
+    if ((issue.getData()[0].equals("F") && (SeMLValidator.validationState != 0))) {
       this.fixModel(issue, acceptor);
     }
   }
@@ -115,12 +119,16 @@ public class SeMLQuickfixProvider extends DefaultQuickfixProvider {
     acceptor.accept(issue, _plus, "no description", null, new ISemanticModification() {
       @Override
       public void apply(final EObject element, final IModificationContext context) {
-        SeMLQuickfixProvider.this.fixProblem(sol);
+        EObject _rootContainer = EcoreUtil2.getRootContainer(element);
+        SeMLQuickfixProvider.this.fixProblem(sol, ((MainModel) _rootContainer));
       }
     });
   }
   
-  public void fixProblem(final List<String> sol) {
+  public void fixProblem(final List<String> sol, final MainModel m) {
+    if ((SeMLValidator.quickfixMap == null)) {
+      SeMLValidator.PopulateQuickFixMap(m);
+    }
     int _length = ((Object[])Conversions.unwrapArray(sol, Object.class)).length;
     boolean _equals = (_length == 2);
     if (_equals) {
@@ -157,14 +165,14 @@ public class SeMLQuickfixProvider extends DefaultQuickfixProvider {
             break;
         }
       }
-      SeMLValidator.globalMainModel.getSentences().add(a);
+      m.getSentences().add(a);
       MasterOntology.AddDPRelations(Arrays.<Assignment>asList(a));
     } else {
       EObject _get_1 = SeMLValidator.quickfixMap.get(sol.get(0));
       final Individual i1 = ((Individual) _get_1);
       EObject _get_2 = SeMLValidator.quickfixMap.get(sol.get(1));
       final ObjectProperty obj = ((ObjectProperty) _get_2);
-      EList<Sentence> _sentences = SeMLValidator.globalMainModel.getSentences();
+      EList<Sentence> _sentences = m.getSentences();
       for (final Sentence s : _sentences) {
         if ((s instanceof Relation)) {
           final Relation r = ((Relation) s);
@@ -185,8 +193,10 @@ public class SeMLQuickfixProvider extends DefaultQuickfixProvider {
         EObject _get_3 = SeMLValidator.quickfixMap.get(sol.get(i));
         r_1.getInd2().add(((Individual) _get_3));
       }
-      SeMLValidator.globalMainModel.getSentences().add(r_1);
-      MasterOntology.AddOPRelations(Arrays.<Relation>asList(r_1));
+      m.getSentences().add(r_1);
+      if ((SeMLValidator.validationState != 0)) {
+        MasterOntology.AddOPRelations(Arrays.<Relation>asList(r_1));
+      }
     }
   }
 }

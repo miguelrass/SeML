@@ -1,13 +1,25 @@
 package org.xtext.seml;
 
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
+import org.eclipse.ui.handlers.HandlerUtil;
 
 public class Console {
 
@@ -50,6 +62,7 @@ public class Console {
     }
     
     public static void ChangeConsole(Color c, Font f){
+					
     	Display.getDefault().asyncExec(new Runnable() {
             public void run() {	
     			if(c!=null) console.setBackground(c);
@@ -58,32 +71,18 @@ public class Console {
          });
     }
     
-    public static void OutPairLn(String s1, String s2){
-    	out.println(s2); System.out.println(s1+s2);
-    }
+
     
-    public static void ErrPairLn(String s1, String s2){
-    	err.println(s2); System.err.println(s1+s2);
-    }
+    public static void OutPairLn(String s1, String s2){ out.println(s2); System.out.println(s1+s2); }
+    public static void ErrPairLn(String s1, String s2){ err.println(s2); System.err.println(s1+s2); }
+    public static void DebPairLn(String s1, String s2){ deb.println(s2); System.out.println(s1+s2); }
+    public static void ImpPairLn(String s1, String s2){ imp.println(s2); System.out.println(s1+s2); }
     
-    public static void DebPairLn(String s1, String s2){
-    	deb.println(s2); System.out.println(s1+s2);
-    }
+    public static void OutPair(String s1, String s2){ out.print(s2); System.out.print(s1+s2); }
+    public static void DebPair(String s1, String s2){ deb.print(s2); System.out.print(s1+s2); }
     
-    public static void ImpPairLn(String s1, String s2){
-    	imp.println(s2); System.out.println(s1+s2);
-    }
-    
-    public static void DebPair(String s1, String s2){
-    	deb.print(s2); System.out.print(s1+s2);
-    }
-    
-    public static void OutLn(String s){
-    	out.println(s); System.out.println(s);
-    }
-    
-    public static void ErrLn(String s){
-    	err.println(s); System.err.println(s);
-    }
+    public static void OutLn(String s){ out.println(s); System.out.println(s); }
+    public static void ErrLn(String s){ err.println(s); System.err.println(s); }
+    public static void DebLn(String s){ deb.println(s); System.out.println(s); }
 
 }
