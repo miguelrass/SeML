@@ -19,6 +19,7 @@ import org.xtext.seml.seML.Relation
 import org.xtext.seml.seML.SeMLFactory
 import org.xtext.seml.seML.SeMLPackage
 import org.xtext.seml.seML.MainModel
+import org.xtext.seml.seML.Characteristic
 import org.xtext.seml.validation.SeMLValidator
 import org.rass.restrictions.Problem.TypeE
 import java.util.List
@@ -52,16 +53,27 @@ class SeMLQuickfixProvider extends DefaultQuickfixProvider {
 
 				val m = EcoreUtil2.getRootContainer(element) as MainModel;
 				System.out.println(local_log + "Fixing model...");
-				while(true){
+				val long startTime = System.currentTimeMillis(); //log validation time	
+				
+				var String err;
+				var boolean break;
+				while(!break){
 					//Find next error
 					SeMLValidator.CheckModelRestrictions(true, new HashSet<List<String>>());
-					if(SeMLValidator.nextProblem === null) {System.out.println(local_log + "Done. No more solutions."); return;}
-	
-					fixProblem(SeMLValidator.nextProblem.solutions.get(0), m); //Fix next error
-					System.out.println(local_log + "Added: " + SeMLValidator.nextProblem.solutions.get(0));
-					
-					//Each solution was already tested for consistency 
+					if(SeMLValidator.nextProblem === null) {break=true;}
+					else{
+						fixProblem(SeMLValidator.nextProblem.solutions.get(0), m); //Fix next error
+						System.out.println(local_log + "Added: " + SeMLValidator.nextProblem.solutions.get(0));
+						
+						err = SeMLValidator.QuickFixUpdate(); //updates the infrastructure
+						if(err !== null) break=true; //In case of failure
+					}
 				}
+				
+				val String timeStamp = "  " + (System.currentTimeMillis() - startTime)/1000 + "s";
+				if(err !== null) {Console.ErrPair(local_log, err);}
+				else Console.OutPair(local_log, "Model was fixed. No more solutions.");
+				Console.DebLn(timeStamp);
 	        }
     	});
 	}
@@ -147,13 +159,21 @@ class SeMLQuickfixProvider extends DefaultQuickfixProvider {
     	});
 	}
 	
+	/**
+	 * Fixes one Problems
+	 * @return String containing problem that aborts the Model-Fix
+	 */
 	def void fixProblem(List<String> sol, MainModel m){
 		
 		//populate quickfixMap if empty
 		if(SeMLValidator.quickfixMap === null) SeMLValidator.PopulateQuickFixMap(m); 
 		
-		//Decide whether to create an assignment or a relation
-		if(sol.length == 2){
+		//Decide whether to create a characteristic, an assignment or a relation
+		if(sol.length == 1){ //Characteristic
+			var z = SeMLValidator.quickfixMap;
+			m.useCh.add(z.get(sol.get(0)) as Characteristic); 
+		
+		}else if(sol.length == 2){ //Assignment
 			val Assignment a = SeMLFactory.eINSTANCE.createAssignment();
 			a.ind = SeMLValidator.quickfixMap.get(sol.get(0)) as Individual;
 			val s1 = sol.get(1); val ss1 = s1.substring(1); val fac = SeMLFactory.eINSTANCE; //shortcuts
@@ -167,16 +187,20 @@ class SeMLQuickfixProvider extends DefaultQuickfixProvider {
 			m.sentences.add(a); //add sentence
 			MasterOntology.AddDPRelations(Arrays.asList(a)); //Add relation to master ontology for forthcoming validations
 			
-		}else{
+		}else{ //Relation
 			
 			val i1 = SeMLValidator.quickfixMap.get(sol.get(0)) as Individual;
 			val obj = SeMLValidator.quickfixMap.get(sol.get(1)) as ObjectProperty;
+			
+			//Create list with all secondary individuals
+			val i2 = new ArrayList<Individual>();
+			for(var i=2; i<sol.length; i++) i2.add(SeMLValidator.quickfixMap.get(sol.get(i)) as Individual);
 			
 			for(s : m.sentences){ //Add individuals to existing relation
 				if(s instanceof Relation){
 					val r = s as Relation;
 					if(r.ind1 === i1 && r.obj === obj){
-						for(var i=2; i<sol.length; i++) r.ind2.add(SeMLValidator.quickfixMap.get(sol.get(i)) as Individual);
+						r.ind2.addAll(i2);
 						MasterOntology.AddOPRelations(Arrays.asList(r)); //Add relation to master ontology for forthcoming validations
 						return;
 					}
@@ -186,7 +210,7 @@ class SeMLQuickfixProvider extends DefaultQuickfixProvider {
 			//Create new relations sentence
 			val Relation r = SeMLFactory.eINSTANCE.createRelation();
 			r.ind1 = i1; r.obj  = obj;
-			for(var i=2; i<sol.length; i++) r.ind2.add(SeMLValidator.quickfixMap.get(sol.get(i)) as Individual);
+			r.ind2.addAll(i2);
 
 			m.sentences.add(r); //add sentence
 			if(SeMLValidator.validationState != 0) MasterOntology.AddOPRelations(Arrays.asList(r)); //Add relation to master ontology for forthcoming validations

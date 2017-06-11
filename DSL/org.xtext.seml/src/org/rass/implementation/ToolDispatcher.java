@@ -21,6 +21,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.eclipse.xtext.xbase.lib.Pair;
 import org.rass.ontologies.Ontologies;
 import org.rass.swrl.ExternalSWRLBuiltins;
+import org.xtext.seml.Console;
 
 public class ToolDispatcher {
 	private static final String local_log = "ToolDispatcher Log: ";
@@ -120,7 +121,7 @@ public class ToolDispatcher {
     		}
         	
         	if(compiler.run(null, null, null, javaNamesArray)!=0) 
-        		System.out.println(local_log + "Some files could not be compiled. If possible, previous classes will be used instead.");
+        		Console.ErrPairLn(local_log, "Some files could not be compiled. If possible, previous classes will be used instead.");
         	
         	System.out.println("(" + (System.currentTimeMillis() - startTime) + "ms)");
         }   

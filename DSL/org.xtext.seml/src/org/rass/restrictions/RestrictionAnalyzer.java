@@ -94,7 +94,7 @@ public class RestrictionAnalyzer implements OWLClassExpressionVisitor {
     	
     	try { targets = MasterOntology.GetFullIntances(e);} 
     	catch (Exception ex) {
-    		System.err.println("Internal Error: remove this print line only"); //this exception might be outdated
+    		System.err.println("Internal Error: accessing full reasoner"); //this exception still occurs!! (when updating Onto)
 			return null; // The getInstances() procedure fails when no individuals are found (when using complex Class Expressions)
 		}
     	

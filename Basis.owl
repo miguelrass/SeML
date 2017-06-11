@@ -25,6 +25,9 @@
         <Class IRI="#P"/>
     </Declaration>
     <Declaration>
+        <NamedIndividual IRI="#r1"/>
+    </Declaration>
+    <Declaration>
         <NamedIndividual IRI="#example"/>
     </Declaration>
     <Declaration>
@@ -41,6 +44,9 @@
     </Declaration>
     <Declaration>
         <NamedIndividual IRI="#twoInst"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#w.3"/>
     </Declaration>
     <Declaration>
         <Class IRI="#ChB1"/>
@@ -88,7 +94,13 @@
         <Class IRI="#ExampleHead"/>
     </Declaration>
     <Declaration>
+        <Class IRI="#W"/>
+    </Declaration>
+    <Declaration>
         <Class IRI="#ChA4"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#w.2"/>
     </Declaration>
     <Declaration>
         <NamedIndividual IRI="#a1.1"/>
@@ -97,10 +109,16 @@
         <Class IRI="#S"/>
     </Declaration>
     <Declaration>
+        <NamedIndividual IRI="#x3.4"/>
+    </Declaration>
+    <Declaration>
         <Class IRI="#S2"/>
     </Declaration>
     <Declaration>
         <NamedIndividual IRI="#O2.2"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#calls"/>
     </Declaration>
     <Declaration>
         <NamedIndividual IRI="#s2.1"/>
@@ -139,16 +157,19 @@
         <Class IRI="#Z"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual IRI="#c1.1"/>
+        <Class IRI="#X2"/>
     </Declaration>
     <Declaration>
-        <Class IRI="#X2"/>
+        <NamedIndividual IRI="#c1.1"/>
     </Declaration>
     <Declaration>
         <Class IRI="#ChA1"/>
     </Declaration>
     <Declaration>
         <Class IRI="#PrA1"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#w.1"/>
     </Declaration>
     <Declaration>
         <Class IRI="#B"/>
@@ -163,10 +184,10 @@
         <Class IRI="#X3"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual IRI="#x3.3"/>
+        <Class IRI="#S1"/>
     </Declaration>
     <Declaration>
-        <Class IRI="#S1"/>
+        <NamedIndividual IRI="#x3.3"/>
     </Declaration>
     <Declaration>
         <NamedIndividual IRI="#s3.1"/>
@@ -211,6 +232,12 @@
         <Class IRI="#P2"/>
     </Declaration>
     <Declaration>
+        <NamedIndividual IRI="#w.4"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#callsH"/>
+    </Declaration>
+    <Declaration>
         <Class IRI="#ChB"/>
     </Declaration>
     <Declaration>
@@ -224,6 +251,9 @@
     </Declaration>
     <Declaration>
         <Class IRI="#O4"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#callsL"/>
     </Declaration>
     <EquivalentClasses>
         <Class IRI="#Z1"/>
@@ -631,6 +661,21 @@
         <Class IRI="#S"/>
     </SubClassOf>
     <SubClassOf>
+        <Class IRI="#W"/>
+        <Class IRI="#ExampleHead"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#W"/>
+        <Class IRI="esrg:upper#Process"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#W"/>
+        <ObjectMinCardinality cardinality="3">
+            <ObjectProperty IRI="#calls"/>
+            <Class IRI="#W"/>
+        </ObjectMinCardinality>
+    </SubClassOf>
+    <SubClassOf>
         <Class IRI="#X"/>
         <Class IRI="esrg:upper#Process"/>
     </SubClassOf>
@@ -752,6 +797,10 @@
         <NamedIndividual IRI="#p2"/>
     </ClassAssertion>
     <ClassAssertion>
+        <Class IRI="#R1"/>
+        <NamedIndividual IRI="#r1"/>
+    </ClassAssertion>
+    <ClassAssertion>
         <Class IRI="#S1"/>
         <NamedIndividual IRI="#s1.1"/>
     </ClassAssertion>
@@ -780,6 +829,18 @@
         <NamedIndividual IRI="#twoInst"/>
     </ClassAssertion>
     <ClassAssertion>
+        <Class IRI="#W"/>
+        <NamedIndividual IRI="#w.1"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#W"/>
+        <NamedIndividual IRI="#w.2"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#W"/>
+        <NamedIndividual IRI="#w.3"/>
+    </ClassAssertion>
+    <ClassAssertion>
         <Class IRI="#X3"/>
         <NamedIndividual IRI="#x3.1"/>
     </ClassAssertion>
@@ -792,6 +853,10 @@
         <NamedIndividual IRI="#x3.3"/>
     </ClassAssertion>
     <ClassAssertion>
+        <Class IRI="#X3"/>
+        <NamedIndividual IRI="#x3.4"/>
+    </ClassAssertion>
+    <ClassAssertion>
         <Class IRI="#Z2"/>
         <NamedIndividual IRI="#z2"/>
     </ClassAssertion>
@@ -800,6 +865,14 @@
         <NamedIndividual IRI="#twoInst"/>
         <NamedIndividual IRI="#oneLiteral"/>
     </ObjectPropertyAssertion>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#callsH"/>
+        <ObjectProperty IRI="#calls"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#callsL"/>
+        <ObjectProperty IRI="#calls"/>
+    </SubObjectPropertyOf>
     <DLSafeRule>
         <Annotation>
             <AnnotationProperty IRI="http://swrl.stanford.edu/ontologies/3.3/swrla.owl#isRuleEnabled"/>
@@ -976,12 +1049,27 @@
     <AnnotationAssertion>
         <AnnotationProperty IRI="esrg:upper#ImplArg"/>
         <IRI>#c1.1</IRI>
-        <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">main.c,var_c_1_1</Literal>
+        <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">s/s3.txt,getVariable</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty IRI="esrg:upper#ImplInd"/>
         <IRI>#c1.1</IRI>
-        <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">ReplaceTool,CheckExistence</Literal>
+        <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">ReplaceTool,checkExistence</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="esrg:upper#ImplOP"/>
+        <IRI>#calls</IRI>
+        <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">DummyTool,ShouldBeCalledSecond,2</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="esrg:upper#ImplOP"/>
+        <IRI>#callsH</IRI>
+        <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">DummyTool,ShouldBeCalledFirst,1</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="esrg:upper#ImplOP"/>
+        <IRI>#callsL</IRI>
+        <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">DummyTool,ShouldBeCalledThird,3</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty IRI="esrg:upper#StaticIndividual"/>
@@ -997,6 +1085,41 @@
         <AnnotationProperty IRI="esrg:upper#DefaultValue"/>
         <IRI>#p1</IRI>
         <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#integer">50</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="esrg:upper#ImplArg"/>
+        <IRI>#r1</IRI>
+        <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">s/s.txt,var_R1</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="esrg:upper#ImplArg"/>
+        <IRI>#r1</IRI>
+        <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">s/s2.txt,var_R2</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="esrg:upper#ImplDP"/>
+        <IRI>#r1</IRI>
+        <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">ReplaceTool,replace,esrg:upper#hasValue</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="esrg:upper#ImplArg"/>
+        <IRI>#w.1</IRI>
+        <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">John</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="esrg:upper#ImplArg"/>
+        <IRI>#w.2</IRI>
+        <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">Mary</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="esrg:upper#ImplArg"/>
+        <IRI>#w.3</IRI>
+        <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">Domenico</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="esrg:upper#ImplArg"/>
+        <IRI>#w.4</IRI>
+        <Literal datatypeIRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">Secondary Process</Literal>
     </AnnotationAssertion>
 </Ontology>
 

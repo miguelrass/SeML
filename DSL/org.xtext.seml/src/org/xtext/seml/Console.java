@@ -79,6 +79,7 @@ public class Console {
     public static void ImpPairLn(String s1, String s2){ imp.println(s2); System.out.println(s1+s2); }
     
     public static void OutPair(String s1, String s2){ out.print(s2); System.out.print(s1+s2); }
+    public static void ErrPair(String s1, String s2){ err.print(s2); System.err.print(s1+s2); }
     public static void DebPair(String s1, String s2){ deb.print(s2); System.out.print(s1+s2); }
     
     public static void OutLn(String s){ out.println(s); System.out.println(s); }

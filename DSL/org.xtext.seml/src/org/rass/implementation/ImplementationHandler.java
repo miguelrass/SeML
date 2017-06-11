@@ -1,8 +1,14 @@
 package org.rass.implementation;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,6 +33,7 @@ import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.NodeSet;
 import org.xtext.seml.Console;
@@ -61,6 +68,10 @@ public class ImplementationHandler implements IHandler {
 		//Command = ([Tool, Function, ..], Argument Packs)
 		//Argument Pack = List of Arguments
 		commands = new TreeMap<Integer, ArrayList<Pair<String[],ArrayList<List<String>>>>>();
+		
+		
+		//========================================================================= Annotations asserted on individuals
+        //=============================================================================================================
 		
 		Set<OWLNamedIndividual> inds = reasoner.getInstances(Ontologies.OWLC_Component, false).getFlattened(); //get instances of Component
 
@@ -142,8 +153,80 @@ public class ImplementationHandler implements IHandler {
 	        }
 		}
 		
+		//=================================================================== Annotations asserted on Object Properties
+        //=============================================================================================================
+
+		Set<OWLObjectPropertyExpression> ops = reasoner.getSubObjectProperties(Ontologies.OWLP_OP_Top, false).getFlattened(); //get all OPs
+ 
+		for(OWLObjectPropertyExpression o : ops){ //Iterate all OPs
+			Set<OWLAnnotationAssertionAxiom> annotations = ontology.getAnnotationAssertionAxioms(o.getNamedProperty().getIRI());
+	    	for (OWLAnnotationAssertionAxiom annotation : annotations) { //gets annotations associated with the OP
+	    		if(Ontologies.OWL_Ann_ImplOP.equals(annotation.getProperty().getIRI().toString())){ //filter annotations
+	    			
+	        		//Parse input command
+	    			Pair<String[], ArrayList<Pair<String[], ArrayList<List<String>>>>> args_cmdList = CmdParse(annotation, 2);
+
+	    			//Check if user defined a specific annotation property for the arguments
+	        		String annotationP = Ontologies.OWL_Ann_ImplArg; //arguments annotation property
+	        		if(args_cmdList.getKey().length > 3) annotationP = args_cmdList.getKey()[3]; //get user-defined Annotation Property
+	    			
+	        		//Build command for each relation
+	        		for(OWLNamedIndividual i: inds){
+	        			for(OWLNamedIndividual i2 : reasoner.getObjectPropertyValues(i, o).getFlattened()){
+	        				ArrayList<List<String>> command = new ArrayList<List<String>>();
+	        				
+	        				command.add(insertAnnPack(ontology.getAnnotationAssertionAxioms( i.getIRI()), annotationP)); //Add arguments pack (from individual1)
+	        				command.add(insertAnnPack(ontology.getAnnotationAssertionAxioms(i2.getIRI()), annotationP)); //Add arguments pack (from individual2)
+	        			
+	        				//Insert command object 
+		        			args_cmdList.getValue().add(new Pair<>(args_cmdList.getKey(),command));
+	        			}
+	        		}
+	        	}
+	        }
+		}
+		
+		//===================================================================== Annotations asserted on Data Properties
+        //=============================================================================================================
+
+		Set<OWLDataProperty> dps = reasoner.getSubDataProperties(Ontologies.OWLP_DP_Top, false).getFlattened(); //get all DPs
+ 
+		for(OWLDataProperty d : dps){ //Iterate all DPs
+			Set<OWLAnnotationAssertionAxiom> annotations = ontology.getAnnotationAssertionAxioms(d.getIRI());
+	    	for (OWLAnnotationAssertionAxiom annotation : annotations) { //gets annotations associated with the DP
+	    		if(Ontologies.OWL_Ann_ImplDP.equals(annotation.getProperty().getIRI().toString())){ //filter annotations
+	    			
+	        		//Parse input command
+	    			Pair<String[], ArrayList<Pair<String[], ArrayList<List<String>>>>> args_cmdList = CmdParse(annotation, 2);
+
+	    			//Check if user defined a specific annotation property for the arguments
+	        		String annotationP = Ontologies.OWL_Ann_ImplArg; //arguments annotation property
+	        		if(args_cmdList.getKey().length > 3) annotationP = args_cmdList.getKey()[3]; //get user-defined Annotation Property
+	    			
+	        		//Build command for each relation
+	        		for(OWLNamedIndividual i: inds){
+	        			for(OWLLiteral l : reasoner.getDataPropertyValues(i, d)){
+	        				ArrayList<List<String>> command = new ArrayList<List<String>>();
+	        				
+	        				command.add(insertAnnPack(ontology.getAnnotationAssertionAxioms( i.getIRI()), annotationP)); //Add arguments pack (from individual1)
+	        				command.add(Arrays.asList(l.getLiteral())); //Add arguments pack (one literal)
+	        				
+	        				//Insert command object 
+		        			args_cmdList.getValue().add(new Pair<>(args_cmdList.getKey(),command));
+	        			}
+	        		}
+	        	}
+	        }
+		}
+		
+		//==================================================================================================== Dispatch
+        //=============================================================================================================
+		
 		ToolDispatcher.LoadToolClasses();
 		
+		//Call setSrc to send the src folder location
+		for(Class<?> cls : ToolDispatcher.loadedClasses.values()) InvokeMethod(cls, "setSrc",  new Class<?>[] {String.class}, new Object[] {Ontologies.SRCfolder}, false);
+
 		for(ArrayList<Pair<String[], ArrayList<List<String>>>> parallelCmds: commands.values()){ //Commands with same priority
 			for(Pair<String[], ArrayList<List<String>>> cmd: parallelCmds){ //Single command
 
@@ -157,25 +240,39 @@ public class ImplementationHandler implements IHandler {
 				}
 				
 				Class<?> cls = ToolDispatcher.loadedClasses.get(toolSt);			
-	
-				try {
-					Method m = cls.getMethod(funcSt, ArrayList.class);
-					
-					String ret = (String) m.invoke(null,cmd.getValue());
-					if(ret != null) Console.ImpPairLn(local_log, ret);
-				} 
-				catch (NoSuchMethodException e) 	{Console.ErrPairLn(local_log, "Method not found: " + funcSt);} 
-				catch (SecurityException e)	 		{e.printStackTrace();} 
-				catch (IllegalAccessException e) 	{e.printStackTrace();} 
-				catch (IllegalArgumentException e) 	{e.printStackTrace();}
-				catch (InvocationTargetException e) {e.printStackTrace();}
-        
+				InvokeMethod(cls, funcSt, new Class<?>[] {ArrayList.class}, new Object[] {cmd.getValue()}, true);
 			}
 		}
+		
+		//Call apply to finalize implementation
+		for(Class<?> cls : ToolDispatcher.loadedClasses.values()) InvokeMethod(cls, "apply", null, null, false);
 
 		//HandlerUtil.getActiveWorkbenchWindow(event).close();
 		Console.ImpPairLn(local_log, "Done.");
 		return null;
+	}
+	
+	private void InvokeMethod(Class<?> cls, String methodName, Class<?>[] parameter, Object[] args, boolean warnNoMethod){
+		try {
+			
+			Method m = cls.getMethod(methodName, parameter);
+			Class<?> retType = m.getReturnType(); 
+			
+			if(retType.equals(void.class)){
+				m.invoke(null, args);
+			}else if(retType.equals(String.class)){
+				String ret = (String) m.invoke(null, args);
+				if(ret != null) Console.ImpPairLn(local_log, ret);
+			}else if(retType.equals(boolean.class)){
+				boolean ret = (boolean) m.invoke(null, args);
+				if(ret == false) Console.ErrPairLn(local_log, "Method failed: " + methodName);
+			}
+		}
+		catch (NoSuchMethodException e) 	{if(warnNoMethod) Console.ErrPairLn(local_log, "Method not found: " + methodName);} 
+		catch (SecurityException e)	 		{e.printStackTrace();} 
+		catch (IllegalAccessException e) 	{e.printStackTrace();} 
+		catch (IllegalArgumentException e) 	{e.printStackTrace();}
+		catch (InvocationTargetException e) {Console.ErrPairLn(local_log, methodName + " invoked an exception: " + e.getTargetException().getMessage());}
 	}
 	
 	/**

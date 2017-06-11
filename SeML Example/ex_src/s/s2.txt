@@ -1,0 +1,3 @@
+int r2a = var_R2;
+int r2b = var_R2;
+int r2c = var_R2;

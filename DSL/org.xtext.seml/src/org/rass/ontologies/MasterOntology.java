@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.rass.implementation.ImplementationHandler;
@@ -185,6 +186,10 @@ public class MasterOntology {
 		//return Anomaly.ReasonAndExplain(reasoner, master, ReportLevel.INFORMATION); 
 	///}
 	
+	public static boolean CheckConsistency(){
+		return reasoner.isConsistent();
+	}
+	
 	public static boolean ReasonAndExplainMaster(){
 		return Anomaly.ReasonAndExplain(reasoner, master); 
 	}
@@ -236,9 +241,11 @@ public class MasterOntology {
 
 		    HashSet<OWLClassExpression> cRestrList = Ontologies.GetAnonymousSuperClasses(master, c);
 		    cRestrList.forEach(r -> r.accept(RA)); 		//Evaluate each restriction with the visitor pattern
-		    cProblems.forEach(p -> {p.restrictor = c;}); //Insert restrictor reference in each problem
 		    
-		    CheckUpperProblems(RA.upperProblems, cProblems);
+		    //Get all non-solved Upper Problems
+		    if(!RA.upperProblems.isEmpty()) CheckUpperProblems(RA.upperProblems, cProblems);
+		    
+		    cProblems.forEach(p -> {p.restrictor = c;}); //Insert restrictor reference in each problem
 
 		    iProblems.addAll(cProblems);
 		}
@@ -247,37 +254,50 @@ public class MasterOntology {
 	}
 	
 	private static void CheckUpperProblems(HashSet<OWLClass> uPs, ArrayList<Problem> ps){
+		
+		//Add all super Characteristics
 		Set<OWLClass> chs = CharacteristicsSolver.GetRequiredCharacteristics();
+		Set<OWLClass> allChs = new HashSet<OWLClass>();
+		chs.forEach(c -> allChs.addAll(reasoner.getSuperClasses(c, false).getFlattened()));
+		allChs.addAll(chs);
 		
 		for(OWLClass uP : uPs){ //Analyze each UpperProblem
 			Set<OWLClass> superUPs = reasoner.getSuperClasses(uP, false).getFlattened();
 			superUPs.add(uP);
 			superUPs.remove(Ontologies.OWLC_Thing);
 			superUPs.remove(Ontologies.OWLC_Problem);
-			System.out.println(superUPs);
 			
 			//Get all isSolvedBy relations for this UpperProblem (UpperProblem solvers)
-			HashSet<OWLClassExpression> restrictions = new HashSet<OWLClassExpression>();
-			for(OWLClass sUP : superUPs){
-				restrictions.addAll(Ontologies.GetAnonymousSuperClasses(master, sUP)) ;
-			}
+			HashSet<OWLClassExpression> relations = new HashSet<OWLClassExpression>();
+			for(OWLClass sUP : superUPs)
+				relations.addAll(Ontologies.GetAnonymousSuperClasses(master, sUP));
+			
+			//Save Characteristics which would solve the problem
+			ArrayList<String> solutions = new ArrayList<String>();
 			
 			//Check if any solver Characteristic was instantiated
 			boolean foundFlag = false;
 			
-			for( OWLClassExpression ce : restrictions){
+			for( OWLClassExpression ce : relations){ //Relations of all super Upper Problems
 				if(ce.getClassExpressionType() == ClassExpressionType.OBJECT_SOME_VALUES_FROM){
 					OWLObjectSomeValuesFrom someRestr = (OWLObjectSomeValuesFrom) ce;
 					if(someRestr.getProperty().getNamedProperty().getIRI().toString().equals(Ontologies.OWL_OP_isSolvedBy)){
 						if(someRestr.getFiller().getClassExpressionType() == ClassExpressionType.OWL_CLASS){
-							if(chs.contains(someRestr.getFiller().asOWLClass())){ foundFlag=true; break;}
+							OWLClass c = someRestr.getFiller().asOWLClass();
+							if(allChs.contains(c)){ foundFlag=true; break;}
+							else solutions.add(cachedIRIs.get(c.getIRI().toString())); //add solution
 						}
 					}
 				}
 			}
-			
-			if(!foundFlag) ps.add(new Problem(true, "Existing Problem: " + Ontologies.GetShortIRI(uP.getIRI())
-    				+ "\nISSUE: no Characteristic is solving this Problem"));
+
+			if(!foundFlag){
+				Problem p = new Problem("Existing Problem: " + Ontologies.GetShortIRI(uP.getIRI())
+							+ "\nISSUE: no Characteristic is solving this Problem"
+							+ "\nSOLUTION: " + solutions.size() + " possible solution(s)");
+				solutions.forEach(s -> p.AddSolution(Arrays.asList(s)));
+				ps.add(p);
+			}
 		}
 	}
 	

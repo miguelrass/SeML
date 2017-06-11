@@ -76,8 +76,12 @@ class SeMLValidator extends AbstractSeMLValidator {
 	//Create map of all visible elements by alias (for error/warning purposes) (individuals)
 	private static var HashMap<String,FeaturePlace> visibilityMap = null;
 	
-	//Create list of active individuals (static + referenced)
-	private static var HashSet<Individual> activeInds = null;
+	/**
+	 * Create list of active individuals (static + referenced)
+	 * This variable is populated when the model is validated (and checked against chaining errors)
+	 * It is also updated when the QuickFix runs
+	 */
+	private static var HashSet<Individual> activeInds = null; 
 	
 	//Create map of imported individuals and object properties by alias for Quickfix
 	public static var HashMap<String,EObject> quickfixMap = null;
@@ -169,6 +173,7 @@ class SeMLValidator extends AbstractSeMLValidator {
 		globalImportModel.staticIndividuals.forEach[i| quickfixMap.put(i.name, i)];
 		globalImportModel.individualOptions.forEach[i| quickfixMap.put(i.name, i)];
 		globalImportModel.objectProperties.forEach[o | quickfixMap.put(o.name, o)];
+		globalImportModel.characteristics.forEach[c | quickfixMap.put(c.name, c)];
 
 		//================================================================================ Check non-ontological errors
         //=============================================================================================================
@@ -264,7 +269,7 @@ class SeMLValidator extends AbstractSeMLValidator {
 			else{eo = m; sf = SeMLPackage.Literals.MAIN_MODEL__USE_CH;}
 			
 			if(!MasterOntology.BuildMastersCharacteristicsTree(useList)){ 
-				error("There are unsolved Characteristics variabilites: \n" +  CharacteristicsSolver.chrProblem, eo, sf);
+				error("There are unsolved Characteristics variabilites: \n" +  CharacteristicsSolver.chrProblem, eo, sf,FIX_PROBLEM, CharacteristicsSolver.chrSolutions);
 				Console.ErrPairLn(local_log, "Aborted. Unsolved Characteristics variabilites.");
 				return false;
 			}	
@@ -274,6 +279,14 @@ class SeMLValidator extends AbstractSeMLValidator {
 			return false;
 		}
 		
+		//------------------------------------------------- Display all required characteristics
+
+		val StringBuilder chStr = new StringBuilder(200); //list of characteristics
+		chStr.append("Characteristics being used: ");
+		CharacteristicsSolver.GetRequiredCharacteristics.forEach(ch | chStr.append(MasterOntology.cachedIRIs.get(ch.getIRI().toString()) + ", "));
+		Console.DebPairLn(local_log, chStr.substring(0, chStr.length()-2));
+
+				
 		//------------------------------------------------- Add Characteristic individuals to ontology and check consistency (SWRL)
 		
 		MasterOntology.AddChIndividuals(CharacteristicsSolver.GetRequiredCharacteristics);
@@ -381,40 +394,105 @@ class SeMLValidator extends AbstractSeMLValidator {
 		problems = new HashMap<String, ArrayList<Problem>>;
 		
 		//Start progress monitor
-		val int workload = CharacteristicsSolver.GetCharacteristicsSize + activeInds.size;
-		val pm = new Progress(workload, "Validating Model", "Checking consistency");
-		
-		//------------------------------------------------- Check characteristic imposed restrictions
-
-		for(OWLClass ch: CharacteristicsSolver.GetRequiredCharacteristics){
-			pm.subTask = "Checking \"" + Ontologies.GetShortIRI(ch.IRI) + "\" imposed restrictions";
-			val ArrayList<Problem> ps = MasterOntology.CheckModelRestrictions(ch); 
-			if(!ps.empty) { //Problems exist
-				if(skipFullTest) {if(FindNextProblem(ps)){ pm.stop(); return false;}} //Irrelevant return value
-				problems.put(MasterOntology.cachedIRIs.get(ch.IRI.toString), ps); //no old entry is overwritten because ch is unique every time
-			}
-			pm.state++; //Thread.sleep(200); //yield
+		var Progress pm = null;
+		if(!skipFullTest){
+			val int workload = CharacteristicsSolver.GetCharacteristicsSize + activeInds.size;
+			pm = new Progress(workload, "Validating Model", "Checking consistency");
 		}
 		
-		//If excess errors exist, skip further checks
-		if(problems.entrySet.exists[e | e.value.exists[p | p.type==TypeE.CHAR_EXCESS]]) { pm.stop(); return true;}
-		
-		//------------------------------------------------- Check individual restrictions & Reports & unsolved upperProblems
+		try {
 
-		//Check if individuals that were created in Protégé meet their class's restrictions
-		//Note: these defect errors are not detected before due to the Open World Assumption 
-		
-		for(Individual i: activeInds){
-			pm.subTask = "Checking \"" + i.name + "\" restrictions and reports";
-			var ArrayList<Problem> ps = MasterOntology.CheckRelationRestrictions(authorizatedRels, i.iri);
-			if(skipFullTest) {if(FindNextProblem(ps)) { pm.stop(); return false;}}//Irrelevant return value
-			MasterOntology.CheckReports(i.iri,ps); //add Reports
+			//------------------------------------------------- Check characteristic imposed restrictions
+	
+			for(OWLClass ch: CharacteristicsSolver.GetRequiredCharacteristics){
+				if(!skipFullTest) pm.subTask = "Checking \"" + Ontologies.GetShortIRI(ch.IRI) + "\" imposed restrictions";
+				val ArrayList<Problem> ps = MasterOntology.CheckModelRestrictions(ch); 
+				if(!ps.empty) { //Problems exist
+					if(skipFullTest) {if(FindNextProblem(ps)){ if(!skipFullTest) pm.stop(); return false;}} //Irrelevant return value
+					problems.put(MasterOntology.cachedIRIs.get(ch.IRI.toString), ps); //no old entry is overwritten because ch is unique every time
+				}
+				if(!skipFullTest) pm.state++; //Thread.sleep(200); //yield
+			}
 			
-			if(!ps.empty) problems.put(i.name, ps); //no old entry is overwritten because i is unique every time
-			pm.state++; //Thread.sleep(200); //yield
+			//If excess errors exist, skip further checks
+			if(problems.entrySet.exists[e | e.value.exists[p | p.type==TypeE.CHAR_EXCESS]]) { if(!skipFullTest) pm.stop(); return true;}
+			
+			//------------------------------------------------- Check individual restrictions & Reports & unsolved upperProblems
+	
+			//Check if individuals that were created in Protégé meet their class's restrictions
+			//Note: these defect errors are not detected before due to the Open World Assumption 
+			
+			for(Individual i: activeInds){
+				if(!skipFullTest) pm.subTask = "Checking \"" + i.name + "\" restrictions and reports";
+				var ArrayList<Problem> ps = MasterOntology.CheckRelationRestrictions(authorizatedRels, i.iri);
+				if(skipFullTest) {if(FindNextProblem(ps)) { if(!skipFullTest) pm.stop(); return false;}}//Irrelevant return value
+				MasterOntology.CheckReports(i.iri,ps); //add Reports
+				
+				if(!ps.empty) problems.put(i.name, ps); //no old entry is overwritten because i is unique every time
+				if(!skipFullTest) pm.state++; //Thread.sleep(200); //yield
+			}
+				
+		} catch (Exception exception) {
+			pm.stop();
+			throw exception;
 		}
 		
 		return false;
+	}
+	
+	
+	/**
+	 * Updates the infrastructure when a change to the model is made by the Quickfix
+	 * @return fail message or null
+	 */
+	def public static String QuickFixUpdate(){
+		val MainModel m = globalMainModel;
+		val relationsList = EcoreUtil2.getAllContentsOfType(m, Relation);
+		val assignmentsList =	EcoreUtil2.getAllContentsOfType(m, Assignment);
+		
+		//=================================================================================== Update active individuals
+        //=============================================================================================================
+        
+		activeInds = new HashSet<Individual>(); //Create list of active individuals (static + referenced)
+		globalImportModel.staticIndividuals.forEach[i | activeInds.add(i)]; //Add static individuals
+        val freeRefIRIs = new HashSet<String>(); //Create list of free referenced individuals
+        
+		//Populate lists
+		for(r : relationsList){
+			activeInds.addAll(r.ind2); //add every referenced instance
+			r.ind2.forEach[i| if(i instanceof FreeIndividual) freeRefIRIs.add(i.iri)];
+		}
+		
+		//============================================================================================= Update ontology
+        //=============================================================================================================
+        
+		//Load Master (with referenced individuals) and initialize OWLAPI objects
+		try { 
+			MasterOntology.loadMasterOntology(new File(Ontologies.GENfolder + Ontologies.masterNAME), freeRefIRIs);
+		} catch (Exception e) { return "Model fix was aborted. Error loading master ontology file: " + e.message; }	
+		
+		MasterOntology.AddOPRelations(relationsList); //Add all OP relations to master ontology
+		MasterOntology.AddDPRelations(assignmentsList); //Add all DP relations to master ontology
+		
+		if(!MasterOntology.CheckConsistency()) //Check for inconsistencies
+			return "Model fix was aborted. Last insertion generated inconsistencies.";
+		
+		//------------------------------------------------- Update Characteristics tree and check it
+
+		try {
+			if(!MasterOntology.BuildMastersCharacteristicsTree(m.useCh)) return "Model fix was aborted. Unsolved Characteristics variabilites.";
+		} catch (Exception e) {
+			return "Model fix was aborted. Characteristics inconsistency.";
+		}
+
+		//------------------------------------------------- Add Characteristic individuals to ontology and check consistency (SWRL)
+		
+		MasterOntology.AddChIndividuals(CharacteristicsSolver.GetRequiredCharacteristics);
+		
+		if(!MasterOntology.CheckConsistency()) //Check for inconsistencies
+			return "Model fix was aborted. Last insertion generated Characteristic inconsistencies.";
+		
+		return null;
 	}
 	
 
@@ -596,6 +674,7 @@ class SeMLValidator extends AbstractSeMLValidator {
 		impModel.staticIndividuals.forEach[i| quickfixMap.put(i.name, i)];
 		impModel.individualOptions.forEach[i| quickfixMap.put(i.name, i)];
 		impModel.objectProperties.forEach[o | quickfixMap.put(o.name, o)];
+		impModel.characteristics.forEach[c | quickfixMap.put(c.name, c)];
 		
 		return true; //Return after populating quickfixMap
 	}

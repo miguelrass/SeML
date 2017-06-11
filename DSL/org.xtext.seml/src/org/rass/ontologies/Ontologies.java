@@ -50,16 +50,20 @@ public class Ontologies {
 	public static final OWLClass OWLC_Problem = fac.getOWLClass(IRI.create(OWL_Problem));
 	
 	public static final String OWL_OP_Bottom = "http://www.w3.org/2002/07/owl#bottomObjectProperty";
+	public static final String OWL_OP_Top = "http://www.w3.org/2002/07/owl#topObjectProperty";
 	public static final String OWL_OP_demands = OWL_Upper + "demands";
 	public static final String OWL_OP_hasProblem = OWL_Upper + "hasProblem";
 	public static final String OWL_OP_isSolvedBy = OWL_Upper + "isSolvedBy";
+	public static final String OWL_DP_Top = "http://www.w3.org/2002/07/owl#topDataProperty";
 	public static final String OWL_DP_hasValue = OWL_Upper + "hasValue";
 	public static final String OWL_DP_hasReport = OWL_Upper + "hasReport";
 	public static final String OWL_DP_hasError = OWL_Upper + "hasError";
 	public static final String OWL_DP_hasWarning = OWL_Upper + "hasWarning";
 	public static final String OWL_DP_hasInfo = OWL_Upper + "hasInfo";
 	
+	public static final OWLObjectProperty OWLP_OP_Top = fac.getOWLObjectProperty(IRI.create(OWL_OP_Top));
 	public static final OWLObjectProperty OWLP_OP_Bottom = fac.getOWLObjectProperty(IRI.create(OWL_OP_Bottom));
+	public static final OWLDataProperty OWLP_DP_Top = fac.getOWLDataProperty(IRI.create(OWL_DP_Top));
 	public static final OWLDataProperty OWLP_DP_hasValue = fac.getOWLDataProperty(IRI.create(OWL_DP_hasValue));
 	public static final OWLDataProperty OWLP_DP_hasReport = fac.getOWLDataProperty(IRI.create(OWL_DP_hasReport));
 	public static final OWLDataProperty OWLP_DP_hasError = fac.getOWLDataProperty(IRI.create(OWL_DP_hasError));
@@ -84,6 +88,7 @@ public class Ontologies {
 	public static String Toolsfolder = null; //Tools folder (absolute path)
 	public static String TEMPLfolder = null; //swrl templates folder (absolute path)
 	public static String PROJfolder = null; //project folder (absolute path)
+	public static String SRCfolder = null; //Source files folder (absolute path)
 	public static String SWRLPackage = null; //swrl java package (semlbasename+ ".swrl")
 	public static String ToolsPackage = null; //Tools java package (semlbasename+ ".tools")
 	public static final String GENfirstline = "/* Automatically generated file. Source files: ";
@@ -514,18 +519,26 @@ public class Ontologies {
 		SWRLfolder =  SEMLfile_abspath_noExt + "_swrl/";				// 	".../path/----_swrl/"
 		Toolsfolder = SEMLfile_abspath_noExt + "_tools/";				// 	".../path/----_tools/"
 		TEMPLfolder = SEMLfile_abspath_noExt + "_template/";			// 	".../path/----_template/"
+		SRCfolder   = SEMLfile_abspath_noExt + "_src/";					// 	".../path/----_src/"
 		SWRLPackage = SEMLfile_basename + "_swrl";						// 	"----_swrl"
 		ToolsPackage =SEMLfile_basename + "_tools";						// 	"----_tools"
+		
 		
 		//Get generated file path (relative + absolute)
 		GENfile = new File(GENfolder + GENfile_NAME);					// ".../path/----_gen/imports.seml"
 		GENfile_relpath = SEMLfile_basename + "_gen/" + GENfile_NAME;	// "----_gen/imports.seml"				
 		
-		//Create tools folder 
+		//Create tools & src folder 
 		File toolsFolderFile = new File(Toolsfolder);
 		if(!toolsFolderFile.exists()){ //Check if folder exists, create it otherwise
 			if(!toolsFolderFile.mkdir())
 				throw new IOException("Error creating directory: " + Toolsfolder); //Error occurred while creating folder
+	    }
+
+		File srcFolderFile = new File(SRCfolder);
+		if(!srcFolderFile.exists()){ //Check if folder exists, create it otherwise
+			if(!srcFolderFile.mkdir())
+				throw new IOException("Error creating directory: " + SRCfolder); //Error occurred while creating folder
 	    }
     }
 	

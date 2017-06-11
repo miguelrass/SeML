@@ -10,7 +10,7 @@ import org.semanticweb.owlapi.model.OWLClass;
 public class Problem {
 	
 	public enum TypeE{
-		SOLVED, SOLVABLE, UNSOLVABLE, OrPROBLEM, CHAR_EXCESS, CHAR_DEFECT, REPORT, UPPER_PROBLEM
+		SOLVED, SOLVABLE, UNSOLVABLE, OrPROBLEM, CHAR_EXCESS, CHAR_DEFECT, REPORT
 	}
 	public enum LevelE{
 		INFO, WARNING, ERROR
@@ -21,15 +21,15 @@ public class Problem {
 	public LevelE level = LevelE.ERROR;
 	
 	public String GetLabel(){
-		//Report or Upper Problem:
-		if(type == TypeE.REPORT || type == TypeE.UPPER_PROBLEM) return problemLabel;
+		//Report:
+		if(type == TypeE.REPORT) return problemLabel;
 		
 		//Characteristic problem: 
 		//Gets Alias of characteristic 
 		if(type == TypeE.CHAR_EXCESS || type == TypeE.CHAR_DEFECT)
 			return "Characteristic: " + MasterOntology.cachedIRIs.get(restrictor.getIRI().toString()) + "\n" + problemLabel;
 				
-		//Individual problem:
+		//Individual problem or Upper Problem:
 		//Gets short IRI to show names of classes, no need to generate an Alias for these
 		//Unlike characteristics, classes are not referred in the DSL
 		String s = "Source: " + Ontologies.GetShortIRI(restrictor.getIRI());
@@ -56,7 +56,7 @@ public class Problem {
 		else type = TypeE.CHAR_DEFECT;
 	}
 	
-	//========================================================= Individual problem
+	//========================================================= Individual problem / Upper Problem
 	
 	/**
 	 * Problem Types:
@@ -89,16 +89,10 @@ public class Problem {
 		type = TypeE.UNSOLVABLE;
 	}
 
-	void AddSolution(List<String> solution){
+	public void AddSolution(List<String> solution){
 		if(solutions.isEmpty()) type = TypeE.SOLVED;
 		else type = TypeE.SOLVABLE;
 		solutions.add(solution);
 	}
 	
-	//========================================================= Upper Problem
-	
-	public Problem(boolean dummy, String pL){ 
-		problemLabel = pL;
-		type = TypeE.UPPER_PROBLEM;
-	}
 }

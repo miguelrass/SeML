@@ -39,6 +39,7 @@ public class CharacteristicsSolver {
 	private static OWLObjectProperty OWL_OP_Requires = factory.getOWLObjectProperty(IRI.create(Ontologies.OWL_Requires));
 	
 	public static String chrProblem = null;
+	public static ArrayList<String> chrSolutions = null;
 	
 	public static int GetCharacteristicsSize(){
 		return chrListRequired.size();
@@ -51,7 +52,8 @@ public class CharacteristicsSolver {
 	private static void WriteProblem(){
 		
 		StringBuilder problem = new StringBuilder(200); //set initial capacity to 200 chars
-		
+		HashSet<String> solutions = new HashSet<String>(); //store Characteristics that would solve the problem
+	
 		for(Pair<Set<OWLClassExpression>, Boolean> orList : orListPending){
 			problem.append("Should use one of: ");
 			
@@ -62,6 +64,7 @@ public class CharacteristicsSolver {
 				String ch = MasterOntology.cachedIRIs.get(it.next().asOWLClass().getIRI().toString());
 				if(ch==null) ch = "Characteristic_Not_Found";
 				problem.append(ch + " or ");
+				solutions.add(ch);
 			}
 			
 			problem.setLength(problem.length()-4);
@@ -69,6 +72,9 @@ public class CharacteristicsSolver {
 		}
 		
 		chrProblem = problem.substring(0, problem.length()-1);//remove "\n"
+
+		chrSolutions = new ArrayList<String>(solutions);
+		chrSolutions.add(0,""); //Avoid fixing model in Quickfix
 	}
 	
 	/**
@@ -96,14 +102,8 @@ public class CharacteristicsSolver {
 		//Iteratively solve OR variabilities until the iteration yields no result
 		do{
 			
-			//Check if algorithm has ended
-			if(orListPending.isEmpty()){
-				Console.DebPair(local_log, "Characteristics being used: ");
-				StringBuilder strChrList = new StringBuilder(100); //list of characteristics
-				chrListRequired.forEach(ch -> strChrList.append(MasterOntology.cachedIRIs.get(ch.getIRI().toString()) + ", "));
-				Console.DebPairLn(local_log, strChrList.substring(0, strChrList.length()-2));
-				return true; //the tree was built and all variabilities are solved
-			}
+			//Check if algorithm has ended (the tree was built and all variabilities are solved)
+			if(orListPending.isEmpty()) return true;
 			
 			ArrayList<Pair<Set<OWLClassExpression>,Boolean>> currentOrList = orListPending;
 			orListPending = new ArrayList<Pair<Set<OWLClassExpression>,Boolean>>();
